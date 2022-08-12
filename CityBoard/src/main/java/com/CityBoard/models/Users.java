@@ -1,32 +1,46 @@
 package com.CityBoard.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class Users {
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Users implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true, updatable = false)
-    private String login;
+    private String username;
     @Column(length = 1000)
     private String password;
     private String full_name;
     @CreationTimestamp
     private Timestamp created_at;
     private UserStatus status;
-    @OneToMany(mappedBy = "users")
+    private boolean password_expired;
+    @OneToMany(mappedBy = "user")
     List<Request> requests;
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "user")
     List<Advert> adverts;
     @ElementCollection(targetClass = Roles.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
-    private HashSet<Roles> roles = new HashSet<>();
+    private Set<Roles> roles;
 
     // User actions
     public void banUser() {
@@ -34,7 +48,7 @@ public class Users {
     }
 
     public void restoreUser() {
-        this.setStatus(UserStatus.USUAL);
+        this.setStatus(UserStatus.LOGGED_OFF);
     }
 
     public void deleteUser() {
@@ -51,11 +65,49 @@ public class Users {
     }
 
     public boolean isMod() {
-        return roles.contains(Roles.MOD);
+        return roles.contains(Roles.ROLE_MOD);
     }
 
     public boolean isAdmin() {
-        return roles.contains(Roles.ADMIN);
+        return roles.contains(Roles.ROLE_ADMIN);
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        if (this.status != UserStatus.DELETED) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        if (this.status != UserStatus.BANNED) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return !password_expired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        if (this.status == UserStatus.ACTIVE) {
+            return true;
+        }
+        return false;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
     }
 
     // Default getters and setters
@@ -67,12 +119,8 @@ public class Users {
         this.id = id;
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
+    public String getUsername() {
+        return username;
     }
 
     public String getPassword() {
@@ -123,11 +171,19 @@ public class Users {
         this.adverts = adverts;
     }
 
-    public HashSet<Roles> getRoles() {
+    public Set<Roles> getRoles() {
         return roles;
     }
 
-    public void setRoles(HashSet<Roles> roles) {
+    public void setRoles(Set<Roles> roles) {
         this.roles = roles;
+    }
+
+    public boolean isPassword_expired() {
+        return password_expired;
+    }
+
+    public void setPassword_expired(boolean password_expired) {
+        this.password_expired = password_expired;
     }
 }

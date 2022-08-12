@@ -4,7 +4,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-
+@Entity
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +17,7 @@ public class Request {
     @JoinColumn(name = "author_id")
     private Users user;
     @OneToOne
-    @JoinColumn(name = "advert_id", referencedColumnName = "id")
+    @JoinColumn(name = "advert_id")
     private Advert advert;
 
     // Request actions
