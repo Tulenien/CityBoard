@@ -1,11 +1,11 @@
 package com.CityBoard.services;
 
 import com.CityBoard.DTO.UserCredentialsDTO;
+import com.CityBoard.configuration.SecurityConfiguration;
 import com.CityBoard.models.Roles;
 import com.CityBoard.models.UserStatus;
 import com.CityBoard.models.Users;
 import com.CityBoard.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,10 +19,11 @@ import java.util.Set;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    public CustomUserDetailsService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    private final SecurityConfiguration securityConfiguration;
+    public CustomUserDetailsService(UserRepository userRepository, SecurityConfiguration securityConfiguration) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.securityConfiguration = securityConfiguration;
+        securityConfiguration.setUserDetailsService(this);
     }
 
     @Override
@@ -44,7 +45,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         userRoles.add(Roles.ROLE_USER);
         Users user = Users.builder()
                 .username(userCredentials.getUsername())
-                .password(passwordEncoder.encode(userCredentials.getPassword()))
+                .password(securityConfiguration.passwordEncoder().encode(userCredentials.getPassword()))
                 .created_at(new Timestamp(System.currentTimeMillis()))
                 .password_expired(false)
                 .status(UserStatus.LOGGED_OFF)

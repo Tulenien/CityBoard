@@ -74,10 +74,7 @@ public class Users implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        if (this.status != UserStatus.DELETED) {
-            return true;
-        }
-        return false;
+        return true;
     }
 
     @Override
@@ -95,7 +92,7 @@ public class Users implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        if (this.status == UserStatus.ACTIVE) {
+        if (this.status != UserStatus.DELETED) {
             return true;
         }
         return false;
