@@ -1,10 +1,18 @@
 package com.CityBoard.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +24,7 @@ public class Request {
     @ManyToOne
     @JoinColumn(name = "author_id")
     private Users user;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "advert_id")
     private Advert advert;
 

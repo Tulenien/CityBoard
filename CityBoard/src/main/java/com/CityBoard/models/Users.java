@@ -176,10 +176,6 @@ public class Users implements UserDetails {
         this.roles = roles;
     }
 
-    public boolean isPassword_expired() {
-        return password_expired;
-    }
-
     public void setPassword_expired(boolean password_expired) {
         this.password_expired = password_expired;
     }

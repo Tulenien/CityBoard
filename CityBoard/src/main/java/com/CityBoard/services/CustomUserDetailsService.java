@@ -20,7 +20,8 @@ import java.util.Set;
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
     private final SecurityConfiguration securityConfiguration;
-    public CustomUserDetailsService(UserRepository userRepository, SecurityConfiguration securityConfiguration) {
+    public CustomUserDetailsService(UserRepository userRepository,
+                                    SecurityConfiguration securityConfiguration) {
         this.userRepository = userRepository;
         this.securityConfiguration = securityConfiguration;
         securityConfiguration.setUserDetailsService(this);
@@ -28,7 +29,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username);
+        Users user = userRepository.findByUsername(username);
+        if (user != null) {
+            user.setStatus(UserStatus.ACTIVE);
+            userRepository.save(user);
+            return user;
+        }
+        throw new UsernameNotFoundException("Username not found");
     }
 
     public boolean userExists(String username) {
@@ -40,7 +47,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         {
             throw new Exception("User with this username already exists");
         }
-        System.out.println("We are here!\n");
         Set<Roles> userRoles = new HashSet<Roles>();
         userRoles.add(Roles.ROLE_USER);
         Users user = Users.builder()

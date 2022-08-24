@@ -1,11 +1,21 @@
 package com.CityBoard.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
+
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Advert {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,14 +28,15 @@ public class Advert {
     @UpdateTimestamp
     private Timestamp updated_at;
     private AdvertStatus status;
+    private boolean mod_check;
     private String address;
     private Integer price;
     private Float area;
     @ManyToOne
     @JoinColumn(name = "author_id")
     private Users user;
-    @OneToOne(mappedBy = "advert")
-    private Request request;
+    @OneToMany(mappedBy = "advert")
+    private List<Request> requests;
 
     // Advert actions
     public boolean isVisible() {
@@ -33,6 +44,14 @@ public class Advert {
             return true;
         }
         return false;
+    }
+
+    public boolean isModChecked() {
+        return this.mod_check;
+    }
+
+    public void addRequest(Request request) {
+        requests.add(request);
     }
 
     // Default getters and setters
@@ -84,14 +103,6 @@ public class Advert {
         this.updated_at = updated_at;
     }
 
-    public AdvertStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(AdvertStatus status) {
-        this.status = status;
-    }
-
     public String getAddress() {
         return address;
     }
@@ -124,11 +135,27 @@ public class Advert {
         this.user = user;
     }
 
-    public Request getRequest() {
-        return request;
+    public AdvertStatus getStatus() {
+        return status;
     }
 
-    public void setRequest(Request request) {
-        this.request = request;
+    public void setStatus(AdvertStatus status) {
+        this.status = status;
+    }
+
+    public boolean isMod_check() {
+        return mod_check;
+    }
+
+    public void setMod_check(boolean mod_check) {
+        this.mod_check = mod_check;
+    }
+
+    public List<Request> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<Request> requests) {
+        this.requests = requests;
     }
 }
