@@ -6,9 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Service
-public class AdvertsService {
+public abstract class AdvertsService {
     public final RequestsService requestsService;
 
     @Autowired
@@ -48,4 +49,7 @@ public class AdvertsService {
     public void makeRequest(Users requester, Advert advert, RequestType requestType) {
         Request request = requestsService.createRequest(requestType, requester, advert);
     }
+
+    public abstract List<Advert> getUserAdverts(Users user);
+
 }

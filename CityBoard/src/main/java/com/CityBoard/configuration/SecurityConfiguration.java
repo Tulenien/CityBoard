@@ -24,7 +24,8 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/profile/**", "/my-requests/**", "/my-adverts/**")
+                .antMatchers("/moderator/**").hasAuthority("ROLE_MOD")
+                .antMatchers("/profile/**", "/my-requests/**", "/my-adverts/**", "/edit/**")
                     .authenticated()
                 .antMatchers("/**").permitAll()
                 .and().formLogin();

@@ -54,14 +54,4 @@ public class UserController {
     public String showUserProfile(Users user, Model model) {
         return "profile";
     }
-
-    @GetMapping("/my-adverts")
-    public String showUserAdverts(Users user, Model model) {
-        return "my-adverts";
-    }
-
-    @GetMapping("/my-requests")
-    public String showUserRequests(Users user, Model model) {
-        return "my-requests";
-    }
 }
