@@ -42,6 +42,10 @@ public class Users implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Roles> roles;
 
+    public void addAdvert(Advert advert) {
+        adverts.add(advert);
+    }
+
     // User actions
     public void banUser() {
         this.setStatus(UserStatus.BANNED);

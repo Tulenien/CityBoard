@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(basePackages = "com.CityBoard.models")
 @EnableJpaRepositories(basePackages = "com.CityBoard.repositories")
 @SpringBootApplication
-public class CityBoardApplication {
+public class  CityBoardApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CityBoardApplication.class, args);

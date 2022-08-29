@@ -1,55 +1,83 @@
 package com.CityBoard.services;
 
-import com.CityBoard.DTO.AdvertDTO;
 import com.CityBoard.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.CityBoard.repositories.AdvertRepository;
+import com.CityBoard.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public abstract class AdvertsService {
-    public final RequestsService requestsService;
+public class AdvertsService {
+    public final UserRepository userRepository;
+    public final AdvertRepository advertRepository;
 
-    @Autowired
-    public AdvertsService(RequestsService requestsService) {
-        this.requestsService = requestsService;
+    public AdvertsService(UserRepository userRepository, AdvertRepository advertRepository) {
+        this.userRepository = userRepository;
+        this.advertRepository = advertRepository;
     }
-
-    public Advert createAdvert(Users author, AdvertDTO object) {
+    public Advert createAdvert(String authorName, AdvertType advertType, String email,
+                               String phone, Integer price, String address,
+                               Float area) {
+        Users user = userRepository.findByUsername(authorName);
         Advert advert = Advert.builder()
-                .email(object.getEmail())
-                .phone(object.getPhone())
-                .price(object.getPrice())
-                .address(object.getAddress())
-                .area(object.getArea())
-                .type(object.getType())
-                .user(author)
+                .type(advertType)
+                .email(email)
+                .phone(phone)
+                .price(price)
+                .address(address)
+                .area(area)
+                .user(user)
                 .status(AdvertStatus.VISIBLE)
                 .mod_check(false)
                 .created_at(new Timestamp(System.currentTimeMillis()))
                 .build();
+        user.addAdvert(advert);
+        advertRepository.save(advert);
+        userRepository.save(user);
         return advert;
     }
 
-    public Advert updateAdvert(AdvertDTO redacted, Advert toUpdate) {
-        toUpdate.setType(redacted.getType());
-        toUpdate.setEmail(redacted.getEmail());
-        toUpdate.setPhone(redacted.getPhone());
+    public Advert updateAdvert(Advert toUpdate, AdvertType advertType, String email,
+                               String phone, Integer price, String address,
+                               Float area, AdvertStatus advertStatus) {
+        toUpdate.setType(advertType);
+        toUpdate.setEmail(email);
+        toUpdate.setPhone(phone);
+        // Updates automatically???
         toUpdate.setUpdated_at(new Timestamp(System.currentTimeMillis()));
-        toUpdate.setStatus(redacted.getStatus());
+        toUpdate.setStatus(advertStatus);
         toUpdate.setMod_check(false);
-        toUpdate.setAddress(redacted.getAddress());
-        toUpdate.setPrice(redacted.getPrice());
-        toUpdate.setArea(redacted.getArea());
+        toUpdate.setAddress(address);
+        toUpdate.setPrice(price);
+        toUpdate.setArea(area);
         return toUpdate;
     }
 
-    public void makeRequest(Users requester, Advert advert, RequestType requestType) {
-        Request request = requestsService.createRequest(requestType, requester, advert);
+    public void checkAdvert(Advert toCheck) {
+        toCheck.setMod_check(true);
     }
 
-    public abstract List<Advert> getUserAdverts(Users user);
+    public void hideAdvert(Advert toHide) {
+        toHide.setStatus(AdvertStatus.HIDDEN);
+    }
+
+    public void deleteAdvert(Advert toDelete) {
+        toDelete.setStatus(AdvertStatus.DELETED);
+    }
+
+    public List<Advert> getAllAdverts() {
+        return advertRepository.findAll();
+    }
+
+    public Advert getAdvertById(Long id) {
+        return advertRepository.findById(id).orElse(null);
+    }
+
+    public List<Advert> getUserAdverts(String authorName) {
+        return advertRepository.findByAuthor(authorName);
+    }
 
 }

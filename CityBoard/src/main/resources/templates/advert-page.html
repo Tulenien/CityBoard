@@ -2,19 +2,20 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8">
-  <title>Users</title>
   <title>Cityboard</title>
 </head>
 <body>
 <table>
-  <tr th:each="advert : ${adverts}">
-    <td><a th:href="@{/cityboard/{id}(id=${advert.id})}">Просмотр</a></td>
+  <tr>
     <th:block th:switch="${advert.type}">
       <td th:case="${T(com.CityBoard.models.AdvertType).SALE}">Продажа</td>
       <td th:case="${T(com.CityBoard.models.AdvertType).RENT}">Аренда</td>
     </th:block>
+    <td th:text="${advert.email}"></td>
+    <td th:text="${advert.phone}"></td>
     <td th:text="${advert.address}"></td>
     <td th:text="${advert.price}"></td>
+    <td th:text="${advert.area}"></td>
   </tr>
 </table>
 </body>

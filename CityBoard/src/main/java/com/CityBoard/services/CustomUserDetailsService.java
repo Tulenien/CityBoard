@@ -20,6 +20,7 @@ import java.util.Set;
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
     private final SecurityConfiguration securityConfiguration;
+
     public CustomUserDetailsService(UserRepository userRepository,
                                     SecurityConfiguration securityConfiguration) {
         this.userRepository = userRepository;

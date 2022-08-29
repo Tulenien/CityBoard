@@ -12,10 +12,10 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class Advert {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,23 +38,6 @@ public class Advert {
     @OneToMany(mappedBy = "advert")
     private List<Request> requests;
 
-    // Advert actions
-    public boolean isVisible() {
-        if (this.status == AdvertStatus.VISIBLE) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isModChecked() {
-        return this.mod_check;
-    }
-
-    public void addRequest(Request request) {
-        requests.add(request);
-    }
-
-    // Default getters and setters
     public Long getId() {
         return id;
     }
@@ -103,6 +86,22 @@ public class Advert {
         this.updated_at = updated_at;
     }
 
+    public AdvertStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AdvertStatus status) {
+        this.status = status;
+    }
+
+    public boolean isMod_check() {
+        return mod_check;
+    }
+
+    public void setMod_check(boolean mod_check) {
+        this.mod_check = mod_check;
+    }
+
     public String getAddress() {
         return address;
     }
@@ -133,22 +132,6 @@ public class Advert {
 
     public void setUser(Users user) {
         this.user = user;
-    }
-
-    public AdvertStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(AdvertStatus status) {
-        this.status = status;
-    }
-
-    public boolean isMod_check() {
-        return mod_check;
-    }
-
-    public void setMod_check(boolean mod_check) {
-        this.mod_check = mod_check;
     }
 
     public List<Request> getRequests() {

@@ -25,6 +25,7 @@ public class SecurityConfiguration {
         httpSecurity.authorizeRequests()
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/moderator/**").hasAuthority("ROLE_MOD")
+                .antMatchers("/create-advert/**").hasAuthority("ROLE_USER")
                 .antMatchers("/profile/**", "/my-requests/**", "/my-adverts/**", "/edit/**")
                     .authenticated()
                 .antMatchers("/**").permitAll()

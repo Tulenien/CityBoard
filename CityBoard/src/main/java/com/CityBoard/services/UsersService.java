@@ -3,6 +3,7 @@ package com.CityBoard.services;
 import com.CityBoard.DTO.UserProfileDTO;
 import com.CityBoard.models.Users;
 import com.CityBoard.repositories.UserRepository;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
