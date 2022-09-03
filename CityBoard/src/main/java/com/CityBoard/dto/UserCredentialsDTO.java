@@ -1,4 +1,4 @@
-package com.CityBoard.DTO;
+package com.CityBoard.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

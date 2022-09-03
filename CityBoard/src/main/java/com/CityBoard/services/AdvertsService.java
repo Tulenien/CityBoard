@@ -1,28 +1,28 @@
 package com.CityBoard.services;
 
 import com.CityBoard.models.*;
-import com.CityBoard.repositories.AdvertRepository;
-import com.CityBoard.repositories.UserRepository;
+import com.CityBoard.models.enums.AdvertStatus;
+import com.CityBoard.models.enums.AdvertType;
+import com.CityBoard.repositories.AdvertsRepository;
+import com.CityBoard.repositories.UsersRepository;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class AdvertsService {
-    public final UserRepository userRepository;
-    public final AdvertRepository advertRepository;
+public class AdvertsService extends AbstractService<Adverts, AdvertsRepository> {
+    private final UsersRepository usersRepository;
 
-    public AdvertsService(UserRepository userRepository, AdvertRepository advertRepository) {
-        this.userRepository = userRepository;
-        this.advertRepository = advertRepository;
+    public AdvertsService(AdvertsRepository repository, UsersRepository usersRepository) {
+        super(repository);
+        this.usersRepository = usersRepository;
     }
-    public Advert createAdvert(String authorName, AdvertType advertType, String email,
-                               String phone, Integer price, String address,
-                               Float area) {
-        Users user = userRepository.findByUsername(authorName);
-        Advert advert = Advert.builder()
+
+    public Adverts createAdvert(String authorName, AdvertType advertType, String email,
+                                String phone, Integer price, String address,
+                                Float area) {
+        Users user = findAdvertAuthor(authorName);
+        Adverts advert = Adverts.builder()
                 .type(advertType)
                 .email(email)
                 .phone(phone)
@@ -32,22 +32,27 @@ public class AdvertsService {
                 .user(user)
                 .status(AdvertStatus.VISIBLE)
                 .mod_check(false)
-                .created_at(new Timestamp(System.currentTimeMillis()))
                 .build();
-        user.addAdvert(advert);
-        advertRepository.save(advert);
-        userRepository.save(user);
+        save(advert);
+        updateUserAdverts(user, advert);
         return advert;
     }
 
-    public Advert updateAdvert(Advert toUpdate, AdvertType advertType, String email,
+    public Users findAdvertAuthor(String authorName) {
+        return usersRepository.findByUsername(authorName);
+    }
+
+    public void updateUserAdverts(Users user, Adverts advert) {
+        user.addAdvert(advert);
+        usersRepository.save(user);
+    }
+
+    public Adverts updateAdvert(Adverts toUpdate, AdvertType advertType, String email,
                                String phone, Integer price, String address,
                                Float area, AdvertStatus advertStatus) {
         toUpdate.setType(advertType);
         toUpdate.setEmail(email);
         toUpdate.setPhone(phone);
-        // Updates automatically???
-        toUpdate.setUpdated_at(new Timestamp(System.currentTimeMillis()));
         toUpdate.setStatus(advertStatus);
         toUpdate.setMod_check(false);
         toUpdate.setAddress(address);
@@ -56,28 +61,33 @@ public class AdvertsService {
         return toUpdate;
     }
 
-    public void checkAdvert(Advert toCheck) {
+    public void checkAdvert(Adverts toCheck) {
         toCheck.setMod_check(true);
     }
 
-    public void hideAdvert(Advert toHide) {
+    public void hideAdvert(Adverts toHide) {
         toHide.setStatus(AdvertStatus.HIDDEN);
     }
 
-    public void deleteAdvert(Advert toDelete) {
+    public void deleteAdvert(Adverts toDelete) {
         toDelete.setStatus(AdvertStatus.DELETED);
     }
 
-    public List<Advert> getAllAdverts() {
-        return advertRepository.findAll();
+    public List<Adverts> getAllAdverts() {
+        return repository.findAll();
     }
 
-    public Advert getAdvertById(Long id) {
-        return advertRepository.findById(id).orElse(null);
+    public Adverts getAdvertById(Long id) {
+        return repository.findById(id).orElse(null);
     }
 
-    public List<Advert> getUserAdverts(String authorName) {
-        return advertRepository.findByAuthor(authorName);
+    public List<Adverts> getUserAdverts(String authorName) {
+        Users user = usersRepository.findByUsername(authorName);
+        return user.getAdverts();
     }
 
+    @Override
+    public void save(Adverts entity) {
+        repository.save(entity);
+    }
 }

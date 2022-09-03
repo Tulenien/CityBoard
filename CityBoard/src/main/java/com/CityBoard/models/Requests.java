@@ -1,33 +1,26 @@
 package com.CityBoard.models;
 
+import com.CityBoard.models.enums.RequestStatus;
+import com.CityBoard.models.enums.RequestType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class Request {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@AllArgsConstructor
+@NoArgsConstructor
+public class Requests extends AbstractEntity{
     private RequestType type;
     private RequestStatus status;
-    @CreationTimestamp
-    private Timestamp created_at;
     @ManyToOne
     @JoinColumn(name = "author_id")
-    private Users user;
+    private Users user = null;
     @ManyToOne
     @JoinColumn(name = "advert_id")
-    private Advert advert;
+    private Adverts advert = null;
 
     // Request actions
     public boolean isClosed() {
@@ -38,13 +31,6 @@ public class Request {
     }
 
     // Default getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public RequestType getType() {
         return type;
@@ -62,14 +48,6 @@ public class Request {
         this.status = status;
     }
 
-    public Timestamp getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(Timestamp created_at) {
-        this.created_at = created_at;
-    }
-
     public Users getUser() {
         return user;
     }
@@ -78,11 +56,11 @@ public class Request {
         this.user = user;
     }
 
-    public Advert getAdvert() {
+    public Adverts getAdvert() {
         return advert;
     }
 
-    public void setAdvert(Advert advert) {
+    public void setAdvert(Adverts advert) {
         this.advert = advert;
     }
 }

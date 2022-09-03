@@ -1,4 +1,4 @@
-package com.CityBoard.models;
+package com.CityBoard.models.enums;
 
 import org.springframework.security.core.GrantedAuthority;
 

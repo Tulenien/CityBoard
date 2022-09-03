@@ -1,50 +1,32 @@
 package com.CityBoard.models;
 
+import com.CityBoard.models.enums.AdvertStatus;
+import com.CityBoard.models.enums.AdvertType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class Advert {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Adverts extends AbstractEntity {
     private AdvertType type;
     private String email;
     private String phone;
-    @CreationTimestamp
-    private Timestamp created_at;
-    @UpdateTimestamp
-    private Timestamp updated_at;
     private AdvertStatus status;
-    private boolean mod_check;
+    private boolean mod_check = false;
     private String address;
     private Integer price;
     private Float area;
     @ManyToOne
     @JoinColumn(name = "author_id")
-    private Users user;
+    private Users user = null;
     @OneToMany(mappedBy = "advert")
-    private List<Request> requests;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private List<Requests> requests = null;
 
     public AdvertType getType() {
         return type;
@@ -68,22 +50,6 @@ public class Advert {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public Timestamp getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(Timestamp created_at) {
-        this.created_at = created_at;
-    }
-
-    public Timestamp getUpdated_at() {
-        return updated_at;
-    }
-
-    public void setUpdated_at(Timestamp updated_at) {
-        this.updated_at = updated_at;
     }
 
     public AdvertStatus getStatus() {
@@ -134,11 +100,11 @@ public class Advert {
         this.user = user;
     }
 
-    public List<Request> getRequests() {
+    public List<Requests> getRequests() {
         return requests;
     }
 
-    public void setRequests(List<Request> requests) {
+    public void setRequests(List<Requests> requests) {
         this.requests = requests;
     }
 }

@@ -1,6 +1,6 @@
-package com.CityBoard.DTO;
+package com.CityBoard.dto;
 
-import com.CityBoard.models.Roles;
+import com.CityBoard.models.enums.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

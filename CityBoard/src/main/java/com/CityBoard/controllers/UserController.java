@@ -1,18 +1,20 @@
 package com.CityBoard.controllers;
 
-import com.CityBoard.DTO.UserCredentialsDTO;
+import com.CityBoard.dto.UserCredentialsDTO;
 import com.CityBoard.models.Users;
 import com.CityBoard.services.CustomUserDetailsService;
+import com.CityBoard.services.UsersService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-public class UserController {
+@Controller("/user")
+public class UserController extends AbstractController<Users, UsersService> {
     private final CustomUserDetailsService userDetailsService;
 
-    public UserController(CustomUserDetailsService userDetailsService) {
+    protected UserController(UsersService service, CustomUserDetailsService userDetailsService) {
+        super(service);
         this.userDetailsService = userDetailsService;
     }
 

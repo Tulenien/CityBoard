@@ -1,26 +1,38 @@
 package com.CityBoard.services;
 
 import com.CityBoard.models.*;
+import com.CityBoard.models.enums.RequestStatus;
+import com.CityBoard.models.enums.RequestType;
+import com.CityBoard.repositories.RequestsRepository;
+import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
+@Service
+public class RequestsService extends AbstractService<Requests, RequestsRepository> {
 
-public class RequestsService {
-    public Request createRequest(RequestType requestType, Users author, Advert advert) {
-        Request request = Request.builder()
+    public RequestsService(RequestsRepository repository) {
+        super(repository);
+    }
+
+    public Requests createRequest(RequestType requestType, Users author, Adverts advert) {
+        Requests request = Requests.builder()
                 .type(requestType)
                 .status(RequestStatus.PENDING)
-                .created_at(new Timestamp(System.currentTimeMillis()))
                 .user(author)
                 .advert(advert)
                 .build();
         return request;
     }
 
-    public void acceptRequest(Request request) {
+    public void acceptRequest(Requests request) {
         request.setStatus(RequestStatus.ACCEPTED);
     }
 
-    public void rejectRequest(Request request) {
+    public void rejectRequest(Requests request) {
         request.setStatus(RequestStatus.REJECTED);
+    }
+
+    @Override
+    public void save(Requests entity) {
+        repository.save(entity);
     }
 }

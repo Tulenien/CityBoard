@@ -1,8 +1,9 @@
 package com.CityBoard.models;
 
+import com.CityBoard.models.enums.Roles;
+import com.CityBoard.models.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,19 +12,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class Users implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@AllArgsConstructor
+@NoArgsConstructor
+public class Users extends AbstractEntity implements UserDetails {
     @Column(unique = true, updatable = false)
     private String username;
     @Column(length = 1000)
@@ -34,15 +30,15 @@ public class Users implements UserDetails {
     private UserStatus status;
     private boolean password_expired;
     @OneToMany(mappedBy = "user")
-    List<Request> requests;
+    List<Requests> requests = null;
     @OneToMany(mappedBy = "user")
-    List<Advert> adverts;
+    List<Adverts> adverts = null;
     @ElementCollection(targetClass = Roles.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
-    private Set<Roles> roles;
+    private Set<Roles> roles = null;
 
-    public void addAdvert(Advert advert) {
+    public void addAdvert(Adverts advert) {
         adverts.add(advert);
     }
 
@@ -112,14 +108,6 @@ public class Users implements UserDetails {
     }
 
     // Default getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -156,19 +144,19 @@ public class Users implements UserDetails {
         this.status = status;
     }
 
-    public List<Request> getRequests() {
+    public List<Requests> getRequests() {
         return requests;
     }
 
-    public void setRequests(List<Request> requests) {
+    public void setRequests(List<Requests> requests) {
         this.requests = requests;
     }
 
-    public List<Advert> getAdverts() {
+    public List<Adverts> getAdverts() {
         return adverts;
     }
 
-    public void setAdverts(List<Advert> adverts) {
+    public void setAdverts(List<Adverts> adverts) {
         this.adverts = adverts;
     }
 

@@ -1,7 +1,6 @@
 package com.CityBoard.configuration;
 
 import com.CityBoard.services.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -25,7 +24,7 @@ public class SecurityConfiguration {
         httpSecurity.authorizeRequests()
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/moderator/**").hasAuthority("ROLE_MOD")
-                .antMatchers("/create-advert/**").hasAuthority("ROLE_USER")
+                .antMatchers("/create-advert/**", "/save/**").hasAuthority("ROLE_USER")
                 .antMatchers("/profile/**", "/my-requests/**", "/my-adverts/**", "/edit/**")
                     .authenticated()
                 .antMatchers("/**").permitAll()

@@ -1,4 +1,4 @@
-package com.CityBoard.models;
+package com.CityBoard.models.enums;
 
 public enum AdvertType {
     RENT, SALE;

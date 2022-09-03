@@ -1,6 +1,6 @@
 package com.CityBoard.controllers;
 
-import com.CityBoard.models.Advert;
+import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Users;
 import com.CityBoard.services.AdvertsService;
 import org.springframework.stereotype.Controller;
@@ -11,24 +11,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
+import java.util.List;
 
-@Controller
-public class AdvertController {
-    private final AdvertsService advertsService;
+@Controller("adverts")
+public class AdvertController extends AbstractController<Adverts, AdvertsService> {
 
-    public AdvertController(AdvertsService advertsService) {
-        this.advertsService = advertsService;
+    protected AdvertController(AdvertsService service) {
+        super(service);
     }
 
     @GetMapping("/cityboard")
     public String showMainPage(Model model) {
-        model.addAttribute("adverts", advertsService.getAllAdverts());
+        model.addAttribute("adverts", service.getAllAdverts());
         return "city-board";
     }
 
     @GetMapping("/cityboard/{id}")
     public String showAdvertPage(@PathVariable("id") Long id, Model model) {
-        Advert advert = advertsService.getAdvertById(id);
+        Adverts advert = service.getAdvertById(id);
         if (advert != null) {
             model.addAttribute("advert", advert);
         }
@@ -40,33 +40,39 @@ public class AdvertController {
         return "update-advert";
     }
 
-    @GetMapping("/my-adverts")
-    public String showUserAdverts(Users user, Model model) {
+    @GetMapping("/cityboard/my-adverts")
+    public String showUserAdverts(Principal principal, Model model) {
+        List<Adverts> adverts = service.getUserAdverts(principal.getName());
+        if (adverts != null) {
+            model.addAttribute("adverts", adverts);
+        }
         return "my-adverts";
     }
 
-    @GetMapping("/my-adverts/edit/{id}")
+    @GetMapping("cityboard/my-adverts/edit/{id}")
     public String showAdvertUpdateForm (@PathVariable("id") Long id, Users user, Model model) {
         return "update-advert";
     }
 
     @GetMapping("/create-advert")
     public String showAdvertUpdateForm(Users user, BindingResult bindingResult, Model model) {
-        model.addAttribute("Advert", new Advert());
+        model.addAttribute("Advert", new Adverts());
         return "create-advert";
     }
 
-    @PostMapping("/create-advert")
-    public String createAdvert(Principal principal, Advert advert) {
-        advertsService.createAdvert(principal.getName(), advert.getType(),
-                advert.getEmail(), advert.getPhone(),
-                advert.getPrice(), advert.getAddress(),
-                advert.getArea());
-        return "redirect:/cityboard";
+    @Override
+    @PostMapping("/save-advert")
+    public String create(Principal principal, Adverts entity) {
+        service.createAdvert(principal.getName(), entity.getType(),
+                             entity.getEmail(), entity.getPhone(),
+                             entity.getPrice(), entity.getAddress(),
+                             entity.getArea());
+        return "redirect:/";
     }
 
     @GetMapping("/moderator/check")
     public String showAdvertListModerationForm() {
         return "city-board";
     }
+
 }

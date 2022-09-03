@@ -1,7 +1,7 @@
-package com.CityBoard.DTO;
+package com.CityBoard.dto;
 
-import com.CityBoard.models.AdvertStatus;
-import com.CityBoard.models.AdvertType;
+import com.CityBoard.models.enums.AdvertStatus;
+import com.CityBoard.models.enums.AdvertType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
