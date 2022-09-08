@@ -60,15 +60,15 @@ public class AdvertController extends AbstractController<Adverts, AdvertsService
         return "create-advert";
     }
 
-    @Override
-    @PostMapping("/save-advert")
-    public String create(Principal principal, Adverts entity) {
-        service.createAdvert(principal.getName(), entity.getType(),
-                             entity.getEmail(), entity.getPhone(),
-                             entity.getPrice(), entity.getAddress(),
-                             entity.getArea());
-        return "redirect:/";
-    }
+    //@Override
+    //@PostMapping("/save-advert")
+    //public String create(Principal principal, Adverts entity) {
+    //    service.createAdvert(principal.getName(), entity.getType(),
+    //                         entity.getEmail(), entity.getPhone(),
+    //                         entity.getPrice(), entity.getAddress(),
+    //                         entity.getArea());
+    //    return "redirect:/";
+    //}
 
     @GetMapping("/moderator/check")
     public String showAdvertListModerationForm() {

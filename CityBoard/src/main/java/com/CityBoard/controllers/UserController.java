@@ -1,6 +1,5 @@
 package com.CityBoard.controllers;
 
-import com.CityBoard.dto.UserCredentialsDTO;
 import com.CityBoard.models.Users;
 import com.CityBoard.services.CustomUserDetailsService;
 import com.CityBoard.services.UsersService;
@@ -20,27 +19,27 @@ public class UserController extends AbstractController<Users, UsersService> {
 
     @GetMapping("/registration")
     public String showRegistrationForm(Model model) {
-        model.addAttribute("userCredentialsDTO", new UserCredentialsDTO());
+        //model.addAttribute("userCredentialsDTO", new UserCredentialsDTO());
         return "registration";
     }
 
-    @PostMapping("/register")
-    public String registerUser(UserCredentialsDTO userCredentials, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("registrationForm", userCredentials);
-            return "registration";
-        }
-        try {
-            userDetailsService.registerUser(userCredentials);
-        }
-        catch (Exception exception) {
-            bindingResult.rejectValue("username", "userCredentialsDTO.username",
-                    "This username already exists");
-            model.addAttribute("registrationForm", userCredentials);
-            return "registration";
-        }
-        return "redirect:/login";
-    }
+    //@PostMapping("/register")
+    //public String registerUser(UserCredentialsDTO userCredentials, BindingResult bindingResult, Model model) {
+    //    if (bindingResult.hasErrors()) {
+    //        model.addAttribute("registrationForm", userCredentials);
+    //        return "registration";
+    //    }
+    //    try {
+    //        userDetailsService.registerUser(userCredentials);
+    //    }
+    //    catch (Exception exception) {
+    //        bindingResult.rejectValue("username", "userCredentialsDTO.username",
+    //                "This username already exists");
+    //        model.addAttribute("registrationForm", userCredentials);
+    //        return "registration";
+    //    }
+    //    return "redirect:/login";
+    //}
 
     @GetMapping("/admin/users")
     public String showUserList(Model model) {
