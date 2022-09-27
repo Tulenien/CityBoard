@@ -1,26 +1,20 @@
 package com.CityBoard.services;
 
-import com.CityBoard.DTO.UserCredentialsDTO;
 import com.CityBoard.configuration.SecurityConfiguration;
-import com.CityBoard.models.Roles;
-import com.CityBoard.models.UserStatus;
 import com.CityBoard.models.Users;
-import com.CityBoard.repositories.UserRepository;
+import com.CityBoard.models.enums.UserStatus;
+import com.CityBoard.repositories.UsersRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final UsersRepository userRepository;
     private final SecurityConfiguration securityConfiguration;
-    public CustomUserDetailsService(UserRepository userRepository,
+
+    public CustomUserDetailsService(UsersRepository userRepository,
                                     SecurityConfiguration securityConfiguration) {
         this.userRepository = userRepository;
         this.securityConfiguration = securityConfiguration;
@@ -39,24 +33,23 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public boolean userExists(String username) {
-        return userRepository.findByUsername(username) != null ? true : false;
+        return userRepository.findByUsername(username) != null;
     }
 
-    public void registerUser(UserCredentialsDTO userCredentials) throws Exception {
-        if (userExists(userCredentials.getUsername()))
-        {
-            throw new Exception("User with this username already exists");
-        }
-        Set<Roles> userRoles = new HashSet<Roles>();
-        userRoles.add(Roles.ROLE_USER);
-        Users user = Users.builder()
-                .username(userCredentials.getUsername())
-                .password(securityConfiguration.passwordEncoder().encode(userCredentials.getPassword()))
-                .created_at(new Timestamp(System.currentTimeMillis()))
-                .password_expired(false)
-                .status(UserStatus.LOGGED_OFF)
-                .roles(userRoles)
-                .build();
-        userRepository.save(user);
-    }
+    //public void registerUser(UserCredentialsDTO userCredentials) throws Exception {
+    //    if (userExists(userCredentials.getUsername()))
+    //    {
+    //        throw new Exception("User with this username already exists");
+    //    }
+    //    Set<Roles> userRoles = new HashSet<Roles>();
+    //    userRoles.add(Roles.ROLE_USER);
+    //    Users user = Users.builder()
+    //            .username(userCredentials.getUsername())
+    //            .password(securityConfiguration.passwordEncoder().encode(userCredentials.getPassword()))
+    //            .password_expired(false)
+    //            .status(UserStatus.LOGGED_OFF)
+    //            .roles(userRoles)
+    //            .build();
+    //    userRepository.save(user);
+    //}
 }

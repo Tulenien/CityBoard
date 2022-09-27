@@ -1,51 +1,73 @@
 package com.CityBoard.services;
 
-import com.CityBoard.DTO.AdvertDTO;
-import com.CityBoard.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.CityBoard.dto.AdvertDTO;
+import com.CityBoard.models.Adverts;
+import com.CityBoard.models.Users;
+import com.CityBoard.models.enums.AdvertStatus;
+import com.CityBoard.repositories.AdvertsRepository;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 
 @Service
-public class AdvertsService {
-    public final RequestsService requestsService;
+public class AdvertsService extends AbstractService<Adverts, AdvertsRepository> {
 
-    @Autowired
-    public AdvertsService(RequestsService requestsService) {
-        this.requestsService = requestsService;
+    public AdvertsService(AdvertsRepository repository) {
+        super(repository);
     }
 
-    public Advert createAdvert(Users author, AdvertDTO object) {
-        Advert advert = Advert.builder()
-                .email(object.getEmail())
-                .phone(object.getPhone())
-                .price(object.getPrice())
-                .address(object.getAddress())
-                .area(object.getArea())
-                .type(object.getType())
-                .user(author)
-                .status(AdvertStatus.VISIBLE)
-                .mod_check(false)
-                .created_at(new Timestamp(System.currentTimeMillis()))
-                .build();
+    public Adverts createAdvert(Users user, AdvertDTO advertDTO) {
+        Adverts advert = advertDTO.mapDTOtoEntity();
+        advert.setStatus(AdvertStatus.VISIBLE);
+        advert.setMod_check(false);
+        advert.setUser(user);
         return advert;
     }
 
-    public Advert updateAdvert(AdvertDTO redacted, Advert toUpdate) {
-        toUpdate.setType(redacted.getType());
-        toUpdate.setEmail(redacted.getEmail());
-        toUpdate.setPhone(redacted.getPhone());
-        toUpdate.setUpdated_at(new Timestamp(System.currentTimeMillis()));
-        toUpdate.setStatus(redacted.getStatus());
-        toUpdate.setMod_check(false);
-        toUpdate.setAddress(redacted.getAddress());
-        toUpdate.setPrice(redacted.getPrice());
-        toUpdate.setArea(redacted.getArea());
-        return toUpdate;
+    public Adverts updateAdvert(Adverts advert, AdvertDTO newAdvert) {
+        advert.setType(newAdvert.getType());
+        advert.setEmail(newAdvert.getEmail());
+        advert.setPhone(newAdvert.getPhone());
+        advert.setStatus(newAdvert.getStatus());
+        advert.setCity(newAdvert.getCity());
+        advert.setDistrict(newAdvert.getDistrict());
+        advert.setStreet(newAdvert.getStreet());
+        advert.setHouse_code(newAdvert.getHouse_code());
+        advert.setFlat_num(newAdvert.getFlat_num());
+        advert.setFloor(newAdvert.getFloor());
+        advert.setFloors(newAdvert.getFloors());
+        advert.setRooms_num(newAdvert.getRooms_num());
+        advert.setArea(newAdvert.getArea());
+        advert.setLiving_area(newAdvert.getLiving_area());
+        advert.setPrice(newAdvert.getPrice());
+        advert.setDescription(newAdvert.getDescription());
+        advert.setMod_check(false);
+        return advert;
     }
 
-    public void makeRequest(Users requester, Advert advert, RequestType requestType) {
-        Request request = requestsService.createRequest(requestType, requester, advert);
+    public void hideAdvert(Adverts advert) {
+        advert.setStatus(AdvertStatus.HIDDEN);
+    }
+
+    public void deleteAdvert(Adverts advert) {
+        advert.setStatus(AdvertStatus.DELETED);
+    }
+
+    public void doModeratorCheck(Adverts advert) {
+        // TODO: add validation here
+        advert.setMod_check(true);
+    }
+
+    public void deleteAdvertPermanently(Adverts advert) {
+        delete(advert);
+    }
+
+    @Override
+    public void delete(Adverts entity) {
+        repository.delete(entity);
+    }
+
+    @Override
+    public void save(Adverts entity) {
+        repository.save(entity);
     }
 }

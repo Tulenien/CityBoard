@@ -1,7 +1,8 @@
 package com.CityBoard.configuration;
 
 import com.CityBoard.services.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -17,18 +18,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@Getter
+@Setter
 public class SecurityConfiguration {
     private CustomUserDetailsService userDetailsService = null;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeRequests()
-                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/profile/**", "/my-requests/**", "/my-adverts/**")
-                    .authenticated()
-                .antMatchers("/**").permitAll()
-                .and().formLogin();
-
         httpSecurity.headers().frameOptions().sameOrigin();
         return httpSecurity.build();
     }
@@ -59,13 +55,5 @@ public class SecurityConfiguration {
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
-    }
-
-    public CustomUserDetailsService getUserDetailsService() {
-        return userDetailsService;
-    }
-
-    public void setUserDetailsService(CustomUserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
     }
 }
