@@ -21,6 +21,8 @@ import java.util.Set;
 @Setter
 public class Users extends AbstractEntity implements UserDetails {
     @OneToMany(mappedBy = "user")
+    List<Requests> requests = null;
+    @OneToMany(mappedBy = "user")
     List<Adverts> adverts = null;
     @Column(unique = true, updatable = false)
     private String username;
