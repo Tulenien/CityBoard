@@ -6,7 +6,9 @@ import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.RequestStatus;
 import com.CityBoard.models.enums.RequestType;
 import com.CityBoard.repositories.RequestsRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RequestsService extends AbstractService<Requests, RequestsRepository> {
     public RequestsService(RequestsRepository repository) {
         super(repository);
