@@ -2,6 +2,7 @@ package com.CityBoard.services;
 
 //import com.CityBoard.dto.UserProfileDTO;
 
+import com.CityBoard.dto.UserEncodedDTO;
 import com.CityBoard.models.Users;
 import com.CityBoard.repositories.UsersRepository;
 import org.springframework.stereotype.Service;
@@ -15,25 +16,28 @@ public class UsersService extends AbstractService<Users, UsersRepository> {
         super(repository);
     }
 
-    // Use the Repository
-    public List<Users> getUsersList() {
-        List<Users> users = repository.findAll();
-        return users;
+    public Users getUserByUsername(String username) {
+        return repository.findByUsername(username);
     }
-
-    //public UserProfileDTO getUserProfile(String username) {
-    //    Users user = repository.findByUsername(username);
-    //    UserProfileDTO userDTO = UserProfileDTO.builder()
-    //            .username(username)
-    //            .full_name(user.getFull_name())
-    //            .created_at(user.getCreated_at())
-    //            .roles(user.getRoles())
-    //            .build();
-    //    return userDTO;
-    //}
+    public Users createUserFromEncodedDTO(UserEncodedDTO userEncoded) {
+        Users user = Users.builder()
+                .username(userEncoded.getUsername())
+                .password(userEncoded.getEncodedPassword())
+                .status(userEncoded.getUserStatus())
+                .password_expired(userEncoded.isPassword_expired())
+                .build();
+        return user;
+    }
 
     @Override
     public void save(Users entity) {
         repository.save(entity);
     }
+
+    @Override
+    public void delete(Users entity) {
+        repository.delete(entity);
+    }
+
+
 }
