@@ -23,11 +23,4 @@ public class Requests extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "advert_id")
     private Adverts advert = null;
-
-    public boolean isClosed() {
-        if (this.status == RequestStatus.ACCEPTED || this.status == RequestStatus.REJECTED) {
-            return true;
-        }
-        return false;
-    }
 }
