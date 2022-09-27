@@ -36,10 +36,6 @@ public class Users extends AbstractEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Roles> roles = null;
 
-    public void addAdvert(Adverts advert) {
-        adverts.add(advert);
-    }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
