@@ -20,19 +20,17 @@ import java.util.Set;
 @Getter
 @Setter
 public class Users extends AbstractEntity implements UserDetails {
+    @OneToMany(mappedBy = "user")
+    List<Adverts> adverts = null;
     @Column(unique = true, updatable = false)
     private String username;
     @Column(length = 1000)
     private String password;
-    private String full_name;
-    @CreationTimestamp
-    private Timestamp created_at;
+    private String name;
+    private String surname;
+    private String middle_name;
     private UserStatus status;
     private boolean password_expired;
-    @OneToMany(mappedBy = "user")
-    List<Requests> requests = null;
-    @OneToMany(mappedBy = "user")
-    List<Adverts> adverts = null;
     @ElementCollection(targetClass = Roles.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
@@ -40,10 +38,6 @@ public class Users extends AbstractEntity implements UserDetails {
 
     public void addAdvert(Adverts advert) {
         adverts.add(advert);
-    }
-
-    public void addRequest(Requests request) {
-        requests.add(request);
     }
 
     @Override

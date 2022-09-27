@@ -1,8 +1,8 @@
 package com.CityBoard.services;
 
 import com.CityBoard.configuration.SecurityConfiguration;
-import com.CityBoard.models.enums.UserStatus;
 import com.CityBoard.models.Users;
+import com.CityBoard.models.enums.UserStatus;
 import com.CityBoard.repositories.UsersRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
