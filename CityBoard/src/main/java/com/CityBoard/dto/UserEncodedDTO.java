@@ -1,6 +1,5 @@
 package com.CityBoard.dto;
 
-import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.models.enums.Roles;
 import com.CityBoard.models.enums.UserStatus;
 import lombok.*;

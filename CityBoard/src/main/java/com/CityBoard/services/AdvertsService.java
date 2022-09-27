@@ -7,6 +7,8 @@ import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.repositories.AdvertsRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service
 public class AdvertsService extends AbstractService<Adverts, AdvertsRepository> {
@@ -59,6 +61,14 @@ public class AdvertsService extends AbstractService<Adverts, AdvertsRepository> 
 
     public void deleteAdvertPermanently(Adverts advert) {
         delete(advert);
+    }
+
+    public Adverts getAdvertById(Long advertId) {
+        Optional<Adverts> advert = repository.findById(advertId);
+        if (advert.isEmpty()) {
+            return null;
+        }
+        return advert.get();
     }
 
     @Override

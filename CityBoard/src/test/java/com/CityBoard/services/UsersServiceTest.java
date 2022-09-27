@@ -1,7 +1,6 @@
 package com.CityBoard.services;
 
 import com.CityBoard.dto.UserCredentialsDTO;
-import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.Roles;
 import com.CityBoard.models.enums.UserStatus;
@@ -9,15 +8,10 @@ import com.CityBoard.repositories.UsersRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,7 +53,7 @@ class UsersServiceTest {
     }
 
     private boolean partlyEquals(Users user1, Users user2) {
-        return  user1.getPassword().equals(user2.getPassword()) &&
+        return user1.getPassword().equals(user2.getPassword()) &&
                 user1.getUsername().equals(user2.getUsername()) &&
                 user1.getRoles().equals(user2.getRoles()) &&
                 user1.getStatus().equals(user2.getStatus());
