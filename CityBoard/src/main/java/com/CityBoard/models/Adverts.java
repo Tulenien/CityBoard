@@ -4,10 +4,7 @@ import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.models.enums.AdvertType;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -37,7 +34,8 @@ public class Adverts extends AbstractEntity {
     private String description;
 
     // Service info
-    private boolean mod_check = false;
+    @Column(name = "mod_check")
+    private boolean modCheck = false;
 
     @ManyToOne
     @JoinColumn(name = "author_id")

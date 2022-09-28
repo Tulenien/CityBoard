@@ -37,7 +37,7 @@ class AdvertsServiceTest {
         Adverts expected = Adverts.builder()
                 .user(user)
                 .type(AdvertType.RENT)
-                .mod_check(false)
+                .modCheck(false)
                 .status(AdvertStatus.VISIBLE)
                 .build();
         AdvertDTO data = AdvertDTO.builder()
@@ -48,7 +48,7 @@ class AdvertsServiceTest {
         Adverts actual = advertsService.createAdvert(user, data);
         assertEquals(expected.getUser(), actual.getUser());
         assertEquals(expected.getType(), actual.getType());
-        assertEquals(expected.isMod_check(), actual.isMod_check());
+        assertEquals(expected.isModCheck(), actual.isModCheck());
         assertEquals(expected.getStatus(), actual.getStatus());
     }
 
@@ -90,7 +90,7 @@ class AdvertsServiceTest {
         Adverts actual = Adverts.builder()
                 .user(user)
                 .type(oldType)
-                .mod_check(true)
+                .modCheck(true)
                 .status(oldStatus)
                 .build();
         AdvertDTO data = AdvertDTO.builder()
@@ -100,7 +100,7 @@ class AdvertsServiceTest {
         advertsService.updateAdvert(actual, data);
         assertEquals(actual.getType(), newType);
         assertEquals(actual.getStatus(), newStatus);
-        assertEquals(actual.isMod_check(), false);
+        assertFalse(actual.isModCheck());
     }
 
     @Test
@@ -121,13 +121,13 @@ class AdvertsServiceTest {
     void doModeratorCheck_shouldChangeMod_check() {
         Adverts advert = new Adverts();
         advertsService.doModeratorCheck(advert);
-        assertEquals(advert.isMod_check(), true);
+        assertTrue(advert.isModCheck());
     }
 
     @Test
     void deleteAdvertPermanently_returnsNull() {
         Adverts advert = new Adverts();
-        advert.setMod_check(true);
+        advert.setModCheck(true);
         advert.setType(AdvertType.SALE);
         advert.setStatus(AdvertStatus.VISIBLE);
         Mockito.doAnswer(invocationOnMock -> {

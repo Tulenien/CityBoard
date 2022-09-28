@@ -20,7 +20,7 @@ public class AdvertsService extends AbstractService<Adverts, AdvertsRepository> 
     public Adverts createAdvert(Users user, AdvertDTO advertDTO) {
         Adverts advert = advertDTO.mapDTOtoEntity();
         advert.setStatus(AdvertStatus.VISIBLE);
-        advert.setMod_check(false);
+        advert.setModCheck(false);
         advert.setUser(user);
         return advert;
     }
@@ -42,7 +42,7 @@ public class AdvertsService extends AbstractService<Adverts, AdvertsRepository> 
         advert.setLiving_area(newAdvert.getLiving_area());
         advert.setPrice(newAdvert.getPrice());
         advert.setDescription(newAdvert.getDescription());
-        advert.setMod_check(false);
+        advert.setModCheck(false);
         return advert;
     }
 
@@ -56,7 +56,7 @@ public class AdvertsService extends AbstractService<Adverts, AdvertsRepository> 
 
     public void doModeratorCheck(Adverts advert) {
         // TODO: add validation here
-        advert.setMod_check(true);
+        advert.setModCheck(true);
     }
 
     public void deleteAdvertPermanently(Adverts advert) {
