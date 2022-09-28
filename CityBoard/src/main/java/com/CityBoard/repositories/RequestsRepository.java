@@ -12,7 +12,6 @@ public interface RequestsRepository extends CommonRepository<Requests> {
     List<Requests> findAll();
     @Override
     Optional<Requests> findById(Long id);
-
     List<Requests> findByUser(Users user);
     List<Requests> findByAdvert(Adverts advert);
 }
