@@ -36,7 +36,7 @@ class UsersServiceTest {
         user.setStatus(UserStatus.ACTIVE);
         Mockito.when(usersRepository.findByUsername(username)).thenReturn(user);
         assertEquals(usersService.getUserByUsername(username), user);
-        assertEquals(usersService.userExists(username), true);
+        assertTrue(usersService.userExists(username));
     }
 
     @Test
@@ -49,7 +49,7 @@ class UsersServiceTest {
         Mockito.when(usersRepository.findByUsername(correct)).thenReturn(user);
         Mockito.when(usersRepository.findByUsername(incorrect)).thenReturn(null);
         assertNull(usersService.getUserByUsername(incorrect));
-        assertEquals(usersService.userExists(incorrect), false);
+        assertFalse(usersService.userExists(incorrect));
     }
 
     private boolean partlyEquals(Users user1, Users user2) {

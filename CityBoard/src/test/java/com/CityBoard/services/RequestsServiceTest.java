@@ -14,8 +14,6 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RequestsServiceTest {
-
-
     private RequestsService requestsService;
     private RequestsRepository repository;
 
@@ -36,15 +34,15 @@ class RequestsServiceTest {
                 .build();
         Adverts advert = Adverts.builder()
                 .type(AdvertType.RENT)
-                .mod_check(true)
+                .modCheck(true)
                 .build();
         Requests expected = Requests.builder()
                 .user(user)
                 .advert(advert)
-                .type(RequestType.EVALUATION)
+                .type(RequestType.VIEWING)
                 .status(RequestStatus.PENDING)
                 .build();
-        RequestType type = RequestType.EVALUATION;
+        RequestType type = RequestType.VIEWING;
 
         Requests actual = requestsService.createRequest(user, advert, type);
         assertEquals(expected.getUser(), actual.getUser());
