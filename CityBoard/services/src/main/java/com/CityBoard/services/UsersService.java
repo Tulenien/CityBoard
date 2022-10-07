@@ -21,7 +21,6 @@ public class UsersService extends AbstractService<Users, UsersRepository> {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     public Users getUserByUsername(String username) {
         return repository.findByUsername(username);
     }
