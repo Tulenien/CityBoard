@@ -3,7 +3,9 @@ package com.CityBoard.ui;
 import com.CityBoard.models.Adverts;
 import com.CityBoard.services.AdvertsService;
 import com.CityBoard.ui.operations.ModOperations;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ModUI implements ModOperations {
     private final AdvertsService advertsService;
 

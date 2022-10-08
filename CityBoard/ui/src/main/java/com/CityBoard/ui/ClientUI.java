@@ -8,9 +8,11 @@ import com.CityBoard.models.enums.RequestType;
 import com.CityBoard.services.AdvertsService;
 import com.CityBoard.services.RequestsService;
 import com.CityBoard.ui.operations.ClientOperations;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class ClientUI implements ClientOperations {
     private final RequestsService requestsService;
     private final AdvertsService advertsService;
@@ -65,22 +67,30 @@ public class ClientUI implements ClientOperations {
     }
 
     @Override
+    public List<Adverts> viewAuthoredAdverts(Users user) {
+        if (user != null) {
+            return advertsService.getAuthoredAdverts(user);
+        }
+        return null;
+    }
+
+    @Override
     public Adverts viewAdvert(Long advertId) {
         return advertsService.getAdvertById(advertId);
     }
 
     @Override
     public Adverts createAdvert(Users user, AdvertDTO advertDTO) {
-        return advertsService.createAdvert(user, advertDTO);
+        Adverts advert = advertsService.createAdvert(user, advertDTO);
+        if (advert != null) {
+            advertsService.save(advert);
+        }
+        return advert;
     }
 
     @Override
     public Adverts updateAdvert(Long advertId, AdvertDTO advertDTO) {
-        Adverts advert = advertsService.getAdvertById(advertId);
-        if (advert != null) {
-            advert = advertsService.updateAdvert(advert, advertDTO);
-        }
-        return advert;
+        return advertsService.updateAdvert(advertId, advertDTO);
     }
 
     @Override
@@ -88,6 +98,7 @@ public class ClientUI implements ClientOperations {
         Adverts advert = advertsService.getAdvertById(advertId);
         if (advert != null) {
             advertsService.hideAdvert(advert);
+            advertsService.save(advert);
         }
     }
 
@@ -96,6 +107,7 @@ public class ClientUI implements ClientOperations {
         Adverts advert = advertsService.getAdvertById(advertId);
         if (advert != null) {
             advertsService.deleteAdvert(advert);
+            advertsService.save(advert);
         }
     }
 }
