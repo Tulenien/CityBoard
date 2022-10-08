@@ -43,8 +43,7 @@ public class AdminController {
     }
 
     @GetMapping("/admin/populate")
-    public String populateDatabase()
-    {
+    public String populateDatabase() {
         populator.populateDatabase();
         return "redirect:/";
     }

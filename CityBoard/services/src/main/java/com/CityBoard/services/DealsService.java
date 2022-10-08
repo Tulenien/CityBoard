@@ -6,9 +6,6 @@ import com.CityBoard.models.Users;
 import com.CityBoard.repositories.DealsRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 public class DealsService extends AbstractService<Deals, DealsRepository> {
     public DealsService(DealsRepository repository) {

@@ -22,6 +22,7 @@ public interface ClientOperations {
     List<Adverts> viewAvailableAdverts(Users user);
 
     List<Adverts> viewAuthoredAdverts(Users user);
+
     Adverts viewAdvert(Long advertId);
 
     Adverts createAdvert(Users user, AdvertDTO advertDTO);

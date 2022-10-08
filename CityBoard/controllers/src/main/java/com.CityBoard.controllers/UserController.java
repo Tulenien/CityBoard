@@ -33,8 +33,7 @@ public class UserController {
         List<Adverts> adverts = null;
         if (noRegUI.isUserAuthenticated()) {
             adverts = clientUI.viewAvailableAdverts(noRegUI.getUserByPrincipal(principal));
-        }
-        else {
+        } else {
             adverts = clientUI.viewAvailableAdverts(null);
         }
         model.addAttribute("Adverts", adverts);
@@ -44,14 +43,12 @@ public class UserController {
     @GetMapping("/advert")
     public String showAdvert(@RequestParam(value = "id") Long advertId, Principal principal, Model model) {
         Adverts advert = clientUI.viewAdvert(advertId);
-        if (advert != null)
-        {
+        if (advert != null) {
             model.addAttribute("advert", advert);
             if (noRegUI.isUserAuthenticated()) {
                 if (advert.getUser().getUsername().equals(principal.getName())) {
                     model.addAttribute("userIsNotOwner", false);
-                }
-                else {
+                } else {
                     model.addAttribute("userIsNotOwner", true);
                 }
             }
@@ -63,8 +60,7 @@ public class UserController {
     @GetMapping("/user/adverts")
     public String showUserAdverts(Model model, Principal principal) {
         List<Adverts> adverts = null;
-        if (noRegUI.isUserAuthenticated())
-        {
+        if (noRegUI.isUserAuthenticated()) {
             Users user = noRegUI.getUserByPrincipal(principal);
             if (user != null) {
                 adverts = clientUI.viewAuthoredAdverts(user);
@@ -99,8 +95,7 @@ public class UserController {
 
     @GetMapping("/user/advert/update")
     public String showAdvertUpdateForm(@RequestParam(value = "id") Long advertId, Principal principal, Model model) {
-        if (noRegUI.isUserAuthenticated())
-        {
+        if (noRegUI.isUserAuthenticated()) {
             Users user = noRegUI.getUserByPrincipal(principal);
             if (user != null) {
                 Adverts advert = clientUI.viewAdvert(advertId);
@@ -122,8 +117,7 @@ public class UserController {
             Adverts advert = clientUI.createAdvert(user, dto);
             if (advert != null) {
                 return "redirect:/";
-            }
-            else {
+            } else {
                 bindingResult.reject("Невозможно создать объявление");
                 model.addAttribute("AdvertDTO", dto);
                 return "create-advert";
@@ -146,8 +140,7 @@ public class UserController {
 
     @GetMapping("/user/adverts/hide")
     public String hideAdvert(@RequestParam(value = "id") Long advertId, Principal principal) {
-        if (noRegUI.isUserAuthenticated())
-        {
+        if (noRegUI.isUserAuthenticated()) {
             Users user = noRegUI.getUserByPrincipal(principal);
             if (user != null) {
                 Adverts advert = clientUI.viewAdvert(advertId);
@@ -161,8 +154,7 @@ public class UserController {
 
     @GetMapping("/user/adverts/delete")
     public String deleteAdvert(@RequestParam(value = "id") Long advertId, Principal principal) {
-        if (noRegUI.isUserAuthenticated())
-        {
+        if (noRegUI.isUserAuthenticated()) {
             Users user = noRegUI.getUserByPrincipal(principal);
             if (user != null) {
                 Adverts advert = clientUI.viewAdvert(advertId);
@@ -176,11 +168,9 @@ public class UserController {
 
     @GetMapping("/user/requests")
     public String showUserRequest(Principal principal, Model model) {
-        if (noRegUI.isUserAuthenticated())
-        {
+        if (noRegUI.isUserAuthenticated()) {
             Users user = noRegUI.getUserByPrincipal(principal);
-            if (user != null)
-            {
+            if (user != null) {
                 List<Requests> requestsTo = clientUI.getIncomingRequests(user);
                 List<Requests> requestsFrom = clientUI.getOutgoingRequests(user);
                 model.addAttribute("requestsTo", requestsTo);
@@ -192,10 +182,9 @@ public class UserController {
 
     @GetMapping("/user/request")
     public String makeRequestToAdvert(@RequestParam(value = "type") RequestType requestType,
-                                     @RequestParam(value = "id") Long advertId,
-                                     Principal principal) {
-        if (noRegUI.isUserAuthenticated())
-        {
+                                      @RequestParam(value = "id") Long advertId,
+                                      Principal principal) {
+        if (noRegUI.isUserAuthenticated()) {
             Users user = noRegUI.getUserByPrincipal(principal);
             if (user != null) {
                 clientUI.makeRequest(user, advertId, requestType);

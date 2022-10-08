@@ -1,10 +1,12 @@
 package com.CityBoard.services;
 
-import com.CityBoard.models.*;
+import com.CityBoard.models.Adverts;
+import com.CityBoard.models.Requests;
+import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.*;
-import com.CityBoard.repositories.UsersRepository;
 import com.CityBoard.repositories.AdvertsRepository;
 import com.CityBoard.repositories.RequestsRepository;
+import com.CityBoard.repositories.UsersRepository;
 import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +38,7 @@ public class Populator {
         return (int) ((Math.random() * (max - min)) + min);
     }
 
-    private float getRandomFloatRounded(float min, float max, int places){
+    private float getRandomFloatRounded(float min, float max, int places) {
         double value = (Math.random() * (max - min)) + min;
         BigDecimal bigDecimal = BigDecimal.valueOf(value);
         bigDecimal = bigDecimal.setScale(places, RoundingMode.FLOOR);
@@ -69,17 +71,13 @@ public class Populator {
     private int generateRoomsNumberFromArea(float area) {
         if (area <= 20) {
             return 1;
-        }
-        else if (20 < area && area < 50) {
+        } else if (20 < area && area < 50) {
             return 2;
-        }
-        else if (50.1 < area && area < 75) {
+        } else if (50.1 < area && area < 75) {
             return 3;
-        }
-        else if (75.1 < area && area < 100) {
+        } else if (75.1 < area && area < 100) {
             return 4;
-        }
-        else if (100.1 < area && area < 200) {
+        } else if (100.1 < area && area < 200) {
             return 5;
         }
         return 6;
@@ -95,12 +93,10 @@ public class Populator {
         int rooms = generateRoomsNumberFromArea(area);
         Integer price = 1;
         String description = "Приятное жилище для вас! Всего за ";
-        if (type == AdvertType.RENT)
-        {
+        if (type == AdvertType.RENT) {
             price *= 1000 * (int) area;
             description += price.toString() + " в месяц";
-        }
-        else {
+        } else {
             price *= 50000 * (int) area * rooms;
             description += price.toString() + ".";
         }
@@ -203,8 +199,7 @@ public class Populator {
         List<Requests> requests = new ArrayList<>();
         // Assign each advert to user (2 types each)
         // Each user makes 2 types of request to next users adverts (4 in total)
-        for (int userInd = 3; userInd < users.size(); userInd++)
-        {
+        for (int userInd = 3; userInd < users.size(); userInd++) {
             saleAdverts.get(userInd - 3).setUser(users.get(userInd));
             rentAdverts.get(userInd - 3).setUser(users.get(userInd));
             if (userInd < 1002) {
