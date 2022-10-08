@@ -207,6 +207,7 @@ public class UserController {
     @GetMapping("/request/accept")
     public String acceptChosenRequest(@RequestParam(value = "id", required = true) Long requestId) {
         clientUI.acceptRequest(requestId);
+        clientUI.concludeDeal(requestId);
         return "redirect:/user/requests";
     }
 

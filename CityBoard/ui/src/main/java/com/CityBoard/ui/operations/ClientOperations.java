@@ -31,4 +31,6 @@ public interface ClientOperations {
     void hideAdvert(Long advertId);
 
     void deleteAdvert(Long advertId);
+
+    void concludeDeal(Long requestId);
 }
