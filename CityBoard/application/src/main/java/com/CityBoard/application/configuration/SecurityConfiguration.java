@@ -30,10 +30,12 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
+                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/mod/**").hasAuthority("ROLE_MOD")
+                .antMatchers("/user/**", "/request/**").authenticated()
                 .antMatchers("/**").permitAll()
-                .antMatchers("/adverts/**").authenticated()
-                .and().formLogin().loginPage("/login").permitAll()
-                .and().logout().permitAll();
+                .and().formLogin().permitAll()
+                .and().logout().logoutSuccessUrl("/").permitAll();
 
         httpSecurity.headers().frameOptions().sameOrigin();
         return httpSecurity.build();
