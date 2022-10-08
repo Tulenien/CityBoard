@@ -8,17 +8,16 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EnableJpaRepositories(basePackages = "com.CityBoard.repositories")
+//@EnableJpaRepositories(basePackages = {"com.CityBoard.repositories", "com.CityBoard.stat"})
 @EntityScan(basePackages = "com.CityBoard.models")
-@ComponentScan(basePackages = "com.CityBoard")
+@ComponentScan(basePackages = {"com.CityBoard"})
 @SpringBootApplication
 public class CityBoardApplication {
 
     private static final Logger logger = LoggerFactory.getLogger(CityBoardApplication.class);
 
     public static void main(String[] args) {
-        logger.trace("Start Cityboard application with args {}", args);
         SpringApplication.run(CityBoardApplication.class, args);
-        logger.trace("Stop Cityboard application");
+        logger.trace("Start Cityboard application with args {}", args);
     }
 }

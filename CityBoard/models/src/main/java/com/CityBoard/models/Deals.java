@@ -1,6 +1,9 @@
 package com.CityBoard.models;
 
 
+import com.CityBoard.models.AbstractEntity;
+import com.CityBoard.models.Adverts;
+import com.CityBoard.models.Users;
 import lombok.*;
 
 import javax.persistence.Entity;

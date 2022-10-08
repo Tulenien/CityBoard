@@ -110,7 +110,7 @@
             <li class="list-group-item col-md-12" th:text="${advert.description}">#</li>
         </ul>
         <ul class="list-group list-group-horizontal" sec:authorize="isAuthenticated()" th:if="${userIsNotOwner}">
-            <a class="btn btn-secondary col-md-6" th:href="@{/user/request(type=${T(com.CityBoard.models.enums.RequestType).VIEWING},
+            <a class="btn btn-secondary col-md-6" th:href="@{/user/request(type=${T(com.CityBoard.secondary.models.enums.RequestType).VIEWING},
                 id=${advert.id})}">
                 Запросить осмотр квартиры</a>
             <a class="btn btn-primary col-md-6"

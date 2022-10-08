@@ -1,8 +1,8 @@
 package com.CityBoard.services;
 
 import com.CityBoard.models.Adverts;
-import com.CityBoard.models.Deals;
 import com.CityBoard.models.Users;
+import com.CityBoard.models.Deals;
 import com.CityBoard.repositories.DealsRepository;
 import org.springframework.stereotype.Service;
 

@@ -7,6 +7,7 @@ import com.CityBoard.models.enums.*;
 import com.CityBoard.repositories.AdvertsRepository;
 import com.CityBoard.repositories.RequestsRepository;
 import com.CityBoard.repositories.UsersRepository;
+import com.CityBoard.services.dsrouting.DBContextHolder;
 import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -233,6 +234,12 @@ public class Populator {
         request.setType(RequestType.RENT);
         requests.add(request);
 
+        DBContextHolder.setCurrentConnect(Roles.ROLE_ADMIN);
+        usersRepository.saveAll(users);
+        advertsRepository.saveAll(rentAdverts);
+        advertsRepository.saveAll(saleAdverts);
+        requestsRepository.saveAll(requests);
+        DBContextHolder.setCurrentConnect(Roles.ROLE_USER);
         usersRepository.saveAll(users);
         advertsRepository.saveAll(rentAdverts);
         advertsRepository.saveAll(saleAdverts);
