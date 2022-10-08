@@ -1,15 +1,13 @@
 package com.CityBoard.services.dsrouting;
 
-import com.CityBoard.models.enums.Roles;
-
 public class DBContextHolder {
-    private static final ThreadLocal<Roles> contextHolder = new ThreadLocal<>();
+    private static final ThreadLocal<DBNames> contextHolder = new ThreadLocal<>();
 
-    public static Roles getCurrentConnect() {
+    public static DBNames getCurrentConnect() {
         return contextHolder.get();
     }
 
-    public static void setCurrentConnect(Roles connectType) {
+    public static void setCurrentConnect(DBNames connectType) {
         contextHolder.set(connectType);
     }
 

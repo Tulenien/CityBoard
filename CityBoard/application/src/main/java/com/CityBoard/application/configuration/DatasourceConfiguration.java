@@ -1,6 +1,6 @@
 package com.CityBoard.application.configuration;
 
-import com.CityBoard.models.enums.Roles;
+import com.CityBoard.services.dsrouting.DBNames;
 import com.CityBoard.services.dsrouting.MultiRoutingDataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -33,32 +33,25 @@ public class DatasourceConfiguration {
 
     @Primary
     @Bean(name = "adminDS")
-    @ConfigurationProperties("app.datasource.admin")
-    public DataSource adminDataSource() {
+    @ConfigurationProperties("app.datasource1")
+    public DataSource firstDataSource() {
         return DataSourceBuilder.create().build();
     }
 
     @Bean(name = "modDS")
-    @ConfigurationProperties("app.datasource.mod")
-    public DataSource modDataSource() {
-        return DataSourceBuilder.create().build();
-    }
-
-    @Bean(name = "userDS")
-    @ConfigurationProperties("app.datasource.user")
-    public DataSource userDataSource() {
+    @ConfigurationProperties("app.datasource2")
+    public DataSource secondDataSource() {
         return DataSourceBuilder.create().build();
     }
 
     @Bean(name = "multiRoutingDS")
     public DataSource multiRoutingDataSource() {
         Map<Object, Object> targetDataSources = new HashMap<>();
-        targetDataSources.put(Roles.ROLE_ADMIN, adminDataSource());
-        targetDataSources.put(Roles.ROLE_MOD, modDataSource());
-        targetDataSources.put(Roles.ROLE_USER, userDataSource());
+        targetDataSources.put(DBNames.DB1, firstDataSource());
+        targetDataSources.put(DBNames.DB2, secondDataSource());
 
         MultiRoutingDataSource multiRoutingDataSource = new MultiRoutingDataSource();
-        multiRoutingDataSource.setDefaultTargetDataSource(adminDataSource());
+        multiRoutingDataSource.setDefaultTargetDataSource(firstDataSource());
         multiRoutingDataSource.setTargetDataSources(targetDataSources);
         return multiRoutingDataSource;
     }
@@ -95,7 +88,7 @@ public class DatasourceConfiguration {
         Properties properties = new Properties();
         properties.put("hibernate.show_sql", true);
         properties.put("hibernate.format_sql", true);
-        properties.put("hibernate.hbm2ddl.auto", "update");
+        properties.put("hibernate.hbm2ddl.auto", "create-drop");
         return properties;
     }
 }

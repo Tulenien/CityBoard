@@ -8,6 +8,7 @@ import com.CityBoard.repositories.AdvertsRepository;
 import com.CityBoard.repositories.RequestsRepository;
 import com.CityBoard.repositories.UsersRepository;
 import com.CityBoard.services.dsrouting.DBContextHolder;
+import com.CityBoard.services.dsrouting.DBNames;
 import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -179,7 +180,7 @@ public class Populator {
 
         // Make 1000 unique users
         System.out.println("\nStarted generation users\n");
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 100; i++) {
             Users user = generateUser(usernames, userRole);
             users.add(user);
         }
@@ -187,11 +188,11 @@ public class Populator {
         List<Adverts> rentAdverts = new ArrayList<>();
         List<Adverts> saleAdverts = new ArrayList<>();
         System.out.println("\nStarted generation sale adverts\n");
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 100; i++) {
             saleAdverts.add(generateAdvert(AdvertType.SALE));
         }
         System.out.println("\nStarted generation rent adverts\n");
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 100; i++) {
             rentAdverts.add(generateAdvert(AdvertType.RENT));
         }
 
@@ -203,7 +204,7 @@ public class Populator {
         for (int userInd = 3; userInd < users.size(); userInd++) {
             saleAdverts.get(userInd - 3).setUser(users.get(userInd));
             rentAdverts.get(userInd - 3).setUser(users.get(userInd));
-            if (userInd < 1002) {
+            if (userInd < 102) {
                 Requests request = Requests.builder()
                         .advert(saleAdverts.get(userInd - 3 + 1))
                         .user(users.get(userInd))
@@ -222,7 +223,7 @@ public class Populator {
         // Last user creates request to first adverts
         Requests request = Requests.builder()
                 .advert(rentAdverts.get(0))
-                .user(users.get(1002))
+                .user(users.get(102))
                 .type(RequestType.SALE)
                 .status(RequestStatus.PENDING)
                 .build();
@@ -234,15 +235,15 @@ public class Populator {
         request.setType(RequestType.RENT);
         requests.add(request);
 
-        DBContextHolder.setCurrentConnect(Roles.ROLE_ADMIN);
         usersRepository.saveAll(users);
         advertsRepository.saveAll(rentAdverts);
         advertsRepository.saveAll(saleAdverts);
         requestsRepository.saveAll(requests);
-        DBContextHolder.setCurrentConnect(Roles.ROLE_USER);
+        DBContextHolder.setCurrentConnect(DBNames.DB2);
         usersRepository.saveAll(users);
         advertsRepository.saveAll(rentAdverts);
         advertsRepository.saveAll(saleAdverts);
         requestsRepository.saveAll(requests);
+        DBContextHolder.setCurrentConnect(DBNames.DB1);
     }
 }
