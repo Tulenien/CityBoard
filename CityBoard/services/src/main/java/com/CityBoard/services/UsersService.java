@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -30,6 +31,10 @@ public class UsersService extends AbstractService<Users, UsersRepository> {
 
     public Users getUserById(Long userId) {
         return repository.findById(userId).orElse(null);
+    }
+
+    public List<Users> getUsersList() {
+        return repository.findAll();
     }
 
     public boolean userExists(String username) {
@@ -62,20 +67,18 @@ public class UsersService extends AbstractService<Users, UsersRepository> {
     }
 
     public void addRole(Users user, Roles role) {
-        logger.warn("Add role {} to user {}", role, user.getId());
-        Set<Roles> roles = user.getRoles();
-        if (!roles.contains(role)) {
-            roles.add(role);
-            user.setRoles(roles);
+        if (user != null && !user.getRoles().contains(role)) {
+            logger.warn("Add role {} to user {}", role, user.getId());
+            user.getRoles().add(role);
+            save(user);
         }
     }
 
     public void removeRole(Users user, Roles role) {
-        logger.warn("remove role {} from user {}", role, user.getId());
-        Set<Roles> roles = user.getRoles();
-        if (roles.contains(role)) {
-            roles.remove(role);
-            user.setRoles(roles);
+        if (user != null && user.getRoles().contains(role)) {
+            logger.warn("remove role {} from user {}", role, user.getId());
+            user.getRoles().remove(role);
+            save(user);
         }
     }
 

@@ -26,6 +26,7 @@ public class RequestsService extends AbstractService<Requests, RequestsRepositor
                 .user(author)
                 .advert(advert)
                 .build();
+        save(request);
         return request;
     }
 
