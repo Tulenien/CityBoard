@@ -6,7 +6,11 @@ import com.CityBoard.models.enums.Roles;
 import com.CityBoard.services.AdvertsService;
 import com.CityBoard.services.UsersService;
 import com.CityBoard.ui.operations.AdminOperations;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@Service
 public class AdminUI implements AdminOperations {
     private final AdvertsService advertsService;
     private final UsersService usersService;
@@ -14,6 +18,11 @@ public class AdminUI implements AdminOperations {
     public AdminUI(AdvertsService advertsService, UsersService usersService) {
         this.advertsService = advertsService;
         this.usersService = usersService;
+    }
+
+    @Override
+    public List<Users> getUsers() {
+        return usersService.getUsersList();
     }
 
     @Override

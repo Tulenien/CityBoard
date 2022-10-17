@@ -93,11 +93,13 @@ class AdvertsServiceTest {
                 .modCheck(true)
                 .status(oldStatus)
                 .build();
+        actual.setId(1L);
         AdvertDTO data = AdvertDTO.builder()
                 .type(newType)
                 .status(newStatus)
                 .build();
-        advertsService.updateAdvert(actual, data);
+        Mockito.when(advertsRepository.findById(1L)).thenReturn(Optional.of(actual));
+        advertsService.updateAdvert(1L, data);
         assertEquals(actual.getType(), newType);
         assertEquals(actual.getStatus(), newStatus);
         assertFalse(actual.isModCheck());

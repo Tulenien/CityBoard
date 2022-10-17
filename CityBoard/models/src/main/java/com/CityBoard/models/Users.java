@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,6 +36,15 @@ public class Users extends AbstractEntity implements UserDetails {
     @CollectionTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Roles> roles = null;
+
+    public Set<Roles> getUnusedRoles() {
+        Set<Roles> allRoles = new HashSet<>();
+        allRoles.add(Roles.ROLE_USER);
+        allRoles.add(Roles.ROLE_MOD);
+        allRoles.add(Roles.ROLE_ADMIN);
+        allRoles.removeAll(roles);
+        return allRoles;
+    }
 
     @Override
     public boolean isAccountNonExpired() {

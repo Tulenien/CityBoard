@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user != null) {
             return user;
         }
-        logger.debug("User authentication: {}, {}", user.getUsername(), user.getPassword());
+        logger.debug("User [{}] authentication failed", username);
         throw new UsernameNotFoundException("Username not found");
     }
 }

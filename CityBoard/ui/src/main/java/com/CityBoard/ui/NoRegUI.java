@@ -6,9 +6,11 @@ import com.CityBoard.services.UsersService;
 import com.CityBoard.ui.operations.DefaultOperations;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 
+@Service
 public class NoRegUI implements DefaultOperations {
     private final UsersService usersService;
 
