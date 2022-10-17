@@ -16,6 +16,7 @@ import java.util.Optional;
 @Service
 public class AdvertsService extends AbstractService<Adverts, AdvertsRepository> {
     private static final Logger logger = LoggerFactory.getLogger(AdvertsService.class);
+
     public AdvertsService(AdvertsRepository repository) {
         super(repository);
     }

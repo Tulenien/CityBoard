@@ -8,6 +8,7 @@ public enum Roles implements GrantedAuthority {
     ROLE_ADMIN("Администратор");
 
     private final String displayValue;
+
     private Roles(String displayValue) {
         this.displayValue = displayValue;
     }

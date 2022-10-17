@@ -22,6 +22,7 @@ public interface ClientOperations {
     List<Adverts> viewAvailableAdverts(Users user);
 
     List<Adverts> viewAuthoredAdverts(Users user);
+
     Adverts viewAdvert(Long advertId);
 
     Adverts createAdvert(Users user, AdvertDTO advertDTO);
@@ -31,4 +32,6 @@ public interface ClientOperations {
     void hideAdvert(Long advertId);
 
     void deleteAdvert(Long advertId);
+
+    void concludeDeal(Long requestId);
 }

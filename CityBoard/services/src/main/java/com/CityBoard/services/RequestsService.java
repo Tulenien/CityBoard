@@ -15,6 +15,7 @@ import java.util.List;
 @Service
 public class RequestsService extends AbstractService<Requests, RequestsRepository> {
     private static final Logger logger = LoggerFactory.getLogger(RequestsService.class);
+
     public RequestsService(RequestsRepository repository) {
         super(repository);
     }

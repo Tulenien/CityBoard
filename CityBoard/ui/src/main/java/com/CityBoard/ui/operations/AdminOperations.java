@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface AdminOperations {
     List<Users> getUsers();
+
     void deleteAdvertForever(Long advertId);
 
     void addUserRole(Long userId, Roles role);
