@@ -6,7 +6,6 @@ import com.CityBoard.models.Users;
 import com.CityBoard.models.dto.AdvertDTO;
 import com.CityBoard.models.enums.RequestType;
 import com.CityBoard.services.AdvertsService;
-import com.CityBoard.services.DealsService;
 import com.CityBoard.services.RequestsService;
 import com.CityBoard.ui.operations.ClientOperations;
 import org.springframework.stereotype.Service;
@@ -17,12 +16,10 @@ import java.util.List;
 public class ClientUI implements ClientOperations {
     private final RequestsService requestsService;
     private final AdvertsService advertsService;
-    private final DealsService dealsService;
 
-    public ClientUI(RequestsService requestsService, AdvertsService advertsService, DealsService dealsService) {
+    public ClientUI(RequestsService requestsService, AdvertsService advertsService) {
         this.requestsService = requestsService;
         this.advertsService = advertsService;
-        this.dealsService = dealsService;
     }
 
     @Override
@@ -121,7 +118,6 @@ public class ClientUI implements ClientOperations {
             Adverts advert = request.getAdvert();
             Users customer = advert.getUser();
             Users seller = request.getUser();
-            dealsService.createDeal(seller, customer, advert);
         }
     }
 }

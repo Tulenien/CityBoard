@@ -1,6 +1,6 @@
-# iu7-software-design
+# iu7-web-design
 
-# Software Design course. BMSTU 2022.
+# Web Design course. BMSTU 2022.
 
 ## 1. Название приложения
 	Приложение для осуществления риелторской деятельности.

@@ -81,7 +81,7 @@
         </td>
         <td sec:authorize="hasRole('ROLE_ADMIN')">
             <a class="btn btn-secondary"
-               th:href="@{'/admin/delete/advert?id=' + ${advert.id}}">Удалить</a>
+               th:href="@{'/admin/adverts/delete?id=' + ${advert.id}}">Удалить</a>
         </td>
     </tr>
     </tbody>

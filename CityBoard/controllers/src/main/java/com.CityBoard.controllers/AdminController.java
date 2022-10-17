@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -40,6 +41,12 @@ public class AdminController {
                               @PathVariable("role") Roles role) {
         ui.addUserRole(id, role);
         return "redirect:/admin/users";
+    }
+
+    @GetMapping("/admin/adverts/delete")
+    public String deleteAdvert(@RequestParam(value = "id") Long advertId) {
+        ui.deleteAdvertForever(advertId);
+        return "redirect:/";
     }
 
     @GetMapping("/admin/populate")
