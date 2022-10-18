@@ -6,8 +6,6 @@ import com.CityBoard.models.dto.UserCredentialsDTO;
 import com.CityBoard.models.enums.Roles;
 import com.CityBoard.models.enums.UserStatus;
 import com.CityBoard.repositories.UsersRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +15,6 @@ import java.util.Set;
 
 @Service
 public class UsersService extends AbstractService<Users, UsersRepository> {
-    private static final Logger logger = LoggerFactory.getLogger(UsersService.class);
     private final PasswordEncoder passwordEncoder;
 
     public UsersService(UsersRepository repository, PasswordEncoder passwordEncoder) {
@@ -50,7 +47,6 @@ public class UsersService extends AbstractService<Users, UsersRepository> {
 
     public Users registerUser(UserCredentialsDTO userCredentials) throws Exception {
         if (userExists(userCredentials.getUsername())) {
-            logger.warn("Use of existing username", userCredentials.getUsername());
             throw new Exception("User with this username already exists");
         }
         Set<Roles> userRoles = new HashSet<>();
@@ -68,7 +64,6 @@ public class UsersService extends AbstractService<Users, UsersRepository> {
 
     public void addRole(Users user, Roles role) {
         if (user != null && !user.getRoles().contains(role)) {
-            logger.warn("Add role {} to user {}", role, user.getId());
             user.getRoles().add(role);
             save(user);
         }
@@ -76,7 +71,6 @@ public class UsersService extends AbstractService<Users, UsersRepository> {
 
     public void removeRole(Users user, Roles role) {
         if (user != null && user.getRoles().contains(role)) {
-            logger.warn("remove role {} from user {}", role, user.getId());
             user.getRoles().remove(role);
             save(user);
         }

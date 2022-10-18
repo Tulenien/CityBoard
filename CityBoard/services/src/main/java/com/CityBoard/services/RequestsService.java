@@ -6,16 +6,12 @@ import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.RequestStatus;
 import com.CityBoard.models.enums.RequestType;
 import com.CityBoard.repositories.RequestsRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class RequestsService extends AbstractService<Requests, RequestsRepository> {
-    private static final Logger logger = LoggerFactory.getLogger(RequestsService.class);
-
     public RequestsService(RequestsRepository repository) {
         super(repository);
     }
@@ -44,13 +40,11 @@ public class RequestsService extends AbstractService<Requests, RequestsRepositor
     }
 
     public void acceptRequest(Requests request) {
-        logger.info("Request {} accepted", request.getId());
         request.setStatus(RequestStatus.ACCEPTED);
         save(request);
     }
 
     public void rejectRequest(Requests request) {
-        logger.info("Request {} rejected", request.getId());
         request.setStatus(RequestStatus.REJECTED);
         save(request);
     }
