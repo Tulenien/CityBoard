@@ -1,20 +1,26 @@
 package com.CityBoard.services;
 
 
+import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Users;
-import com.CityBoard.models.dto.UserCredentialsDTO;
 import com.CityBoard.models.enums.Roles;
-import com.CityBoard.models.enums.UserStatus;
-import com.CityBoard.repositories.UsersRepository;
+import com.CityBoard.postgresql.dto.AdvertDTO;
+import com.CityBoard.postgresql.dto.UserDTO;
+import com.CityBoard.postgresql.repository.UsersRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Service
-public class UsersService extends AbstractService<Users, UsersRepository> {
+public class UsersService extends AbstractService<UserDTO, UsersRepository> {
     private final PasswordEncoder passwordEncoder;
 
     public UsersService(UsersRepository repository, PasswordEncoder passwordEncoder) {
@@ -22,19 +28,29 @@ public class UsersService extends AbstractService<Users, UsersRepository> {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public Page<Users> getAllUsersPage(int currentPage, int pageSize) {
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Page<UserDTO> dtoPage = repository.findAll(pageable);
+        return mapDTOtoEntityPage(dtoPage, pageable);
+    }
+
     public Users getUserByUsername(String username) {
-        return repository.findByUsername(username);
+        UserDTO user = repository.findByUsername(username);
+        if (user != null) {
+            return user.mapDTOtoEntity();
+        }
+        return null;
     }
 
     public Users getUserById(Long userId) {
-        return repository.findById(userId).orElse(null);
+        UserDTO user = repository.findById(userId).orElse(null);
+        if (user != null) {
+            return user.mapDTOtoEntity();
+        }
+        return null;
     }
 
-    public List<Users> getUsersList() {
-        return repository.findAll();
-    }
-
-    public boolean userExists(String username) {
+    public boolean usernameExists(String username) {
         return repository.findByUsername(username) != null;
     }
 
@@ -45,44 +61,52 @@ public class UsersService extends AbstractService<Users, UsersRepository> {
         return passwordEncoder.encode(password);
     }
 
-    public Users registerUser(UserCredentialsDTO userCredentials) throws Exception {
-        if (userExists(userCredentials.getUsername())) {
+    public UserDTO createUser(Users user) throws Exception {
+        if (usernameExists(user.getUsername())) {
             throw new Exception("User with this username already exists");
         }
         Set<Roles> userRoles = new HashSet<>();
         userRoles.add(Roles.ROLE_USER);
-        Users user = Users.builder()
-                .status(UserStatus.ACTIVE)
-                .username(userCredentials.getUsername())
-                .password(cryptPassword(userCredentials.getPassword()))
-                .roles(userRoles)
-                .password_expired(false)
-                .build();
-        repository.save(user);
-        return user;
+        UserDTO userDTO = new UserDTO();
+        userDTO.mapEntity(user);
+        userDTO.setRoles(userRoles);
+        return userDTO;
     }
 
-    public void addRole(Users user, Roles role) {
+    public void addRole(Long userId, Roles role) {
+        UserDTO user = repository.findById(userId).orElse(null);
         if (user != null && !user.getRoles().contains(role)) {
             user.getRoles().add(role);
             save(user);
         }
     }
 
-    public void removeRole(Users user, Roles role) {
+    public void removeRole(Long userId, Roles role) {
+        UserDTO user = repository.findById(userId).orElse(null);
         if (user != null && user.getRoles().contains(role)) {
             user.getRoles().remove(role);
             save(user);
         }
     }
 
+    private Page<Users> mapDTOtoEntityPage(Page<UserDTO> dtoPage, Pageable pageable) {
+        List<UserDTO> dtoList = dtoPage.getContent();
+        long totalElements = dtoPage.getTotalElements();
+
+        List<Users> usersList = new ArrayList<>();
+        for (UserDTO dto : dtoList) {
+            usersList.add(dto.mapDTOtoEntity());
+        }
+        return new PageImpl<>(usersList, pageable, totalElements);
+    }
+
     @Override
-    public void save(Users entity) {
+    public void save(UserDTO entity) {
         repository.save(entity);
     }
 
     @Override
-    public void delete(Users entity) {
+    public void delete(UserDTO entity) {
         repository.delete(entity);
     }
 }

@@ -1,19 +1,19 @@
-package com.CityBoard.interfaces;
+package com.CityBoard.postgresql.repository;
 
-import com.CityBoard.models.Users;
-import com.CityBoard.models.enums.Roles;
+import com.CityBoard.interfaces.CommonRepository;
+import com.CityBoard.postgresql.dto.UserDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UsersRepository extends CommonRepository<Users> {
-    List<Users> findAll();
+public interface UsersRepository extends CommonRepository<UserDTO> {
+    Page<UserDTO> findAll(Pageable pageable);
 
-    Users findByUsername(String username);
+    UserDTO findByUsername(String username);
 
-    Optional<Users> findById(Long id);
-
-    List<Users> findByRoles(Roles role);
+    Optional<UserDTO> findById(Long id);
 }
