@@ -1,29 +1,22 @@
-package com.CityBoard.interfaces;
+package com.CityBoard.postgresql.repository;
 
-import com.CityBoard.models.Adverts;
-import com.CityBoard.models.Requests;
-import com.CityBoard.models.Users;
+import com.CityBoard.interfaces.CommonRepository;
+import com.CityBoard.postgresql.dto.RequestDTO;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface RequestsRepository extends CommonRepository<Requests> {
+@Repository
+public interface RequestsRepository extends CommonRepository<RequestDTO> {
     @Override
-    List<Requests> findAll();
+    Optional<RequestDTO> findById(Long id);
 
-    @Override
-    Optional<Requests> findById(Long id);
-
-    List<Requests> findByUser(Users user);
-
-    //@Query(value = "select * from requests where requests.advert_id in (select adverts.id from adverts where author_id = ?1) and requests.status = 0", nativeQuery = true);
-    @Query(value = "select * from requests where requests.advert_id in (select adverts.id from adverts where author_id = ?1) " +
-            "and requests.status = 0", nativeQuery = true)
-    List<Requests> findIncoming(Long userId);
+    @Query(value = "select * from requests where requests.advert_id in (select adverts.id from adverts " +
+            "where author_id = ?1) and requests.status = 0", nativeQuery = true)
+    List<RequestDTO> findIncoming(Long userId);
 
     @Query(value = "select * from requests where requests.author_id = ?1 and status <> 3", nativeQuery = true)
-    List<Requests> findOutgoing(Long userId);
-
-    List<Requests> findByAdvert(Adverts advert);
+    List<RequestDTO> findOutgoing(Long userId);
 }
