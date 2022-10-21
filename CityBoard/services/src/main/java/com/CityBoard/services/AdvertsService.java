@@ -1,112 +1,115 @@
 package com.CityBoard.services;
 
 import com.CityBoard.models.Adverts;
-import com.CityBoard.models.Users;
-import com.CityBoard.models.dto.AdvertDTO;
 import com.CityBoard.models.enums.AdvertStatus;
-import com.CityBoard.repositories.AdvertsRepository;
-
+import com.CityBoard.postgresql.dto.AdvertDTO;
+import com.CityBoard.postgresql.repository.AdvertsRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
-public class AdvertsService extends AbstractService<Adverts, AdvertsRepository> {
+public class AdvertsService extends AbstractService<AdvertDTO, AdvertsRepository> {
     public AdvertsService(AdvertsRepository repository) {
         super(repository);
     }
 
-    public Adverts createAdvert(Users user, AdvertDTO advertDTO) {
-        Adverts advert = advertDTO.mapDTOtoEntity();
-        advert.setStatus(AdvertStatus.VISIBLE);
-        advert.setModCheck(false);
-        advert.setUser(user);
-        return advert;
+    public AdvertDTO createAdvert(Adverts advert) {
+        AdvertDTO dto = new AdvertDTO();
+        dto.mapEntity(advert);
+        dto.setStatus(AdvertStatus.VISIBLE);
+        dto.setModCheck(false);
+        return dto;
     }
 
-    public Adverts updateAdvert(Long advertId, AdvertDTO newAdvert) {
-        Adverts advert = repository.findById(advertId).orElse(null);
+    public AdvertDTO updateAdvert(Adverts advert) {
+        AdvertDTO dto = repository.findById(advert.getId()).orElse(null);
+        if (dto != null) {
+            dto.mapEntity(advert);
+            dto.setModCheck(false);
+            return dto;
+        }
+        return null;
+    }
+
+    public Page<Adverts> getAllAdvertsPage(int currentPage, int pageSize) {
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Page<AdvertDTO> dtoPage = repository.findAll(pageable);
+        return mapDTOtoEntityPage(dtoPage, pageable);
+    }
+
+    public Page<Adverts> getVisibleAdvertsPage(int currentPage, int pageSize) {
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Page<AdvertDTO> dtoPage = repository.findAllVisiblePaginated(pageable);
+        return mapDTOtoEntityPage(dtoPage, pageable);
+    }
+
+    public Page<Adverts> getVisibleNotAuthoredAdvertsPage(Long authorId, int currentPage, int pageSize) {
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Page<AdvertDTO> dtoPage = repository.findVisibleNotAuthoredPaginated(authorId, pageable);
+        return mapDTOtoEntityPage(dtoPage, pageable);
+    }
+
+    public List<Adverts> getAuthoredAdvertsList(Long authorId) {
+        return mapDTOtoEntityList(repository.findAllAuthored(authorId));
+    }
+
+    public void changeAdvertStatus(Long advertId, AdvertStatus status) {
+        AdvertDTO advert = repository.findById(advertId).orElse(null);
         if (advert != null) {
-            advert.setType(newAdvert.getType());
-            advert.setEmail(newAdvert.getEmail());
-            advert.setPhone(newAdvert.getPhone());
-            advert.setStatus(newAdvert.getStatus());
-            advert.setCity(newAdvert.getCity());
-            advert.setDistrict(newAdvert.getDistrict());
-            advert.setStreet(newAdvert.getStreet());
-            advert.setHouse_code(newAdvert.getHouse_code());
-            advert.setFlat_num(newAdvert.getFlat_num());
-            advert.setFloor(newAdvert.getFloor());
-            advert.setFloors(newAdvert.getFloors());
-            advert.setRooms_num(newAdvert.getRooms_num());
-            advert.setArea(newAdvert.getArea());
-            advert.setLiving_area(newAdvert.getLiving_area());
-            advert.setPrice(newAdvert.getPrice());
-            advert.setDescription(newAdvert.getDescription());
-            advert.setModCheck(false);
+            advert.setStatus(status);
             save(advert);
         }
-        return advert;
     }
 
-    public List<Adverts> getAvailableAdverts() {
-        List<Adverts> adverts = repository.findAllVisible();
-        if (adverts.isEmpty()) {
-            return null;
+    public void changeAdvertModCheck(Long advertId) {
+        AdvertDTO advert = repository.findById(advertId).orElse(null);
+        if (advert != null) {
+            advert.setModCheck(!advert.isModCheck());
+            save(advert);
         }
-        return adverts;
-    }
-
-    public List<Adverts> getAuthoredAdverts(Users user) {
-        List<Adverts> adverts = repository.findAllAuthored(user.getUsername());
-        if (adverts.isEmpty()) {
-            return null;
-        }
-        return adverts;
-    }
-
-    public List<Adverts> getAvailableAdvertsNotAuthored(Users user) {
-        List<Adverts> adverts = repository.findAllVisibleNotAuthored(user.getUsername());
-        if (adverts.isEmpty()) {
-            return null;
-        }
-        return adverts;
-    }
-
-    public void hideAdvert(Adverts advert) {
-        advert.setStatus(AdvertStatus.HIDDEN);
-    }
-
-    public void deleteAdvert(Adverts advert) {
-        advert.setStatus(AdvertStatus.DELETED);
-    }
-
-    public void doModeratorCheck(Adverts advert) {
-        advert.setModCheck(true);
-        save(advert);
-    }
-
-    public void deleteAdvertPermanently(Adverts advert) {
-        delete(advert);
     }
 
     public Adverts getAdvertById(Long advertId) {
-        Optional<Adverts> advert = repository.findById(advertId);
-        if (advert.isEmpty()) {
-            return null;
+        AdvertDTO advert = repository.findById(advertId).orElse(null);
+        if (advert != null) {
+            return advert.mapDTOtoEntity();
         }
-        return advert.orElse(null);
+        return null;
+    }
+
+    private Page<Adverts> mapDTOtoEntityPage(Page<AdvertDTO> dtoPage, Pageable pageable) {
+        List<AdvertDTO> dtoList = dtoPage.getContent();
+        long totalElements = dtoPage.getTotalElements();
+
+        List<Adverts> advertsList = new ArrayList<>();
+        for (AdvertDTO dto : dtoList) {
+            advertsList.add(dto.mapDTOtoEntity());
+        }
+        return new PageImpl<>(advertsList, pageable, totalElements);
+    }
+
+    private List<Adverts> mapDTOtoEntityList(List<AdvertDTO> dtoList) {
+        List<Adverts> adverts = new ArrayList<>();
+        for (AdvertDTO dto : dtoList) {
+            adverts.add(dto.mapDTOtoEntity());
+        }
+        return adverts;
     }
 
     @Override
-    public void delete(Adverts entity) {
+    public void delete(AdvertDTO entity) {
         repository.delete(entity);
     }
 
     @Override
-    public void save(Adverts entity) {
+    public void save(AdvertDTO entity) {
         repository.save(entity);
     }
 }

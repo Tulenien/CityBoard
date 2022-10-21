@@ -1,32 +1,33 @@
-package com.CityBoard.interfaces;
+package com.CityBoard.postgresql.repository;
 
-import com.CityBoard.models.Adverts;
-import com.CityBoard.models.enums.AdvertStatus;
-import com.CityBoard.models.enums.AdvertType;
+import com.CityBoard.interfaces.CommonRepository;
+import com.CityBoard.postgresql.dto.AdvertDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface AdvertsRepository extends CommonRepository<Adverts> {
-    @Override
-    List<Adverts> findAll();
+@Repository
+public interface AdvertsRepository extends CommonRepository<AdvertDTO> {
+    Page<AdvertDTO> findAll(Pageable pageable);
 
     @Query(value = "select * from adverts where status = 0", nativeQuery = true)
-    List<Adverts> findAllVisible();
+    Page<AdvertDTO> findAllVisiblePaginated(Pageable pageable);
+
+    @Query(value = "select * from adverts where status <> 2",
+           countQuery = "select count(*) from adverts where status <> 2", nativeQuery = true)
+    Page<AdvertDTO> findAllNotDeletedPaginated(Pageable pageable);
+
+    @Query(value = "select * from adverts where author_id <> ?1 and status = 0",
+           countQuery = "select count(*) from adverts where author_id <> ?1 and status = 0", nativeQuery = true)
+    Page<AdvertDTO> findVisibleNotAuthoredPaginated(Long authorId, Pageable pageable);
+
+    @Query(value = "select * from adverts where author_id = ?1 and status <> 2", nativeQuery = true)
+    List<AdvertDTO> findAllAuthored(Long authorId);
 
     @Override
-    Optional<Adverts> findById(Long id);
-
-    List<Adverts> findByType(AdvertType type);
-
-    List<Adverts> findByStatus(AdvertStatus status);
-
-    List<Adverts> findByModCheck(boolean mod_check);
-
-    @Query(value = "select * from adverts where author_id in (select users.id from users where username = ?1) and status <> 2", nativeQuery = true)
-    List<Adverts> findAllAuthored(String username);
-
-    @Query(value = "select * from adverts where author_id not in (select users.id from users where username = ?1) and status = 0", nativeQuery = true)
-    List<Adverts> findAllVisibleNotAuthored(String username);
+    Optional<AdvertDTO> findById(Long id);
 }
