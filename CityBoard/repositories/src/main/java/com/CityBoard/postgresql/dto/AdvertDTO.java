@@ -1,71 +1,99 @@
-package com.CityBoard.models.dto;
+package com.CityBoard.postgresql.dto;
 
+import com.CityBoard.interfaces.AbstractEntityDTO;
 import com.CityBoard.models.Adverts;
+import com.CityBoard.models.Requests;
+import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.models.enums.AdvertType;
 import lombok.*;
 
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class AdvertDTO {
-    private AdvertStatus status;
+@Table(name = "adverts")
+public class AdvertDTO extends AbstractEntityDTO {
     private AdvertType type;
     private String email;
     private String phone;
+    private AdvertStatus status;
+    // Address
     private String city;
     private String district;
     private String street;
-    private String house_code;
-    private Integer flat_num;
+    @Column(name = "house_code")
+    private String houseCode;
+    @Column(name = "flat_num")
+    private Integer flatNum;
+    // Info
     private Integer floor;
     private Integer floors;
-    private Integer rooms_num;
+    @Column(name = "rooms_num")
+    private Integer roomsNum;
     private Float area;
-    private Float living_area;
+    @Column(name = "living_area")
+    private Float livingArea;
     private Integer price;
     private String description;
 
+    // Service info
+    @Column(name = "mod_check")
+    private boolean modCheck;
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private UserDTO user;
+    @OneToMany(mappedBy = "advert")
+    private List<RequestDTO> requests;
+
     public Adverts mapDTOtoEntity() {
         Adverts advert = Adverts.builder()
+                .id(id)
                 .type(type)
                 .email(email)
                 .phone(phone)
+                .status(status)
                 .city(city)
                 .district(district)
                 .street(street)
-                .house_code(house_code)
-                .flat_num(flat_num)
+                .houseCode(houseCode)
+                .flatNumber(flatNum)
                 .floor(floor)
                 .floors(floors)
-                .rooms_num(rooms_num)
+                .roomsNumber(roomsNum)
                 .area(area)
-                .living_area(living_area)
+                .livingArea(livingArea)
                 .price(price)
                 .description(description)
-                .status(status)
+                .authorId(user.getId())
                 .build();
         return advert;
     }
 
     public void mapEntity(Adverts advert) {
+        id = advert.getId();
         type = advert.getType();
         email = advert.getEmail();
         phone = advert.getPhone();
+        status = advert.getStatus();
         city = advert.getCity();
         district = advert.getDistrict();
         street = advert.getStreet();
-        house_code = advert.getHouse_code();
-        flat_num = advert.getFlat_num();
+        houseCode = advert.getHouseCode();
+        flatNum = advert.getFlatNumber();
         floor = advert.getFloor();
         floors = advert.getFloors();
-        rooms_num = advert.getRooms_num();
+        roomsNum = advert.getRoomsNumber();
         area = advert.getArea();
-        living_area = advert.getLiving_area();
+        livingArea = advert.getLivingArea();
         price = advert.getPrice();
         description = advert.getDescription();
-        status = advert.getStatus();
+        modCheck = advert.isModCheck();
     }
 }

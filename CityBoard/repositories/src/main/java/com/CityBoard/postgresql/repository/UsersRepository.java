@@ -1,4 +1,4 @@
-package com.CityBoard.repositories;
+package com.CityBoard.interfaces;
 
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.Roles;

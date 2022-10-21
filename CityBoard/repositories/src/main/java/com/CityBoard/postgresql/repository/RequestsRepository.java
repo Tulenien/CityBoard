@@ -1,4 +1,4 @@
-package com.CityBoard.repositories;
+package com.CityBoard.interfaces;
 
 import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Requests;

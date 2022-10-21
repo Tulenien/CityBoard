@@ -1,4 +1,4 @@
-package com.CityBoard.models;
+package com.CityBoard.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,10 +15,10 @@ import java.sql.Timestamp;
 @MappedSuperclass
 @Getter
 @Setter
-public abstract class AbstractEntity implements Serializable {
+public abstract class AbstractEntityDTO implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
     @CreationTimestamp
     private Timestamp created_at;
     @UpdateTimestamp
