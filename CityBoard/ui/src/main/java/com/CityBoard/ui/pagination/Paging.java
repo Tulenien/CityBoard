@@ -1,6 +1,8 @@
 package com.CityBoard.ui.pagination;
 
-import com.CityBoard.models.enums.PageItemType;
+import com.CityBoard.ui.pagination.PageItemType;
+import com.CityBoard.ui.operations.PagingOperations;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,14 +12,13 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Paging {
+public class Paging implements PagingOperations {
     private static final int PAGINATION_STEP = 3;
 
     private boolean nextEnabled;
     private boolean prevEnabled;
     private int pageSize;
     private int pageNumber;
-
     private List<PageItem> items = new ArrayList<>();
 
     public static Paging of(int totalPages, int pageNumber, int pageSize) {

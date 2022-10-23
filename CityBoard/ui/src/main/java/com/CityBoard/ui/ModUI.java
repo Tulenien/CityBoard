@@ -1,12 +1,17 @@
 package com.CityBoard.ui;
 
 import com.CityBoard.models.Adverts;
+import com.CityBoard.models.Users;
 import com.CityBoard.services.AdvertsService;
+import com.CityBoard.ui.operations.CommonOperations;
 import com.CityBoard.ui.operations.ModOperations;
+import com.CityBoard.ui.pagination.Paged;
+import com.CityBoard.ui.pagination.Paging;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ModUI implements ModOperations {
+public class ModUI implements ModOperations, CommonOperations {
     private final AdvertsService advertsService;
 
     public ModUI(AdvertsService advertsService) {
@@ -14,10 +19,18 @@ public class ModUI implements ModOperations {
     }
 
     @Override
-    public void checkAdvert(Long advertId) {
-        Adverts advert = advertsService.getAdvertById(advertId);
-        if (advert != null) {
-            advertsService.doModeratorCheck(advert);
-        }
+    public void changeAdvertModCheck(Long advertId) {
+        advertsService.changeAdvertModCheck(advertId);
+    }
+
+    @Override
+    public Paged<Adverts> getAvailableAdvertsPaged(Users user, int currentPage, int pageSize) {
+        Page<Adverts> advertsPage = advertsService.getNotDeletedAdvertsPage(currentPage, pageSize);
+        return new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
+    }
+
+    @Override
+    public Adverts getAdvert(Long advertId) {
+        return advertsService.getAdvertById(advertId);
     }
 }

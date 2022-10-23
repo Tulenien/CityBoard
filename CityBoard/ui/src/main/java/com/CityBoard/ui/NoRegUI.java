@@ -1,9 +1,15 @@
 package com.CityBoard.ui;
 
+import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Users;
-import com.CityBoard.models.dto.UserCredentialsDTO;
+import com.CityBoard.postgresql.dto.UserDTO;
+import com.CityBoard.services.AdvertsService;
 import com.CityBoard.services.UsersService;
+import com.CityBoard.ui.operations.CommonOperations;
 import com.CityBoard.ui.operations.DefaultOperations;
+import com.CityBoard.ui.pagination.Paged;
+import com.CityBoard.ui.pagination.Paging;
+import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -11,11 +17,13 @@ import org.springframework.stereotype.Service;
 import java.security.Principal;
 
 @Service
-public class NoRegUI implements DefaultOperations {
+public class NoRegUI implements DefaultOperations, CommonOperations {
     private final UsersService usersService;
+    private final AdvertsService advertsService;
 
-    public NoRegUI(UsersService usersService) {
+    public NoRegUI(UsersService usersService, AdvertsService advertsService) {
         this.usersService = usersService;
+        this.advertsService = advertsService;
     }
 
     @Override
@@ -36,13 +44,25 @@ public class NoRegUI implements DefaultOperations {
     }
 
     @Override
-    public Users registerUser(UserCredentialsDTO userCredentials) {
-        Users user;
+    public boolean registerUser(Users user) {
         try {
-            user = usersService.registerUser(userCredentials);
-        } catch (Exception e) {
-            return null;
+            UserDTO dto = usersService.createUser(user);
+            usersService.save(dto);
         }
-        return user;
+        catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Paged<Adverts> getAvailableAdvertsPaged(Users user, int currentPage, int pageSize) {
+        Page<Adverts> advertsPage = advertsService.getVisibleAdvertsPage(currentPage, pageSize);
+        return new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
+    }
+
+    @Override
+    public Adverts getAdvert(Long advertId) {
+        return advertsService.getAdvertById(advertId);
     }
 }

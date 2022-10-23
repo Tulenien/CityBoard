@@ -1,6 +1,6 @@
 package com.CityBoard.ui.pagination;
 
-import com.CityBoard.models.enums.PageItemType;
+import lombok.*;
 
 @Builder
 @AllArgsConstructor
