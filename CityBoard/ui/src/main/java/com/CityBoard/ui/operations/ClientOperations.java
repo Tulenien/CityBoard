@@ -3,35 +3,30 @@ package com.CityBoard.ui.operations;
 import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Requests;
 import com.CityBoard.models.Users;
-import com.CityBoard.models.dto.AdvertDTO;
+import com.CityBoard.postgresql.dto.AdvertDTO;
 import com.CityBoard.models.enums.RequestType;
+import com.CityBoard.postgresql.dto.UserDTO;
 
 import java.util.List;
 
 public interface ClientOperations {
-    Requests makeRequest(Users user, Long advertId, RequestType type);
+    boolean makeRequest(UserDTO user, Long advertId, RequestType type);
 
-    List<Requests> getIncomingRequests(Users user);
+    List<Requests> getIncomingRequests(Long userId);
 
-    List<Requests> getOutgoingRequests(Users user);
+    List<Requests> getOutgoingRequests(Long userId);
 
     void acceptRequest(Long requestId);
 
     void rejectRequest(Long requestId);
 
-    List<Adverts> viewAvailableAdverts(Users user);
+    boolean createAdvert(Adverts advert);
 
-    List<Adverts> viewAuthoredAdverts(Users user);
-
-    Adverts viewAdvert(Long advertId);
-
-    Adverts createAdvert(Users user, AdvertDTO advertDTO);
-
-    Adverts updateAdvert(Long advertId, AdvertDTO advertDTO);
+    boolean updateAdvert(Adverts advert);
 
     void hideAdvert(Long advertId);
 
-    void deleteAdvert(Long advertId);
+    void revealAdvert(Long advertId);
 
-    void concludeDeal(Long requestId);
+    void deleteAdvert(Long advertId);
 }

@@ -1,7 +1,7 @@
 package com.CityBoard.ui.operations;
 
 import com.CityBoard.models.Users;
-import com.CityBoard.models.dto.UserCredentialsDTO;
+import com.CityBoard.postgresql.dto.UserDTO;
 
 import java.security.Principal;
 
@@ -10,5 +10,5 @@ public interface DefaultOperations {
 
     Users getUserByPrincipal(Principal principal);
 
-    Users registerUser(UserCredentialsDTO userCredentials) throws Exception;
+    boolean registerUser(Users user) throws Exception;
 }
