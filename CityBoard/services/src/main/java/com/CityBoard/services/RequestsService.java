@@ -20,11 +20,11 @@ public class RequestsService extends AbstractService<RequestDTO, RequestsReposit
         super(repository);
     }
 
-    public RequestDTO createRequest(UserDTO author, AdvertDTO advert, RequestType type) {
+    public RequestDTO createRequest(UserDTO user, AdvertDTO advert, RequestType type) {
         return RequestDTO.builder()
                 .type(type)
                 .status(RequestStatus.PENDING)
-                .user(author)
+                .user(user)
                 .advert(advert)
                 .build();
     }
@@ -53,12 +53,18 @@ public class RequestsService extends AbstractService<RequestDTO, RequestsReposit
         return null;
     }
 
-    public void changeRequestStatus(Long requestId, RequestStatus status) {
+    public RequestDTO getRequestDTOById(Long requestId) {
+        return repository.findById(requestId).orElse(null);
+    }
+
+    public boolean changeRequestStatus(Long requestId, RequestStatus status) {
         RequestDTO request = repository.findById(requestId).orElse(null);
         if (request != null) {
             request.setStatus(status);
             save(request);
+            return true;
         }
+        return false;
     }
 
     private List<Requests> mapDTOtoEntityList(List<RequestDTO> dtoList) {

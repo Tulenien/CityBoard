@@ -37,9 +37,33 @@
     </form>
 </nav>
 
+<!--<h2 class="mb-5" th:if="${#lists.isEmpty(AdvertsPage.page)}">Объявления не найдены</h2>-->
+
+<nav aria-label="Page navigation" class="paging">
+    <ul class="pagination" th:if="${AdvertsPage.page.totalPages > 1}">
+        <li class="page-item" th:classappend="${!AdvertsPage.paging.isPrevEnabled()? 'disabled' : ''}">
+            <a class="page-link" tabindex="-1"
+               th:href="@{'/?pageNumber=' + ${AdvertsPage.paging.pageNumber - 1}}">Previous</a>
+        </li>
+        <th:block th:each="item : ${AdvertsPage.paging.getItems()}">
+            <li class="page-item" th:classappend="${item.index == AdvertsPage.paging.pageNumber? 'active' : ''}"
+                th:if="${item.pageItemType.name() == 'PAGE'}">
+                <a class="page-link" th:href="@{'/?pageNumber=' + ${item.index}}"
+                   th:text="${item.index}"></a>
+            </li>
+            <li class="page-item disabled" th:if="${item.pageItemType.name() == 'DOTS'}">
+                <a class="page-link" href="#">...</a>
+            </li>
+        </th:block>
+        <li class="page-item" th:classappend="${!AdvertsPage.paging.isNextEnabled()? 'disabled' : ''}">
+            <a class="page-link" th:href="@{'/?pageNumber=' + ${AdvertsPage.paging.pageNumber + 1}}">Next</a>
+        </li>
+    </ul>
+</nav>
+
 <body>
-<h2 class="mb-5" th:if="${#lists.isEmpty(Adverts)}">Объявления не найдены</h2>
-<table class="table table-bordered table-hover" th:if="${not #lists.isEmpty(Adverts)}">
+<h2 class="mb-5" th:if="${#lists.isEmpty(AdvertsPage.page)}">Объявления не найдены</h2>
+<table class="table table-bordered table-hover" th:if="${not #lists.isEmpty(AdvertsPage.page)}">
     <thead>
     <tr>
         <th scope="col">#</th>
@@ -60,7 +84,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="advert : ${Adverts}">
+    <tr th:each="advert : ${AdvertsPage.page}">
         <th scope="row">
             <a target="_blank" th:href="@{/advert(id=${advert.id})}">Просмотр</a>
         </th>
@@ -70,10 +94,10 @@
         </th:block>
         <td th:text="${advert.district}"></td>
         <td th:text="${advert.street}"></td>
-        <td th:text="${advert.house_code}"></td>
+        <td th:text="${advert.houseCode}"></td>
         <td th:text="${advert.floor + '/ ' + advert.floors}"></td>
-        <td th:text="${advert.rooms_num}"></td>
-        <td th:text="${advert.living_area + '/ ' + advert.area}"></td>
+        <td th:text="${advert.roomsNumber}"></td>
+        <td th:text="${advert.livingArea + '/ ' + advert.area}"></td>
         <td th:text="${advert.price}"></td>
         <td sec:authorize="hasRole('ROLE_MOD')">
             <a class="btn btn-secondary"

@@ -36,12 +36,12 @@ public class AdminUI implements AdminOperations, CommonOperations {
     }
 
     @Override
-    public void addUserRole(Long userId, Roles role) {
-        usersService.addRole(userId, role);
+    public boolean addUserRole(Long userId, Roles role) {
+        return usersService.addRole(userId, role);
     }
     @Override
-    public void removeUserRole(Long userId, Roles role) {
-        usersService.removeRole(userId, role);
+    public boolean removeUserRole(Long userId, Roles role) {
+        return usersService.removeRole(userId, role);
     }
 
     @Override

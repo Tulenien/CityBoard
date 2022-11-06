@@ -8,6 +8,8 @@ import java.security.Principal;
 public interface DefaultOperations {
     boolean isUserAuthenticated();
 
+    UserDTO getUserDTOByPrincipal(Principal principal);
+
     Users getUserByPrincipal(Principal principal);
 
     boolean registerUser(Users user) throws Exception;

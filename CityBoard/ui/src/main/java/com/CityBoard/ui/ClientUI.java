@@ -55,13 +55,13 @@ public class ClientUI implements ClientOperations, CommonOperations {
     }
 
     @Override
-    public void acceptRequest(Long requestId) {
-        requestsService.changeRequestStatus(requestId, RequestStatus.ACCEPTED);
+    public boolean acceptRequest(Long requestId) {
+        return requestsService.changeRequestStatus(requestId, RequestStatus.ACCEPTED);
     }
 
     @Override
-    public void rejectRequest(Long requestId) {
-        requestsService.changeRequestStatus(requestId, RequestStatus.REJECTED);
+    public boolean rejectRequest(Long requestId) {
+        return requestsService.changeRequestStatus(requestId, RequestStatus.REJECTED);
     }
 
     @Override
@@ -85,24 +85,28 @@ public class ClientUI implements ClientOperations, CommonOperations {
     }
 
     @Override
-    public void hideAdvert(Long advertId) {
-        advertsService.changeAdvertStatus(advertId, AdvertStatus.HIDDEN);
+    public boolean hideAdvert(Long advertId) {
+        return advertsService.changeAdvertStatus(advertId, AdvertStatus.HIDDEN);
     }
 
     @Override
-    public void revealAdvert(Long advertId) {
-        advertsService.changeAdvertStatus(advertId, AdvertStatus.VISIBLE);
+    public boolean revealAdvert(Long advertId) {
+        return advertsService.changeAdvertStatus(advertId, AdvertStatus.VISIBLE);
     }
 
     @Override
-    public void deleteAdvert(Long advertId) {
-        advertsService.changeAdvertStatus(advertId, AdvertStatus.DELETED);
+    public boolean deleteAdvert(Long advertId) {
+        return advertsService.changeAdvertStatus(advertId, AdvertStatus.DELETED);
     }
 
     @Override
     public Paged<Adverts> getAvailableAdvertsPaged(Users user, int currentPage, int pageSize) {
         Page<Adverts> advertsPage = advertsService.getVisibleNotAuthoredAdvertsPage(user.getId(), currentPage, pageSize);
         return new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
+    }
+
+    public List<Adverts> getUserAdverts(Long userId) {
+        return advertsService.getAuthoredAdvertsList(userId);
     }
 
     @Override

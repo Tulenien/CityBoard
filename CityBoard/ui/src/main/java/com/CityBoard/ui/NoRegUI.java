@@ -44,6 +44,14 @@ public class NoRegUI implements DefaultOperations, CommonOperations {
     }
 
     @Override
+    public UserDTO getUserDTOByPrincipal(Principal principal) {
+        if (isUserAuthenticated()) {
+            return usersService.getUserDTOByUsername(principal.getName());
+        }
+        return null;
+    }
+
+    @Override
     public boolean registerUser(Users user) {
         try {
             UserDTO dto = usersService.createUser(user);
@@ -57,7 +65,7 @@ public class NoRegUI implements DefaultOperations, CommonOperations {
 
     @Override
     public Paged<Adverts> getAvailableAdvertsPaged(Users user, int currentPage, int pageSize) {
-        Page<Adverts> advertsPage = advertsService.getVisibleAdvertsPage(currentPage, pageSize);
+        Page<Adverts> advertsPage = advertsService.getNotDeletedAdvertsPage(currentPage, pageSize);
         return new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
     }
 

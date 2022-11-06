@@ -16,17 +16,19 @@ public interface ClientOperations {
 
     List<Requests> getOutgoingRequests(Long userId);
 
-    void acceptRequest(Long requestId);
+    boolean acceptRequest(Long requestId);
 
-    void rejectRequest(Long requestId);
+    boolean rejectRequest(Long requestId);
 
     boolean createAdvert(Adverts advert);
 
     boolean updateAdvert(Adverts advert);
 
-    void hideAdvert(Long advertId);
+    boolean hideAdvert(Long advertId);
 
-    void revealAdvert(Long advertId);
+    boolean revealAdvert(Long advertId);
 
-    void deleteAdvert(Long advertId);
+    boolean deleteAdvert(Long advertId);
+
+    List<Adverts> getUserAdverts(Long userId);
 }

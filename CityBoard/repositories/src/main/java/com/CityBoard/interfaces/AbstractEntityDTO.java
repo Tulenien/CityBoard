@@ -1,4 +1,4 @@
-package com.CityBoard.dto;
+package com.CityBoard.interfaces;
 
 import lombok.Getter;
 import lombok.Setter;

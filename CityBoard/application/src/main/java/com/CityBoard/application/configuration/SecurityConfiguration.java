@@ -32,10 +32,12 @@ public class SecurityConfiguration {
         httpSecurity.authorizeRequests()
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/mod/**").hasAuthority("ROLE_MOD")
-                .antMatchers("/user/**", "/request/**").authenticated()
+                .antMatchers("/request/**").authenticated()
                 .antMatchers("/**").permitAll()
                 .and().formLogin().permitAll()
-                .and().logout().logoutSuccessUrl("/").permitAll();
+                .and().logout().logoutSuccessUrl("/").permitAll().and();
+
+        httpSecurity.csrf().disable().cors().and();
 
         httpSecurity.headers().frameOptions().sameOrigin();
         return httpSecurity.build();

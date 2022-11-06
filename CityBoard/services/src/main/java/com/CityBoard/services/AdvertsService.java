@@ -45,13 +45,19 @@ public class AdvertsService extends AbstractService<AdvertDTO, AdvertsRepository
     }
 
     public Page<Adverts> getVisibleAdvertsPage(int currentPage, int pageSize) {
-        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
         Page<AdvertDTO> dtoPage = repository.findAllVisiblePaginated(pageable);
         return mapDTOtoEntityPage(dtoPage, pageable);
     }
 
+    public Page<Adverts> getNotDeletedAdvertsPage(int currentPage, int pageSize) {
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
+        Page<AdvertDTO> dtoPage = repository.findAllNotDeletedPaginated(pageable);
+        return mapDTOtoEntityPage(dtoPage, pageable);
+    }
+
     public Page<Adverts> getVisibleNotAuthoredAdvertsPage(Long authorId, int currentPage, int pageSize) {
-        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
         Page<AdvertDTO> dtoPage = repository.findVisibleNotAuthoredPaginated(authorId, pageable);
         return mapDTOtoEntityPage(dtoPage, pageable);
     }
@@ -60,20 +66,24 @@ public class AdvertsService extends AbstractService<AdvertDTO, AdvertsRepository
         return mapDTOtoEntityList(repository.findAllAuthored(authorId));
     }
 
-    public void changeAdvertStatus(Long advertId, AdvertStatus status) {
+    public boolean changeAdvertStatus(Long advertId, AdvertStatus status) {
         AdvertDTO advert = repository.findById(advertId).orElse(null);
         if (advert != null) {
             advert.setStatus(status);
             save(advert);
+            return true;
         }
+        return false;
     }
 
-    public void changeAdvertModCheck(Long advertId) {
+    public boolean changeAdvertModCheck(Long advertId) {
         AdvertDTO advert = repository.findById(advertId).orElse(null);
         if (advert != null) {
             advert.setModCheck(!advert.isModCheck());
             save(advert);
+            return true;
         }
+        return false;
     }
 
     public Adverts getAdvertById(Long advertId) {
@@ -82,6 +92,10 @@ public class AdvertsService extends AbstractService<AdvertDTO, AdvertsRepository
             return advert.mapDTOtoEntity();
         }
         return null;
+    }
+
+    public AdvertDTO getAdvertDTOById(Long advertId) {
+        return repository.findById(advertId).orElse(null);
     }
 
     private Page<Adverts> mapDTOtoEntityPage(Page<AdvertDTO> dtoPage, Pageable pageable) {

@@ -47,7 +47,9 @@ public class UserDTO extends AbstractEntityDTO implements UserDetails {
                 .name(name)
                 .surname(surname)
                 .middle_name(middle_name)
+                .status(status)
                 .password_expired(password_expired)
+                .roles(roles)
                 .build();
         return user;
     }
@@ -59,6 +61,9 @@ public class UserDTO extends AbstractEntityDTO implements UserDetails {
         name = user.getName();
         surname = user.getSurname();
         middle_name = user.getMiddle_name();
+        status = user.getStatus();
+        password_expired = user.isPassword_expired();
+        roles = user.getRoles();
     }
 
     @Override

@@ -13,9 +13,9 @@ public class ModController {
         this.ui = ui;
     }
 
-    @GetMapping("/mod/check")
-    public String checkAdvert(@RequestParam(value = "id") Long advertId) {
-        ui.checkAdvert(advertId);
-        return "redirect:/";
-    }
+    //@GetMapping("/mod/check")
+    //public String checkAdvert(@RequestParam(value = "id") Long advertId) {
+    //    ui.checkAdvert(advertId);
+    //    return "redirect:/";
+    //}
 }

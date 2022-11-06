@@ -29,17 +29,13 @@ public class UsersService extends AbstractService<UserDTO, UsersRepository> {
     }
 
     public Page<Users> getAllUsersPage(int currentPage, int pageSize) {
-        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
         Page<UserDTO> dtoPage = repository.findAll(pageable);
         return mapDTOtoEntityPage(dtoPage, pageable);
     }
 
     public Users getUserByUsername(String username) {
-        UserDTO user = repository.findByUsername(username);
-        if (user != null) {
-            return user.mapDTOtoEntity();
-        }
-        return null;
+        return repository.findByUsername(username).mapDTOtoEntity();
     }
 
     public Users getUserById(Long userId) {
@@ -48,6 +44,14 @@ public class UsersService extends AbstractService<UserDTO, UsersRepository> {
             return user.mapDTOtoEntity();
         }
         return null;
+    }
+
+    public UserDTO getUserDTOByUsername(String username) {
+        return repository.findByUsername(username);
+    }
+
+    public UserDTO getUserDTOById(Long userId) {
+        return repository.findById(userId).orElse(null);
     }
 
     public boolean usernameExists(String username) {
@@ -68,25 +72,30 @@ public class UsersService extends AbstractService<UserDTO, UsersRepository> {
         Set<Roles> userRoles = new HashSet<>();
         userRoles.add(Roles.ROLE_USER);
         UserDTO userDTO = new UserDTO();
+        user.setPassword(cryptPassword(user.getPassword()));
         userDTO.mapEntity(user);
         userDTO.setRoles(userRoles);
         return userDTO;
     }
 
-    public void addRole(Long userId, Roles role) {
+    public boolean addRole(Long userId, Roles role) {
         UserDTO user = repository.findById(userId).orElse(null);
         if (user != null && !user.getRoles().contains(role)) {
             user.getRoles().add(role);
             save(user);
+            return true;
         }
+        return false;
     }
 
-    public void removeRole(Long userId, Roles role) {
+    public boolean removeRole(Long userId, Roles role) {
         UserDTO user = repository.findById(userId).orElse(null);
         if (user != null && user.getRoles().contains(role)) {
             user.getRoles().remove(role);
             save(user);
+            return true;
         }
+        return false;
     }
 
     private Page<Users> mapDTOtoEntityPage(Page<UserDTO> dtoPage, Pageable pageable) {

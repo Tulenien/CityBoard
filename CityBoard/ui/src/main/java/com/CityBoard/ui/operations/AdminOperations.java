@@ -9,7 +9,7 @@ import java.util.List;
 public interface AdminOperations {
     Paged<Users> getUsersPaged(int currentPage, int pageSize);
 
-    void addUserRole(Long userId, Roles role);
+    boolean addUserRole(Long userId, Roles role);
 
-    void removeUserRole(Long userId, Roles role);
+    boolean removeUserRole(Long userId, Roles role);
 }

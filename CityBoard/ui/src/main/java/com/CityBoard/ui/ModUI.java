@@ -19,8 +19,8 @@ public class ModUI implements ModOperations, CommonOperations {
     }
 
     @Override
-    public void changeAdvertModCheck(Long advertId) {
-        advertsService.changeAdvertModCheck(advertId);
+    public boolean changeAdvertModCheck(Long advertId) {
+        return advertsService.changeAdvertModCheck(advertId);
     }
 
     @Override
