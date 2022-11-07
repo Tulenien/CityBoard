@@ -1,9 +1,6 @@
-package com.CityBoard.postgresql.dto;
+package com.CityBoard.postgresql.dbmodels;
 
-import com.CityBoard.interfaces.AbstractEntityDTO;
-import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Requests;
-import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.RequestStatus;
 import com.CityBoard.models.enums.RequestType;
 import lombok.*;
@@ -20,15 +17,15 @@ import javax.persistence.Table;
 @Setter
 @Getter
 @Table(name = "requests")
-public class RequestDTO extends AbstractEntityDTO {
+public class RequestsModel extends AbstractModel {
     private RequestType type;
     private RequestStatus status;
     @ManyToOne
     @JoinColumn(name = "author_id")
-    private UserDTO user;
+    private UsersModel user;
     @ManyToOne
     @JoinColumn(name = "advert_id")
-    private AdvertDTO advert;
+    private AdvertsModel advert;
 
     public Requests mapDTOtoEntity() {
         Requests request = Requests.builder()

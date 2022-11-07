@@ -1,6 +1,5 @@
-package com.CityBoard.postgresql.dto;
+package com.CityBoard.postgresql.dbmodels;
 
-import com.CityBoard.interfaces.AbstractEntityDTO;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.Roles;
 import com.CityBoard.models.enums.UserStatus;
@@ -20,11 +19,11 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "users")
-public class UserDTO extends AbstractEntityDTO implements UserDetails {
+public class UsersModel extends AbstractModel implements UserDetails {
     @OneToMany(mappedBy = "user")
-    List<RequestDTO> requests;
+    List<RequestsModel> requests;
     @OneToMany(mappedBy = "user")
-    List<AdvertDTO> adverts;
+    List<AdvertsModel> adverts;
     @Column(unique = true, updatable = false)
     private String username;
     @Column(length = 1000)

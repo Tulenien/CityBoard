@@ -3,7 +3,7 @@ package com.CityBoard.rest;
 import com.CityBoard.models.Requests;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.RequestType;
-import com.CityBoard.postgresql.dto.UserDTO;
+import com.CityBoard.postgresql.dbmodels.UsersModel;
 import com.CityBoard.ui.ClientUI;
 import com.CityBoard.ui.NoRegUI;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.coyote.Request;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -79,7 +78,7 @@ public class RequestController {
     public ResponseEntity<Void> makeRequest(@RequestParam("id") Long advertId,
                                             @RequestParam("type") RequestType type,
                                             Principal principal) {
-        UserDTO user = noRegUI.getUserDTOByPrincipal(principal);
+        UsersModel user = noRegUI.getUserDTOByPrincipal(principal);
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create("/advert?id=" + advertId.toString()));
         if(clientUI.makeRequest(user, advertId, type)) {

@@ -4,7 +4,6 @@ import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.models.enums.Roles;
-import com.CityBoard.postgresql.dto.AdvertDTO;
 import com.CityBoard.ui.AdminUI;
 import com.CityBoard.ui.ClientUI;
 import com.CityBoard.ui.ModUI;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Configuration

@@ -1,14 +1,14 @@
 package com.CityBoard.ui.operations;
 
 import com.CityBoard.models.Users;
-import com.CityBoard.postgresql.dto.UserDTO;
+import com.CityBoard.postgresql.dbmodels.UsersModel;
 
 import java.security.Principal;
 
 public interface DefaultOperations {
     boolean isUserAuthenticated();
 
-    UserDTO getUserDTOByPrincipal(Principal principal);
+    UsersModel getUserDTOByPrincipal(Principal principal);
 
     Users getUserByPrincipal(Principal principal);
 

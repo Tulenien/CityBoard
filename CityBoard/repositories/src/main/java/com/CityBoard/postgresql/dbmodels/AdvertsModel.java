@@ -1,15 +1,11 @@
-package com.CityBoard.postgresql.dto;
+package com.CityBoard.postgresql.dbmodels;
 
-import com.CityBoard.interfaces.AbstractEntityDTO;
 import com.CityBoard.models.Adverts;
-import com.CityBoard.models.Requests;
-import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.models.enums.AdvertType;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "adverts")
-public class AdvertDTO extends AbstractEntityDTO {
+public class AdvertsModel extends AbstractModel {
     private AdvertType type;
     private String email;
     private String phone;
@@ -48,9 +44,9 @@ public class AdvertDTO extends AbstractEntityDTO {
     private boolean modCheck;
     @ManyToOne
     @JoinColumn(name = "author_id")
-    private UserDTO user;
+    private UsersModel user;
     @OneToMany(mappedBy = "advert")
-    private List<RequestDTO> requests;
+    private List<RequestsModel> requests;
 
     public Adverts mapDTOtoEntity() {
         Adverts advert = Adverts.builder()

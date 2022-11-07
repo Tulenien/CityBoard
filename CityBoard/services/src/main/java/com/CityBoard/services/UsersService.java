@@ -1,11 +1,9 @@
 package com.CityBoard.services;
 
 
-import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.Roles;
-import com.CityBoard.postgresql.dto.AdvertDTO;
-import com.CityBoard.postgresql.dto.UserDTO;
+import com.CityBoard.postgresql.dbmodels.UsersModel;
 import com.CityBoard.postgresql.repository.UsersRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class UsersService extends AbstractService<UserDTO, UsersRepository> {
+public class UsersService extends AbstractService<UsersModel, UsersRepository> {
     private final PasswordEncoder passwordEncoder;
 
     public UsersService(UsersRepository repository, PasswordEncoder passwordEncoder) {
@@ -30,7 +28,7 @@ public class UsersService extends AbstractService<UserDTO, UsersRepository> {
 
     public Page<Users> getAllUsersPage(int currentPage, int pageSize) {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
-        Page<UserDTO> dtoPage = repository.findAll(pageable);
+        Page<UsersModel> dtoPage = repository.findAll(pageable);
         return mapDTOtoEntityPage(dtoPage, pageable);
     }
 
@@ -39,18 +37,18 @@ public class UsersService extends AbstractService<UserDTO, UsersRepository> {
     }
 
     public Users getUserById(Long userId) {
-        UserDTO user = repository.findById(userId).orElse(null);
+        UsersModel user = repository.findById(userId).orElse(null);
         if (user != null) {
             return user.mapDTOtoEntity();
         }
         return null;
     }
 
-    public UserDTO getUserDTOByUsername(String username) {
+    public UsersModel getUserDTOByUsername(String username) {
         return repository.findByUsername(username);
     }
 
-    public UserDTO getUserDTOById(Long userId) {
+    public UsersModel getUserDTOById(Long userId) {
         return repository.findById(userId).orElse(null);
     }
 
@@ -65,13 +63,13 @@ public class UsersService extends AbstractService<UserDTO, UsersRepository> {
         return passwordEncoder.encode(password);
     }
 
-    public UserDTO createUser(Users user) throws Exception {
+    public UsersModel createUser(Users user) throws Exception {
         if (usernameExists(user.getUsername())) {
             throw new Exception("User with this username already exists");
         }
         Set<Roles> userRoles = new HashSet<>();
         userRoles.add(Roles.ROLE_USER);
-        UserDTO userDTO = new UserDTO();
+        UsersModel userDTO = new UsersModel();
         user.setPassword(cryptPassword(user.getPassword()));
         userDTO.mapEntity(user);
         userDTO.setRoles(userRoles);
@@ -79,7 +77,7 @@ public class UsersService extends AbstractService<UserDTO, UsersRepository> {
     }
 
     public boolean addRole(Long userId, Roles role) {
-        UserDTO user = repository.findById(userId).orElse(null);
+        UsersModel user = repository.findById(userId).orElse(null);
         if (user != null && !user.getRoles().contains(role)) {
             user.getRoles().add(role);
             save(user);
@@ -89,7 +87,7 @@ public class UsersService extends AbstractService<UserDTO, UsersRepository> {
     }
 
     public boolean removeRole(Long userId, Roles role) {
-        UserDTO user = repository.findById(userId).orElse(null);
+        UsersModel user = repository.findById(userId).orElse(null);
         if (user != null && user.getRoles().contains(role)) {
             user.getRoles().remove(role);
             save(user);
@@ -98,24 +96,24 @@ public class UsersService extends AbstractService<UserDTO, UsersRepository> {
         return false;
     }
 
-    private Page<Users> mapDTOtoEntityPage(Page<UserDTO> dtoPage, Pageable pageable) {
-        List<UserDTO> dtoList = dtoPage.getContent();
+    private Page<Users> mapDTOtoEntityPage(Page<UsersModel> dtoPage, Pageable pageable) {
+        List<UsersModel> dtoList = dtoPage.getContent();
         long totalElements = dtoPage.getTotalElements();
 
         List<Users> usersList = new ArrayList<>();
-        for (UserDTO dto : dtoList) {
+        for (UsersModel dto : dtoList) {
             usersList.add(dto.mapDTOtoEntity());
         }
         return new PageImpl<>(usersList, pageable, totalElements);
     }
 
     @Override
-    public void save(UserDTO entity) {
+    public void save(UsersModel entity) {
         repository.save(entity);
     }
 
     @Override
-    public void delete(UserDTO entity) {
+    public void delete(UsersModel entity) {
         repository.delete(entity);
     }
 }

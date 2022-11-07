@@ -1,19 +1,17 @@
 package com.CityBoard.postgresql.repository;
 
-import com.CityBoard.interfaces.CommonRepository;
-import com.CityBoard.postgresql.dto.UserDTO;
+import com.CityBoard.postgresql.dbmodels.UsersModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UsersRepository extends CommonRepository<UserDTO> {
-    Page<UserDTO> findAll(Pageable pageable);
+public interface UsersRepository extends org.springframework.data.jpa.repository.JpaRepository<UsersModel, Long> {
+    Page<UsersModel> findAll(Pageable pageable);
 
-    UserDTO findByUsername(String username);
+    UsersModel findByUsername(String username);
 
-    Optional<UserDTO> findById(Long id);
+    Optional<UsersModel> findById(Long id);
 }

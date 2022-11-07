@@ -5,11 +5,10 @@ import com.CityBoard.models.Requests;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.models.enums.RequestStatus;
-import com.CityBoard.models.enums.Roles;
-import com.CityBoard.postgresql.dto.AdvertDTO;
+import com.CityBoard.postgresql.dbmodels.AdvertsModel;
 import com.CityBoard.models.enums.RequestType;
-import com.CityBoard.postgresql.dto.RequestDTO;
-import com.CityBoard.postgresql.dto.UserDTO;
+import com.CityBoard.postgresql.dbmodels.RequestsModel;
+import com.CityBoard.postgresql.dbmodels.UsersModel;
 import com.CityBoard.services.AdvertsService;
 import com.CityBoard.services.RequestsService;
 import com.CityBoard.ui.operations.ClientOperations;
@@ -32,10 +31,10 @@ public class ClientUI implements ClientOperations, CommonOperations {
     }
 
     @Override
-    public boolean makeRequest(UserDTO user, Long advertId, RequestType type) {
-        AdvertDTO advertDTO = advertsService.getAdvertDTOById(advertId);
+    public boolean makeRequest(UsersModel user, Long advertId, RequestType type) {
+        AdvertsModel advertDTO = advertsService.getAdvertDTOById(advertId);
         if (advertDTO != null) {
-            RequestDTO requestDTO = requestsService.createRequest(user, advertDTO, type);
+            RequestsModel requestDTO = requestsService.createRequest(user, advertDTO, type);
             if (requestDTO != null) {
                 requestsService.save(requestDTO);
                 return true;
@@ -66,7 +65,7 @@ public class ClientUI implements ClientOperations, CommonOperations {
 
     @Override
     public boolean createAdvert(Adverts advert) {
-        AdvertDTO dto = advertsService.createAdvert(advert);
+        AdvertsModel dto = advertsService.createAdvert(advert);
         if (dto != null) {
             advertsService.save(dto);
             return true;
@@ -76,7 +75,7 @@ public class ClientUI implements ClientOperations, CommonOperations {
 
     @Override
     public boolean updateAdvert(Adverts advert) {
-        AdvertDTO dto = advertsService.updateAdvert(advert);
+        AdvertsModel dto = advertsService.updateAdvert(advert);
         if (dto != null) {
             advertsService.save(dto);
             return true;

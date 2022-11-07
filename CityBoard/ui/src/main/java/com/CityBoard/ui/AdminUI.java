@@ -1,10 +1,8 @@
 package com.CityBoard.ui;
 
 import com.CityBoard.models.Adverts;
-import com.CityBoard.models.Requests;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.Roles;
-import com.CityBoard.postgresql.dto.RequestDTO;
 import com.CityBoard.services.AdvertsService;
 import com.CityBoard.services.RequestsService;
 import com.CityBoard.services.UsersService;
@@ -14,8 +12,6 @@ import com.CityBoard.ui.pagination.Paged;
 import com.CityBoard.ui.pagination.Paging;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class AdminUI implements AdminOperations, CommonOperations {
