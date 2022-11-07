@@ -9,8 +9,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(basePackages = "com.CityBoard.postgresql.dto")
 @SpringBootApplication(scanBasePackages = {"com.CityBoard.application",
                                            "com.CityBoard.models",
-                                           "com.CityBoard.controllers",
-                                           //"com.CityBoard.rest",
+                                           //"com.CityBoard.controllers",
+                                           "com.CityBoard.rest",
                                            "com.CityBoard.services",
                                            "com.CityBoard.ui"})
 public class CityBoardApplication {
