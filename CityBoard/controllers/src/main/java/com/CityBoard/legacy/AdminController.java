@@ -1,14 +1,7 @@
 package com.CityBoard.controllers;
 
-import com.CityBoard.models.Users;
-import com.CityBoard.models.enums.Roles;
 import com.CityBoard.ui.AdminUI;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.List;
 
 @Controller
 public class AdminController {

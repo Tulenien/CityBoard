@@ -1,7 +1,7 @@
 package com.CityBoard.services;
 
-import com.CityBoard.postgresql.dbmodels.UsersModel;
-import com.CityBoard.postgresql.repository.UsersRepository;
+import com.CityBoard.interfaces.repository.UsersRepository;
+import com.CityBoard.postgresql.dbmodels.UsersModelImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,7 +17,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UsersModel user = usersRepository.findByUsername(username);
+        UsersModelImpl user = usersRepository.findByUsername(username);
         if (user != null) {
             return user;
         }

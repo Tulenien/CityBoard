@@ -3,10 +3,12 @@ package com.CityBoard.interfaces;
 import com.CityBoard.postgresql.dbmodels.AbstractModel;
 
 import javax.persistence.TypedQuery;
-import java.util.function.Predicate;
+import javax.persistence.criteria.Predicate;
 
 public interface CriteriaRepository<E extends AbstractModel> {
     TypedQuery<E> createTypedQuery();
-    Predicate createPredicates();
+
+    Predicate connectPredicates();
+
     Long countElements(Predicate template);
 }

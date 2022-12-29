@@ -46,8 +46,7 @@ public class UsersController {
             Users user = noRegUI.getUserByPrincipal(principal);
             if (user != null && advert.getAuthorId().equals(user.getId())) {
                 model.addAttribute("userIsNotOwner", false);
-            }
-            else {
+            } else {
                 model.addAttribute("userIsNotOwner", true);
             }
             return "advert";
@@ -71,6 +70,7 @@ public class UsersController {
         }
         return "redirect:/";
     }
+
     @GetMapping("/user/advert/create")
     public String showAdvertCreationForm(Model model) {
         model.addAttribute("AdvertDTO", new Adverts());

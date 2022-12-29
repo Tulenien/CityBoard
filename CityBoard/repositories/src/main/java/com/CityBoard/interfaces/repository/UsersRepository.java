@@ -6,6 +6,12 @@ import org.springframework.data.domain.Pageable;
 
 public interface UsersRepository {
     Page<UsersModel> findAllUsers(Pageable pageable);
+
     UsersModel findUserById(Long id);
+
     UsersModel findUserByUsername(String username);
+
+    void persist(UsersModel model);
+
+    void update(UsersModel model);
 }
