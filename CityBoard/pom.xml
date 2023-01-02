@@ -24,6 +24,7 @@
         <module>repositories</module>
         <module>ui</module>
         <module>models</module>
+        <module>dto</module>
     </modules>
 
     <properties>

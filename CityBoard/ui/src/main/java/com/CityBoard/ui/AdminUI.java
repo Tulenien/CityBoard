@@ -1,5 +1,6 @@
 package com.CityBoard.ui;
 
+import com.CityBoard.dto.AdvertControllerDTO;
 import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.Roles;
@@ -27,7 +28,7 @@ public class AdminUI implements AdminOperations, CommonOperations {
 
     @Override
     public Paged<Users> getUsersPaged(int currentPage, int pageSize) {
-        Page<Users> usersPage = usersService.getAllUsersPage(currentPage, pageSize);
+        Page<AdvertCon> usersPage = usersService.getAllUsersPage(currentPage, pageSize);
         return new Paged<>(usersPage, Paging.of(usersPage.getTotalPages(), currentPage, pageSize));
     }
 
@@ -35,6 +36,7 @@ public class AdminUI implements AdminOperations, CommonOperations {
     public boolean addUserRole(Long userId, Roles role) {
         return usersService.addRole(userId, role);
     }
+
     @Override
     public boolean removeUserRole(Long userId, Roles role) {
         return usersService.removeRole(userId, role);
@@ -42,7 +44,7 @@ public class AdminUI implements AdminOperations, CommonOperations {
 
     @Override
     public Paged<Adverts> getAvailableAdvertsPaged(Users user, int currentPage, int pageSize) {
-        Page<Adverts> advertsPage = advertsService.getAllAdvertsPage(currentPage, pageSize);
+        Page<AdvertControllerDTO> advertsPage = advertsService.getAllAdvertsPage(currentPage, pageSize);
         return new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
     }
 

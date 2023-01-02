@@ -1,4 +1,4 @@
-package com.CityBoard.controllers;
+package com.CityBoard.legacy;
 
 import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Users;

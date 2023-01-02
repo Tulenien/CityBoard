@@ -1,6 +1,5 @@
 package com.CityBoard.ui.pagination;
 
-import com.CityBoard.ui.pagination.PageItemType;
 import com.CityBoard.ui.operations.PagingOperations;
 import lombok.*;
 

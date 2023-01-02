@@ -17,18 +17,16 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
 @Configuration
 @SecurityScheme(name = "basicAuth", scheme = "basic", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER,
-description = "Roles: USER_ROLE, MOD_ROLE, ADMIN_ROLE")
+        description = "Roles: USER_ROLE, MOD_ROLE, ADMIN_ROLE")
 @OpenAPIDefinition(info = @Info(title = "CityBoard API", version = "v1"))
 
 @Tag(name = "User API")
@@ -43,8 +41,8 @@ public class UserController {
     }
 
     @Operation(security = @SecurityRequirement(name = "basicAuth"),
-               responses = {@ApiResponse(responseCode = "200", description = "Successfully return users page content")},
-               description = "Role required: ADMIN_ROLE")
+            responses = {@ApiResponse(responseCode = "200", description = "Successfully return users page content")},
+            description = "Role required: ADMIN_ROLE")
     @GetMapping("/users")
     public ResponseEntity<Paged<Users>> showUsersPaged(
             @RequestParam(value = "pageNumber", required = false, defaultValue = "1") int currentPage,
@@ -55,11 +53,11 @@ public class UserController {
 
     @Operation(security = @SecurityRequirement(name = "basicAuth"),
             responses = {@ApiResponse(responseCode = "200", description = "Successfully removed role, return to /users",
-                                      links = {@Link(name = "Get users page", operationId = "getUsersPaged",
-                                                     parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
-                                                                    @LinkParameter(name = "pageSize", expression = "10")}
-                                      )}),
-                         @ApiResponse(responseCode = "404", description = "User not found")},
+                    links = {@Link(name = "Get users page", operationId = "getUsersPaged",
+                            parameters = {@LinkParameter(name = "pageNumber", expression = "1"),
+                                    @LinkParameter(name = "pageSize", expression = "10")}
+                    )}),
+                    @ApiResponse(responseCode = "404", description = "User not found")},
             description = "Role required: ADMIN_ROLE")
     @PutMapping("/user/roles/remove")
     public ResponseEntity<Void> removeUserRole(@RequestParam("id") Long id,
@@ -75,7 +73,7 @@ public class UserController {
     @Operation(security = @SecurityRequirement(name = "basicAuth"),
             responses = {@ApiResponse(responseCode = "200", description = "Successfully added role, return to /users",
                     links = {@Link(name = "Get users page", operationId = "getUsersPaged",
-                            parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
+                            parameters = {@LinkParameter(name = "pageNumber", expression = "1"),
                                     @LinkParameter(name = "pageSize", expression = "10")}
                     )}),
                     @ApiResponse(responseCode = "404", description = "User not found")},
@@ -92,10 +90,10 @@ public class UserController {
     }
 
     @Operation(responses = {@ApiResponse(responseCode = "201", description = "New user created and saved in database",
-                    links = {@Link(name = "Get adverts page", operationId = "getAdvertsPaged",
-                            parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
-                                           @LinkParameter(name = "pageSize", expression = "10")})}),
-                            @ApiResponse(responseCode = "409", description = "Username exists in database")})
+            links = {@Link(name = "Get adverts page", operationId = "getAdvertsPaged",
+                    parameters = {@LinkParameter(name = "pageNumber", expression = "1"),
+                            @LinkParameter(name = "pageSize", expression = "10")})}),
+            @ApiResponse(responseCode = "409", description = "Username exists in database")})
     @PostMapping("/register")
     public ResponseEntity<Void> registerUser(@RequestParam("username") String username,
                                              @RequestParam("password") String password) {

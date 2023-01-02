@@ -1,14 +1,12 @@
 package com.CityBoard.postgresql.dbmodels;
 
+import com.CityBoard.interfaces.dbmodels.UsersModel;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.Roles;
 import com.CityBoard.models.enums.UserStatus;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -19,16 +17,16 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "users")
-public class UsersModel extends AbstractModel implements UserDetails {
+public class UsersModelImpl extends AbstractModel implements UsersModel {
     @OneToMany(mappedBy = "user")
-    List<RequestsModel> requests;
+    List<RequestsModelImpl> requests;
     @OneToMany(mappedBy = "user")
-    List<AdvertsModel> adverts;
+    List<AdvertsModelImpl> adverts;
     @Column(unique = true, updatable = false)
     private String username;
     @Column(length = 1000)
     private String password;
-    private String name;
+    private String name;git
     private String surname;
     private String middle_name;
     private UserStatus status;
@@ -63,36 +61,5 @@ public class UsersModel extends AbstractModel implements UserDetails {
         status = user.getStatus();
         password_expired = user.isPassword_expired();
         roles = user.getRoles();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        if (this.status != UserStatus.BANNED) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return !password_expired;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        if (this.status != UserStatus.DELETED) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles;
     }
 }

@@ -1,5 +1,6 @@
 package com.CityBoard.postgresql.dbmodels;
 
+import com.CityBoard.interfaces.dbmodels.RequestsModel;
 import com.CityBoard.models.Requests;
 import com.CityBoard.models.enums.RequestStatus;
 import com.CityBoard.models.enums.RequestType;
@@ -17,15 +18,15 @@ import javax.persistence.Table;
 @Setter
 @Getter
 @Table(name = "requests")
-public class RequestsModel extends AbstractModel {
+public class RequestsModelImpl extends AbstractModel implements RequestsModel {
     private RequestType type;
     private RequestStatus status;
     @ManyToOne
     @JoinColumn(name = "author_id")
-    private UsersModel user;
+    private UsersModelImpl user;
     @ManyToOne
     @JoinColumn(name = "advert_id")
-    private AdvertsModel advert;
+    private AdvertsModelImpl advert;
 
     public Requests mapDTOtoEntity() {
         Requests request = Requests.builder()

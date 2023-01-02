@@ -3,23 +3,22 @@ package com.CityBoard.services;
 import com.CityBoard.models.Requests;
 import com.CityBoard.models.enums.RequestStatus;
 import com.CityBoard.models.enums.RequestType;
-import com.CityBoard.postgresql.dbmodels.AdvertsModel;
-import com.CityBoard.postgresql.dbmodels.RequestsModel;
-import com.CityBoard.postgresql.dbmodels.UsersModel;
-import com.CityBoard.postgresql.repository.RequestsRepository;
+import com.CityBoard.postgresql.dbmodels.AdvertsModelImpl;
+import com.CityBoard.postgresql.dbmodels.RequestsModelImpl;
+import com.CityBoard.postgresql.dbmodels.UsersModelImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class RequestsService extends AbstractService<RequestsModel, RequestsRepository> {
+public class RequestsService extends AbstractService<RequestsModelImpl, RequestsRepository> {
     public RequestsService(RequestsRepository repository) {
         super(repository);
     }
 
-    public RequestsModel createRequest(UsersModel user, AdvertsModel advert, RequestType type) {
-        return RequestsModel.builder()
+    public RequestsModelImpl createRequest(UsersModelImpl user, AdvertsModelImpl advert, RequestType type) {
+        return RequestsModelImpl.builder()
                 .type(type)
                 .status(RequestStatus.PENDING)
                 .user(user)
@@ -28,7 +27,7 @@ public class RequestsService extends AbstractService<RequestsModel, RequestsRepo
     }
 
     public List<Requests> getIncomingRequests(Long userId) {
-        List<RequestsModel> requests = repository.findIncoming(userId);
+        List<RequestsModelImpl> requests = repository.findIncoming(userId);
         if (requests.isEmpty()) {
             return null;
         }
@@ -36,7 +35,7 @@ public class RequestsService extends AbstractService<RequestsModel, RequestsRepo
     }
 
     public List<Requests> getOutgoingRequests(Long userId) {
-        List<RequestsModel> requests = repository.findOutgoing(userId);
+        List<RequestsModelImpl> requests = repository.findOutgoing(userId);
         if (requests.isEmpty()) {
             return null;
         }
@@ -44,19 +43,19 @@ public class RequestsService extends AbstractService<RequestsModel, RequestsRepo
     }
 
     public Requests getRequestById(Long requestId) {
-        RequestsModel request = repository.findById(requestId).orElse(null);
+        RequestsModelImpl request = repository.findById(requestId).orElse(null);
         if (request != null) {
             return request.mapDTOtoEntity();
         }
         return null;
     }
 
-    public RequestsModel getRequestDTOById(Long requestId) {
+    public RequestsModelImpl getRequestDTOById(Long requestId) {
         return repository.findById(requestId).orElse(null);
     }
 
     public boolean changeRequestStatus(Long requestId, RequestStatus status) {
-        RequestsModel request = repository.findById(requestId).orElse(null);
+        RequestsModelImpl request = repository.findById(requestId).orElse(null);
         if (request != null) {
             request.setStatus(status);
             save(request);
@@ -65,21 +64,21 @@ public class RequestsService extends AbstractService<RequestsModel, RequestsRepo
         return false;
     }
 
-    private List<Requests> mapDTOtoEntityList(List<RequestsModel> dtoList) {
+    private List<Requests> mapDTOtoEntityList(List<RequestsModelImpl> dtoList) {
         List<Requests> requestsList = new ArrayList<>();
-        for (RequestsModel dto : dtoList) {
+        for (RequestsModelImpl dto : dtoList) {
             requestsList.add(dto.mapDTOtoEntity());
         }
         return requestsList;
     }
 
     @Override
-    public void save(RequestsModel entity) {
+    public void save(RequestsModelImpl entity) {
         repository.save(entity);
     }
 
     @Override
-    public void delete(RequestsModel entity) {
+    public void delete(RequestsModelImpl entity) {
         repository.delete(entity);
     }
 }

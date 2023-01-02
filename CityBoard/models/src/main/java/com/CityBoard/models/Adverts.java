@@ -4,26 +4,28 @@ import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.models.enums.AdvertType;
 import lombok.*;
 
-import java.util.List;
-
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class Adverts {
+    // Service info
     private Long id;
     private AdvertType type;
+    private AdvertStatus status;
+    private boolean modCheck;
+    private Long authorId;
+    // Contact info
     private String email;
     private String phone;
-    private AdvertStatus status;
     // Address
     private String city;
     private String district;
     private String street;
     private String houseCode;
     private Integer flatNumber;
-    // Info
+    // Realty info
     private Integer floor;
     private Integer floors;
     private Integer roomsNumber;
@@ -31,9 +33,4 @@ public class Adverts {
     private Float livingArea;
     private Integer price;
     private String description;
-
-    // Service info
-    private boolean modCheck;
-
-    private Long authorId;
 }

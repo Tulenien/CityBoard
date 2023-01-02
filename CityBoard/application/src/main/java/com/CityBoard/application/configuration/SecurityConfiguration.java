@@ -1,6 +1,6 @@
 package com.CityBoard.application.configuration;
 
-import com.CityBoard.services.CustomUserDetailsService;
+import com.CityBoard.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,9 +21,9 @@ import java.util.Map;
 @EnableWebSecurity
 public class SecurityConfiguration {
     @Autowired
-    private final CustomUserDetailsService userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    public SecurityConfiguration(CustomUserDetailsService userDetailsService) {
+    public SecurityConfiguration(UserDetailsServiceImpl userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 

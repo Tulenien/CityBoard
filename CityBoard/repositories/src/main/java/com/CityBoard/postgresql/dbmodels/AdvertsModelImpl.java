@@ -1,5 +1,6 @@
 package com.CityBoard.postgresql.dbmodels;
 
+import com.CityBoard.interfaces.dbmodels.AdvertsModel;
 import com.CityBoard.models.Adverts;
 import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.models.enums.AdvertType;
@@ -15,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "adverts")
-public class AdvertsModel extends AbstractModel {
+public class AdvertsModelImpl extends AbstractModel {
     private AdvertType type;
     private String email;
     private String phone;
@@ -44,9 +45,9 @@ public class AdvertsModel extends AbstractModel {
     private boolean modCheck;
     @ManyToOne
     @JoinColumn(name = "author_id")
-    private UsersModel user;
+    private UsersModelImpl user;
     @OneToMany(mappedBy = "advert")
-    private List<RequestsModel> requests;
+    private List<RequestsModelImpl> requests;
 
     public Adverts mapDTOtoEntity() {
         Adverts advert = Adverts.builder()

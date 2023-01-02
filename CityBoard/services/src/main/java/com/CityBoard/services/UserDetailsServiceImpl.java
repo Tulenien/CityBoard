@@ -1,23 +1,28 @@
 package com.CityBoard.services;
 
-import com.CityBoard.interfaces.repository.UsersRepository;
-import com.CityBoard.postgresql.dbmodels.UsersModelImpl;
+import com.CityBoard.dto.mapping.UsersDTOMapper;
+import com.CityBoard.common.repository.UsersRepository;
+import com.CityBoard.models.Users;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
     private final UsersRepository usersRepository;
+    private final UsersDTOMapper repositoryMapper;
 
-    public CustomUserDetailsService(UsersRepository usersRepository) {
+    public UserDetailsServiceImpl(UsersRepository usersRepository,
+                                  @Qualifier("repository") UsersDTOMapper repositoryMapper) {
         this.usersRepository = usersRepository;
+        this.repositoryMapper = repositoryMapper;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UsersModelImpl user = usersRepository.findByUsername(username);
+        Users user = repositoryMapper.mapDTOtoUsers(usersRepository.findUserByUsername(username));
         if (user != null) {
             return user;
         }

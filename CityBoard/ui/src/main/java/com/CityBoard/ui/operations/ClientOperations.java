@@ -3,12 +3,12 @@ package com.CityBoard.ui.operations;
 import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Requests;
 import com.CityBoard.models.enums.RequestType;
-import com.CityBoard.postgresql.dbmodels.UsersModel;
+import com.CityBoard.postgresql.dbmodels.UsersModelImpl;
 
 import java.util.List;
 
 public interface ClientOperations {
-    boolean makeRequest(UsersModel user, Long advertId, RequestType type);
+    boolean makeRequest(UsersModelImpl user, Long advertId, RequestType type);
 
     List<Requests> getIncomingRequests(Long userId);
 

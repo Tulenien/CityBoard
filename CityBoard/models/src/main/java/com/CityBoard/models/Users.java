@@ -2,11 +2,11 @@ package com.CityBoard.models;
 
 import com.CityBoard.models.enums.Roles;
 import com.CityBoard.models.enums.UserStatus;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 
 @Builder
@@ -14,24 +14,53 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Users {
+public class Users implements UserDetails {
     private Long id;
     private String username;
     private String password;
+    private Set<Roles> roles;
+    private UserStatus status;
+    private boolean password_expired;
+    // User info
     private String name;
     private String surname;
     private String middle_name;
-    private UserStatus status;
-    private boolean password_expired;
-    private Set<Roles> roles;
 
-    @JsonIgnore
-    public Set<Roles> getUnusedRoles() {
-        Set<Roles> allRoles = new HashSet<>();
-        allRoles.add(Roles.ROLE_USER);
-        allRoles.add(Roles.ROLE_MOD);
-        allRoles.add(Roles.ROLE_ADMIN);
-        allRoles.removeAll(roles);
-        return allRoles;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
     }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        if (status == UserStatus.ACTIVE) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return !password_expired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
+
+    //@JsonIgnore
+    //public Set<Roles> getUnusedRoles() {
+    //    Set<Roles> allRoles = new HashSet<>();
+    //    for (Roles role : Roles.values()) {
+    //        allRoles.add(role);
+    //    }
+    //    allRoles.removeAll(roles);
+    //    return allRoles;
+    //}
 }

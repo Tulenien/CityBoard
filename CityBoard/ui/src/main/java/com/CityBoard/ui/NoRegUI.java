@@ -2,7 +2,7 @@ package com.CityBoard.ui;
 
 import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Users;
-import com.CityBoard.postgresql.dbmodels.UsersModel;
+import com.CityBoard.postgresql.dbmodels.UsersModelImpl;
 import com.CityBoard.services.AdvertsService;
 import com.CityBoard.services.UsersService;
 import com.CityBoard.ui.operations.CommonOperations;
@@ -44,7 +44,7 @@ public class NoRegUI implements DefaultOperations, CommonOperations {
     }
 
     @Override
-    public UsersModel getUserDTOByPrincipal(Principal principal) {
+    public UsersModelImpl getUserDTOByPrincipal(Principal principal) {
         if (isUserAuthenticated()) {
             return usersService.getUserDTOByUsername(principal.getName());
         }
@@ -54,10 +54,9 @@ public class NoRegUI implements DefaultOperations, CommonOperations {
     @Override
     public boolean registerUser(Users user) {
         try {
-            UsersModel dto = usersService.createUser(user);
+            UsersModelImpl dto = usersService.createUser(user);
             usersService.save(dto);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
         return true;
