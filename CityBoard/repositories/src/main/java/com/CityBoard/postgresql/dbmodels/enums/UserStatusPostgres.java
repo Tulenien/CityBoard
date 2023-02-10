@@ -1,13 +1,13 @@
-package com.CityBoard.common.dto.enums;
+package com.CityBoard.postgresql.dbmodels.enums;
 
-public enum UserStatusRepo {
+public enum UserStatusPostgres {
     ACTIVE(0),
     BANNED(1),
     DELETED(2);
 
     private final Integer value;
 
-    private UserStatusRepo(Integer value) {
+    private UserStatusPostgres(Integer value) {
         this.value = value;
     }
 

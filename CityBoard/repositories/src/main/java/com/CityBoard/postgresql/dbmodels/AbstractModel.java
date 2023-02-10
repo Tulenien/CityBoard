@@ -1,5 +1,6 @@
 package com.CityBoard.postgresql.dbmodels;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,9 +14,8 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 @MappedSuperclass
-@Getter
-@Setter
-public abstract class AbstractModel implements Serializable {
+@Data
+public abstract class AbstractModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;

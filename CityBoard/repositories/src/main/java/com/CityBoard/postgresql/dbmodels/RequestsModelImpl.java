@@ -1,47 +1,26 @@
 package com.CityBoard.postgresql.dbmodels;
 
-import com.CityBoard.interfaces.dbmodels.RequestsModel;
-import com.CityBoard.models.Requests;
-import com.CityBoard.models.enums.RequestStatus;
-import com.CityBoard.models.enums.RequestType;
+import com.CityBoard.postgresql.dbmodels.enums.RequestStatusPostgres;
+import com.CityBoard.postgresql.dbmodels.enums.RequestTypePostgres;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
-@Getter
+@Data
 @Table(name = "requests")
-public class RequestsModelImpl extends AbstractModel implements RequestsModel {
-    private RequestType type;
-    private RequestStatus status;
+public class RequestsModelImpl extends AbstractModel {
+    @Enumerated(EnumType.ORDINAL)
+    private RequestTypePostgres type;
+    @Enumerated(EnumType.ORDINAL)
+    private RequestStatusPostgres status;
     @ManyToOne
     @JoinColumn(name = "author_id")
     private UsersModelImpl user;
     @ManyToOne
     @JoinColumn(name = "advert_id")
     private AdvertsModelImpl advert;
-
-    public Requests mapDTOtoEntity() {
-        Requests request = Requests.builder()
-                .id(id)
-                .type(type)
-                .status(status)
-                .authorId(user.getId())
-                .advertId(advert.getId())
-                .build();
-        return request;
-    }
-
-    public void mapEntity(Requests request) {
-        id = request.getId();
-        type = request.getType();
-        status = request.getStatus();
-    }
 }

@@ -1,5 +1,6 @@
 package com.CityBoard.services;
 
+import com.CityBoard.dto.AdvertControllerDTO;
 import com.CityBoard.dto.AdvertDTO;
 import com.CityBoard.dto.mapping.AdvertsDTOMapper;
 import com.CityBoard.common.repository.AdvertsRepository;
@@ -94,7 +95,8 @@ public class AdvertsService {
 
     public Page<AdvertDTO> getAllAdvertsPage(int currentPage, int pageSize) {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
-        Page<Adverts> advertsPage = repositoryMapper.mapDTOtoAdvertsPage(repository.findAdvertsPageNoFilter(pageable));
+        Page<Adverts> advertsPage = repositoryMapper.mapDTOtoAdvertsPage(
+                repository.findAdvertsPageNoFilter(pageable));
         return controllerMapper.mapAdvertsPageToDTO(advertsPage);
     }
 

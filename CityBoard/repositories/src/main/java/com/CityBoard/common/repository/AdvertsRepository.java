@@ -2,13 +2,14 @@ package com.CityBoard.common.repository;
 
 import com.CityBoard.dto.AdvertDTO;
 import com.CityBoard.models.enums.AdvertStatus;
+import com.CityBoard.postgresql.dto.AdvertRepositoryDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface AdvertsRepository {
-    Page<AdvertDTO> findAdvertsPageNoFilter(Pageable pageable);
+    Page<AdvertRepositoryDTO> findAdvertsPageNoFilter(Pageable pageable);
 
     Page<AdvertDTO> findAdvertsPageWithStatus(Pageable pageable, AdvertStatus status);
 

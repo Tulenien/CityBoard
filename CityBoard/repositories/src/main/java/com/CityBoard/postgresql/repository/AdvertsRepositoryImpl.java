@@ -1,7 +1,6 @@
 package com.CityBoard.postgresql.repository;
 
 import com.CityBoard.dto.AdvertDTO;
-import com.CityBoard.interfaces.dbmodels.AdvertsModel;
 import com.CityBoard.interfaces.mapping.AdvertsModelDTOMapper;
 import com.CityBoard.common.repository.AdvertsRepository;
 import com.CityBoard.models.enums.AdvertStatus;
@@ -26,7 +25,7 @@ public class AdvertsRepositoryImpl implements AdvertsRepository {
         this.mapper = mapper;
     }
 
-    public Page<AdvertDTO> findAdvertsPageNoFilter(Pageable pageable) {
+    public Page<AdvertRepositoryDTO> findAdvertsPageNoFilter(Pageable pageable) {
         TypedQuery<AdvertsModelImpl> query = entityManager.createQuery("select a from AdvertsModel",
                 AdvertsModelImpl.class);
         query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
@@ -47,7 +46,8 @@ public class AdvertsRepositoryImpl implements AdvertsRepository {
         TypedQuery<Long> countQuery = entityManager.createQuery("select count(a) from AdvertsModel a where " +
                 "status=:status", Long.class);
         countQuery.setParameter("status", status);
-        return new PageImpl<>(query.getResultList(), pageable, countQuery.getSingleResult());
+        Page<AdvertsModelImpl> advertsModelPage = new PageImpl<>(query.getResultList(), pageable, countQuery.getSingleResult());
+        return mapper.mapAdvertsModelPageToDTO(advertsModelPage);
     }
 
     @Override
