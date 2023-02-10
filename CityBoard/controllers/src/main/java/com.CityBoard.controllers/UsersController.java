@@ -24,73 +24,74 @@ public class UsersController {
         this.clientUI = clientUI;
     }
 
-    @GetMapping("/")
-    public String showAdverts(@RequestParam(value = "pageNumber", required = false, defaultValue = "1") int currentPage,
-                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-                              Model model, Principal principal) {
-        Paged<Adverts> advertsPaged;
-        if (noRegUI.isUserAuthenticated()) {
-            advertsPaged = clientUI.getAvailableAdvertsPaged(noRegUI.getUserByPrincipal(principal), currentPage, pageSize);
-        } else {
-            advertsPaged = noRegUI.getAvailableAdvertsPaged(null, currentPage, pageSize);
-        }
-        model.addAttribute("AdvertsPage", advertsPaged);
-        return "index";
-    }
+    //@GetMapping("/")
+    //public String showAdverts(@RequestParam(value = "pageNumber", required = false, defaultValue = "1") int currentPage,
+                               //                          @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                               //                          Model model, Principal principal) {
+        //    Paged<Adverts> advertsPaged;
+        //    if (noRegUI.isUserAuthenticated()) {
+            //        advertsPaged = clientUI.getAvailableAdvertsPaged(noRegUI.getUserByPrincipal(principal), currentPage, pageSize);
+            //    } else {
+            //        advertsPaged = noRegUI.getAvailableAdvertsPaged(null, currentPage, pageSize);
+            //    }
+        //    model.addAttribute("AdvertsPage", advertsPaged);
+        //    return "index";
+        //}
+    //
+            //@GetMapping("/advert")
+    //public String showAdvert(@RequestParam(value = "id") Long advertId, Principal principal, Model model) {
+        //    Adverts advert = clientUI.getAdvert(advertId);
+        //    if (advert != null) {
+            //        model.addAttribute("advert", advert);
+            //        Users user = noRegUI.getUserByPrincipal(principal);
+            //        if (user != null && advert.getAuthorId().equals(user.getId())) {
+                //            model.addAttribute("userIsNotOwner", false);
+                //        }
+            //        else {
+                //            model.addAttribute("userIsNotOwner", true);
+                //        }
+            //        return "advert";
+            //    }
+        //    return "redirect:/";
+        //}
+    //
+            //@GetMapping("/registration")
+    //public String showRegistrationForm(Model model) {
+        //    model.addAttribute("UserCredentialsDTO", new Users());
+        //    return "registration";
+        //}
 
-    @GetMapping("/advert")
-    public String showAdvert(@RequestParam(value = "id") Long advertId, Principal principal, Model model) {
-        Adverts advert = clientUI.getAdvert(advertId);
-        if (advert != null) {
-            model.addAttribute("advert", advert);
-            Users user = noRegUI.getUserByPrincipal(principal);
-            if (user != null && advert.getAuthorId().equals(user.getId())) {
-                model.addAttribute("userIsNotOwner", false);
-            }
-            else {
-                model.addAttribute("userIsNotOwner", true);
-            }
-            return "advert";
-        }
-        return "redirect:/";
-    }
+    //@PostMapping("/register")
+    //public String registerUser(Users user, BindingResult bindingResult, Model model) {
+    //    boolean status = noRegUI.registerUser(user);
+    //    if (status == false) {
+    //        bindingResult.rejectValue("username", "Данное имя занято");
+    //        model.addAttribute("UserCredentialsDTO", user);
+    //        return "registration";
+    //    }
+    //    return "redirect:/";
+    //}
 
-    @GetMapping("/registration")
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("UserCredentialsDTO", new Users());
-        return "registration";
-    }
+    //@GetMapping("/user/advert/create")
+    //public String showAdvertCreationForm(Model model) {
+    //    model.addAttribute("AdvertDTO", new Adverts());
+    //    return "create-advert";
+    //}
 
-    @PostMapping("/register")
-    public String registerUser(Users user, BindingResult bindingResult, Model model) {
-        boolean status = noRegUI.registerUser(user);
-        if (status == false) {
-            bindingResult.rejectValue("username", "Данное имя занято");
-            model.addAttribute("UserCredentialsDTO", user);
-            return "registration";
-        }
-        return "redirect:/";
-    }
-    @GetMapping("/user/advert/create")
-    public String showAdvertCreationForm(Model model) {
-        model.addAttribute("AdvertDTO", new Adverts());
-        return "create-advert";
-    }
-
-    @GetMapping("/user/advert/update")
-    public String showAdvertUpdateForm(@RequestParam(value = "id") Long advertId, Principal principal, Model model) {
-        if (noRegUI.isUserAuthenticated()) {
-            Users user = noRegUI.getUserByPrincipal(principal);
-            if (user != null) {
-                Adverts advert = clientUI.getAdvert(advertId);
-                if (advert != null && user.getId().equals(advert.getAuthorId())) {
-                    model.addAttribute("AdvertDTO", advert);
-                    return "update-advert";
-                }
-            }
-        }
-        return "redirect:/user/adverts";
-    }
+    //@GetMapping("/user/advert/update")
+    //public String showAdvertUpdateForm(@RequestParam(value = "id") Long advertId, Principal principal, Model model) {
+    //            if (noRegUI.isUserAuthenticated()) {
+    //                        Users user = noRegUI.getUserByPrincipal(principal);
+    //                       if (user != null) {
+    //                                    Adverts advert = clientUI.getAdvert(advertId);
+    //                                    if (advert != null && user.getId().equals(advert.getAuthorId())) {
+    //                                                model.addAttribute("AdvertDTO", advert);
+    //                                                return "update-advert";
+    //                                            }
+    //                                }
+    //              }
+    //           return "redirect:/user/adverts";
+    //   }
 
     //@PostMapping("/user/adverts/save")
     //public String saveAdvert(AdvertDTO dto, Principal principal, BindingResult bindingResult, Model model) {
