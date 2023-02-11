@@ -3,7 +3,7 @@ package com.CityBoard.services;
 
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.Roles;
-import com.CityBoard.postgresql.dbmodels.UsersModelImpl;
+import com.CityBoard.postgresql.dbmodels.UsersPostgres;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class UsersService extends AbstractService<UsersModelImpl, UsersRepository> {
+public class UsersService extends AbstractService<UsersPostgres, UsersRepository> {
     private final PasswordEncoder passwordEncoder;
 
     public UsersService(UsersRepository repository, PasswordEncoder passwordEncoder) {
@@ -27,7 +27,7 @@ public class UsersService extends AbstractService<UsersModelImpl, UsersRepositor
 
     public Page<Users> getAllUsersPage(int currentPage, int pageSize) {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
-        Page<UsersModelImpl> dtoPage = repository.findAll(pageable);
+        Page<UsersPostgres> dtoPage = repository.findAll(pageable);
         return mapDTOtoEntityPage(dtoPage, pageable);
     }
 
@@ -36,18 +36,18 @@ public class UsersService extends AbstractService<UsersModelImpl, UsersRepositor
     }
 
     public Users getUserById(Long userId) {
-        UsersModelImpl user = repository.findById(userId).orElse(null);
+        UsersPostgres user = repository.findById(userId).orElse(null);
         if (user != null) {
             return user.mapDTOtoEntity();
         }
         return null;
     }
 
-    public UsersModelImpl getUserDTOByUsername(String username) {
+    public UsersPostgres getUserDTOByUsername(String username) {
         return repository.findByUsername(username);
     }
 
-    public UsersModelImpl getUserDTOById(Long userId) {
+    public UsersPostgres getUserDTOById(Long userId) {
         return repository.findById(userId).orElse(null);
     }
 
@@ -62,13 +62,13 @@ public class UsersService extends AbstractService<UsersModelImpl, UsersRepositor
         return passwordEncoder.encode(password);
     }
 
-    public UsersModelImpl createUser(Users user) throws Exception {
+    public UsersPostgres createUser(Users user) throws Exception {
         if (usernameExists(user.getUsername())) {
             throw new Exception("User with this username already exists");
         }
         Set<Roles> userRoles = new HashSet<>();
         userRoles.add(Roles.ROLE_USER);
-        UsersModelImpl userDTO = new UsersModelImpl();
+        UsersPostgres userDTO = new UsersPostgres();
         user.setPassword(cryptPassword(user.getPassword()));
         userDTO.mapEntity(user);
         userDTO.setRoles(userRoles);
@@ -76,7 +76,7 @@ public class UsersService extends AbstractService<UsersModelImpl, UsersRepositor
     }
 
     public boolean addRole(Long userId, Roles role) {
-        UsersModelImpl user = repository.findById(userId).orElse(null);
+        UsersPostgres user = repository.findById(userId).orElse(null);
         if (user != null && !user.getRoles().contains(role)) {
             user.getRoles().add(role);
             save(user);
@@ -86,7 +86,7 @@ public class UsersService extends AbstractService<UsersModelImpl, UsersRepositor
     }
 
     public boolean removeRole(Long userId, Roles role) {
-        UsersModelImpl user = repository.findById(userId).orElse(null);
+        UsersPostgres user = repository.findById(userId).orElse(null);
         if (user != null && user.getRoles().contains(role)) {
             user.getRoles().remove(role);
             save(user);
@@ -95,24 +95,24 @@ public class UsersService extends AbstractService<UsersModelImpl, UsersRepositor
         return false;
     }
 
-    private Page<Users> mapDTOtoEntityPage(Page<UsersModelImpl> dtoPage, Pageable pageable) {
-        List<UsersModelImpl> dtoList = dtoPage.getContent();
+    private Page<Users> mapDTOtoEntityPage(Page<UsersPostgres> dtoPage, Pageable pageable) {
+        List<UsersPostgres> dtoList = dtoPage.getContent();
         long totalElements = dtoPage.getTotalElements();
 
         List<Users> usersList = new ArrayList<>();
-        for (UsersModelImpl dto : dtoList) {
+        for (UsersPostgres dto : dtoList) {
             usersList.add(dto.mapDTOtoEntity());
         }
         return new PageImpl<>(usersList, pageable, totalElements);
     }
 
     @Override
-    public void save(UsersModelImpl entity) {
+    public void save(UsersPostgres entity) {
         repository.save(entity);
     }
 
     @Override
-    public void delete(UsersModelImpl entity) {
+    public void delete(UsersPostgres entity) {
         repository.delete(entity);
     }
 }

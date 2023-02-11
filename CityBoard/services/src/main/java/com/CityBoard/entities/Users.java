@@ -2,17 +2,14 @@ package com.CityBoard.entities;
 
 import com.CityBoard.entities.enums.Roles;
 import com.CityBoard.entities.enums.UserStatus;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Set;
 
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class Users implements UserDetails {
     private Long id;
     private String username;

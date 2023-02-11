@@ -1,8 +1,8 @@
 package com.CityBoard.postgresql.repository;
 
-import com.CityBoard.common.repository.RequestsRepository;
+import com.CityBoard.interfaces.RequestsRepository;
 import com.CityBoard.models.enums.RequestStatus;
-import com.CityBoard.postgresql.dbmodels.RequestsModelImpl;
+import com.CityBoard.postgresql.dbmodels.RequestsPostgres;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
@@ -19,17 +19,17 @@ public class RequestsRepositoryImpl implements RequestsRepository {
     }
 
     @Override
-    public RequestsModelImpl findRequestById(Long id) {
-        TypedQuery<RequestsModelImpl> query = entityManager.createQuery("select r from RequestsModel r where r.id=:id",
-                RequestsModelImpl.class);
+    public RequestsPostgres findRequestById(Long id) {
+        TypedQuery<RequestsPostgres> query = entityManager.createQuery("select r from RequestsModel r where r.id=:id",
+                RequestsPostgres.class);
         return query.setParameter("id", id).getSingleResult();
     }
 
     @Override
-    public List<RequestsModelImpl> findIncomingRequestsListByAuthor(Long authorId) {
-        TypedQuery<RequestsModelImpl> query = entityManager.createQuery("select r from RequestsModel r where " +
+    public List<RequestsPostgres> findIncomingRequestsListByAuthor(Long authorId) {
+        TypedQuery<RequestsPostgres> query = entityManager.createQuery("select r from RequestsModel r where " +
                 "r.advert_id in (select a.id from AdvertsModel where a.author_id =:authorId) " +
-                "and r.status=:status", RequestsModelImpl.class);
+                "and r.status=:status", RequestsPostgres.class);
         query.setParameter("authorId", authorId);
         query.setParameter("status", RequestStatus.PENDING);
         return query.setParameter("authorId", authorId).getResultList();
@@ -37,21 +37,21 @@ public class RequestsRepositoryImpl implements RequestsRepository {
     }
 
     @Override
-    public List<RequestsModelImpl> findOutgoingRequestsListByAuthor(Long authorId) {
-        TypedQuery<RequestsModelImpl> query = entityManager.createQuery("select r from RequestsModel r where " +
-                "r.advert_id=:authorId and r.status<>:status", RequestsModelImpl.class);
+    public List<RequestsPostgres> findOutgoingRequestsListByAuthor(Long authorId) {
+        TypedQuery<RequestsPostgres> query = entityManager.createQuery("select r from RequestsModel r where " +
+                "r.advert_id=:authorId and r.status<>:status", RequestsPostgres.class);
         query.setParameter("authorId", authorId);
         query.setParameter("status", RequestStatus.DELETED);
         return query.setParameter("authorId", authorId).getResultList();
     }
 
     @Override
-    public void persist(RequestsModelImpl model) {
+    public void persist(RequestsPostgres model) {
         entityManager.persist(model);
     }
 
     @Override
-    public void update(RequestsModelImpl model) {
+    public void update(RequestsPostgres model) {
         Session session = entityManager.unwrap(Session.class);
         session.update(model);
     }

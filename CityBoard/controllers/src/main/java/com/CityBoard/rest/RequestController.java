@@ -3,7 +3,7 @@ package com.CityBoard.rest;
 import com.CityBoard.models.Requests;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.RequestType;
-import com.CityBoard.postgresql.dbmodels.UsersModelImpl;
+import com.CityBoard.postgresql.dbmodels.UsersPostgres;
 import com.CityBoard.ui.ClientUI;
 import com.CityBoard.ui.NoRegUI;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -78,7 +78,7 @@ public class RequestController {
     public ResponseEntity<Void> makeRequest(@RequestParam("id") Long advertId,
                                             @RequestParam("type") RequestType type,
                                             Principal principal) {
-        UsersModelImpl user = noRegUI.getUserDTOByPrincipal(principal);
+        UsersPostgres user = noRegUI.getUserDTOByPrincipal(principal);
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create("/advert?id=" + advertId.toString()));
         if (clientUI.makeRequest(user, advertId, type)) {

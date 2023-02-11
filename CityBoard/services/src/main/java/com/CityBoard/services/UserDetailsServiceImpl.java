@@ -1,7 +1,7 @@
 package com.CityBoard.services;
 
-import com.CityBoard.dto.mapping.UsersDTOMapper;
-import com.CityBoard.common.repository.UsersRepository;
+import com.CityBoard.tto.mapping.UsersDTOMapper;
+import com.CityBoard.interfaces.UsersRepository;
 import com.CityBoard.models.Users;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;

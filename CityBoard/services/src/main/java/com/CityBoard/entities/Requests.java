@@ -2,12 +2,11 @@ package com.CityBoard.entities;
 
 import com.CityBoard.entities.enums.RequestStatus;
 import com.CityBoard.entities.enums.RequestType;
+import lombok.Data;
 
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Setter
-@Getter
+import javax.annotation.sql.DataSourceDefinition;
+
+@Data
 public class Requests {
     private Long id;
     private RequestType type;

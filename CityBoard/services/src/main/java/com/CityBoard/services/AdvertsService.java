@@ -1,9 +1,8 @@
 package com.CityBoard.services;
 
-import com.CityBoard.dto.AdvertControllerDTO;
-import com.CityBoard.dto.AdvertDTO;
-import com.CityBoard.dto.mapping.AdvertsDTOMapper;
-import com.CityBoard.common.repository.AdvertsRepository;
+import com.CityBoard.tto.AdvertDTO;
+import com.CityBoard.tto.mapping.AdvertsDTOMapper;
+import com.CityBoard.interfaces.AdvertsRepository;
 import com.CityBoard.models.Adverts;
 import com.CityBoard.models.enums.AdvertStatus;
 import org.springframework.beans.factory.annotation.Qualifier;

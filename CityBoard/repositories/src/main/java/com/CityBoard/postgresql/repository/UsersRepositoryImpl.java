@@ -1,7 +1,7 @@
 package com.CityBoard.postgresql.repository;
 
-import com.CityBoard.common.repository.UsersRepository;
-import com.CityBoard.postgresql.dbmodels.UsersModelImpl;
+import com.CityBoard.interfaces.UsersRepository;
+import com.CityBoard.postgresql.dbmodels.UsersPostgres;
 import org.hibernate.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,8 +20,8 @@ public class UsersRepositoryImpl implements UsersRepository {
     }
 
     @Override
-    public Page<UsersModelImpl> findAllUsers(Pageable pageable) {
-        TypedQuery<UsersModelImpl> query = entityManager.createQuery("select u from UsersModel u", UsersModelImpl.class);
+    public Page<UsersPostgres> findAllUsers(Pageable pageable) {
+        TypedQuery<UsersPostgres> query = entityManager.createQuery("select u from UsersModel u", UsersPostgres.class);
         query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
         query.setMaxResults(pageable.getPageSize());
         TypedQuery<Long> countQuery = entityManager.createQuery("select count(u) from UsersModel u", Long.class);
@@ -29,28 +29,28 @@ public class UsersRepositoryImpl implements UsersRepository {
     }
 
     @Override
-    public UsersModelImpl findUserById(Long id) {
-        TypedQuery<UsersModelImpl> query = entityManager.createQuery("select u from UsersModel u where " +
-                "u.id=:id", UsersModelImpl.class);
+    public UsersPostgres findUserById(Long id) {
+        TypedQuery<UsersPostgres> query = entityManager.createQuery("select u from UsersModel u where " +
+                "u.id=:id", UsersPostgres.class);
         query.setParameter("id", id);
         return query.getSingleResult();
     }
 
     @Override
-    public UsersModelImpl findUserByUsername(String username) {
-        TypedQuery<UsersModelImpl> query = entityManager.createQuery("select u from UsersModel u where " +
-                "u.username=:username", UsersModelImpl.class);
+    public UsersPostgres findUserByUsername(String username) {
+        TypedQuery<UsersPostgres> query = entityManager.createQuery("select u from UsersModel u where " +
+                "u.username=:username", UsersPostgres.class);
         query.setParameter("username", username);
         return query.getSingleResult();
     }
 
     @Override
-    public void persist(UsersModelImpl model) {
+    public void persist(UsersPostgres model) {
         entityManager.persist(model);
     }
 
     @Override
-    public void update(UsersModelImpl model) {
+    public void update(UsersPostgres model) {
         Session session = entityManager.unwrap(Session.class);
         session.update(model);
     }

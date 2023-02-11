@@ -1,27 +1,24 @@
-package com.CityBoard.entities;
+package com.CityBoard.repository;
 
-import com.CityBoard.entities.enums.AdvertStatus;
-import com.CityBoard.entities.enums.AdvertType;
-import lombok.Data;
+import com.CityBoard.repository.enums.AdvertStatusRepo;
+import com.CityBoard.repository.enums.AdvertTypeRepo;
+import lombok.*;
 
+@Builder
 @Data
-public class Adverts {
-    // Service info
+public class AdvertsRepositoryDTO {
     private Long id;
-    private AdvertType type;
-    private AdvertStatus status;
+    private AdvertTypeRepo type;
+    private AdvertStatusRepo status;
     private boolean modCheck;
     private Long authorId;
-    // Contact info
     private String email;
     private String phone;
-    // Address
     private String city;
     private String district;
     private String street;
     private String houseCode;
     private Integer flatNumber;
-    // Realty info
     private Integer floor;
     private Integer floors;
     private Integer roomsNumber;
