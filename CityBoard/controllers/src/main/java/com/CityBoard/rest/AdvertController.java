@@ -1,14 +1,5 @@
 package com.CityBoard.rest;
 
-import com.CityBoard.models.Adverts;
-import com.CityBoard.models.Users;
-import com.CityBoard.models.enums.AdvertStatus;
-import com.CityBoard.models.enums.Roles;
-import com.CityBoard.ui.AdminUI;
-import com.CityBoard.ui.ClientUI;
-import com.CityBoard.ui.ModUI;
-import com.CityBoard.ui.NoRegUI;
-import com.CityBoard.ui.pagination.Paged;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;

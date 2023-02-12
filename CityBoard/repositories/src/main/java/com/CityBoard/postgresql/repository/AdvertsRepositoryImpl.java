@@ -55,7 +55,7 @@ public class AdvertsRepositoryImpl implements AdvertsRepository {
                 "status=:status", Long.class);
         countQuery.setParameter("status", status);
         Page<AdvertsPostgres> advertsModelPage = new PageImpl<>(query.getResultList(), pageable, countQuery.getSingleResult());
-        return mapper.mapAdvertsModelPageToDTO(advertsModelPage);
+        return mapper.mapToDto(advertsModelPage);
     }
 
     //@Override
