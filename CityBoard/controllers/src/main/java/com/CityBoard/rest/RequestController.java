@@ -38,7 +38,6 @@ import java.util.List;
 @OpenAPIDefinition(info = @Info(title = "CityBoard API", version = "v1"))
 
 @Tag(name = "Request API")
-@SecurityRequirement(name = "basicAuth")
 @RestController
 public class RequestController {
     private final RequestsService requestsService;
