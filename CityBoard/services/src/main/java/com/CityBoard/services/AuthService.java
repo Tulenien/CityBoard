@@ -5,7 +5,7 @@ import com.CityBoard.models.JwtRequest;
 import com.CityBoard.models.JwtResponse;
 import com.CityBoard.models.Users;
 import com.CityBoard.postgresql.dto.JwtToken;
-import com.CityBoard.postgresql.repository.TokensRepository;
+import com.CityBoard.postgresql.repository.TokensJPARepository;
 import io.jsonwebtoken.Claims;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import javax.security.auth.message.AuthException;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final TokensRepository tokensRepository;
+    private final TokensJPARepository tokensRepository;
     private final UsersService userService;
     private final JwtProvider jwtProvider;
 
