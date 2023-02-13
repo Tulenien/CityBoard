@@ -2,18 +2,22 @@ package com.CityBoard.rest;
 
 import com.CityBoard.models.Requests;
 import com.CityBoard.models.Users;
-import com.CityBoard.models.enums.RequestType;
 import com.CityBoard.postgresql.dto.UserDTO;
+import com.CityBoard.rest.data.RequestData;
+import com.CityBoard.rest.data.RequestStatusData;
+import com.CityBoard.services.AdvertsService;
+import com.CityBoard.services.RequestsService;
+import com.CityBoard.services.UsersService;
 import com.CityBoard.ui.ClientUI;
 import com.CityBoard.ui.NoRegUI;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.coyote.Request;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,66 +29,127 @@ import java.security.Principal;
 import java.util.List;
 
 @Configuration
-@SecurityScheme(name = "basicAuth", scheme = "basic", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER,
-        description = "Roles: USER_ROLE, MOD_ROLE, ADMIN_ROLE")
+@SecurityScheme(
+        name = "Bearer Authentication",
+        type = SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
+        scheme = "Bearer"
+)
 @OpenAPIDefinition(info = @Info(title = "CityBoard API", version = "v1"))
 
 @Tag(name = "Request API")
 @SecurityRequirement(name = "basicAuth")
 @RestController
 public class RequestController {
-    private final ClientUI clientUI;
-    private final NoRegUI noRegUI;
+    private final RequestsService requestsService;
+    private final UsersService usersService;
+    private final AdvertsService advertsService;
 
-    public RequestController(ClientUI clientUI, NoRegUI noRegUI) {
-        this.clientUI = clientUI;
-        this.noRegUI = noRegUI;
+    public RequestController(RequestsService requestsService, UsersService usersService, AdvertsService advertsService) {
+        this.requestsService = requestsService;
+        this.usersService = usersService;
+        this.advertsService = advertsService;
     }
 
+    @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {@ApiResponse(responseCode = "200", description = "Successfully show incoming requests"),
+                         @ApiResponse(responseCode = "403", description = "User is unauthorized"),
+                         @ApiResponse(responseCode = "500", description = "Server-side problem")},
+            description = "Authorization required")
     @GetMapping("/requests/incoming")
-    public ResponseEntity<List<Requests>> showIncomingRequestsList(@RequestParam("id") Long userId) {
-        List<Requests> requests = clientUI.getIncomingRequests(userId);
-        return new ResponseEntity<>(requests, HttpStatus.OK);
+    public ResponseEntity<List<Requests>> showIncomingRequestsList(Principal principal) {
+        Users user = usersService.getUserByPrincipal(principal);
+        HttpStatus status = HttpStatus.OK;
+        if (user == null) {
+            status = HttpStatus.FORBIDDEN;
+            return new ResponseEntity<>(status);
+        }
+        else {
+            List<Requests> requests = requestsService.getIncomingRequests(user.getId());
+            return new ResponseEntity<>(requests, status);
+        }
     }
 
+    @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {@ApiResponse(responseCode = "200", description = "Successfully show outgoing requests"),
+                    @ApiResponse(responseCode = "403", description = "User is unauthorized"),
+                    @ApiResponse(responseCode = "500", description = "Server-side problem")},
+            description = "Authorization required")
     @GetMapping("/requests/outgoing")
-    public ResponseEntity<List<Requests>> showOutgoingRequestsList(@RequestParam("id") Long userId) {
-        List<Requests> requests = clientUI.getOutgoingRequests(userId);
-        return new ResponseEntity<>(requests, HttpStatus.OK);
-    }
-
-    @PutMapping("/request/accept")
-    public ResponseEntity<Void> acceptRequest(@RequestParam("id") Long requestId, Principal principal) {
-        Users user = noRegUI.getUserByPrincipal(principal);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/requests/incoming?id=" + user.getId().toString()));
-        if (clientUI.acceptRequest(requestId)) {
-            return new ResponseEntity<>(headers, HttpStatus.OK);
+    public ResponseEntity<List<Requests>> showOutgoingRequestsList(Principal principal) {
+        Users user = usersService.getUserByPrincipal(principal);
+        HttpStatus status = HttpStatus.OK;
+        if (user == null) {
+            status = HttpStatus.FORBIDDEN;
+            return new ResponseEntity<>(status);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @PutMapping("/request/reject")
-    public ResponseEntity<Void> rejectRequest(@RequestParam("id") Long requestId, Principal principal) {
-        Users user = noRegUI.getUserByPrincipal(principal);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/requests/incoming?id=" + user.getId().toString()));
-        if (clientUI.acceptRequest(requestId)) {
-            return new ResponseEntity<>(headers, HttpStatus.OK);
+        else {
+            List<Requests> requests = requestsService.getOutgoingRequests(user.getId());
+            return new ResponseEntity<>(requests, status);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/request/create")
-    public ResponseEntity<Void> makeRequest(@RequestParam("id") Long advertId,
-                                            @RequestParam("type") RequestType type,
+    @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {@ApiResponse(responseCode = "201", description = "Successfully create request"),
+                    @ApiResponse(responseCode = "403", description = "User is unauthorized"),
+                    @ApiResponse(responseCode = "400", description = "Bad request")},
+            description = "Authorization required")
+    @PostMapping("/requests")
+    public ResponseEntity<Void> makeRequest(@RequestBody RequestData data,
                                             Principal principal) {
-        UserDTO user = noRegUI.getUserDTOByPrincipal(principal);
+        Users user = usersService.getUserByPrincipal(principal);
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/advert?id=" + advertId.toString()));
-        if(clientUI.makeRequest(user, advertId, type)) {
+        headers.setLocation(URI.create("/advert/" + data.advertId.toString()));
+        if (user == null) {
+            return new ResponseEntity<>(headers, HttpStatus.UNAUTHORIZED);
+        }
+        else if (requestsService.createRequest(usersService.getUserDTOById(user.getId()),
+                                          advertsService.getAdvertDTOById(data.getAdvertId()),
+                                          data.getType()) != null) {
             return new ResponseEntity<>(headers, HttpStatus.CREATED);
         }
         return new ResponseEntity<>(headers, HttpStatus.BAD_REQUEST);
     }
+
+    @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {@ApiResponse(responseCode = "204", description = "Successfully change request status"),
+                    @ApiResponse(responseCode = "403", description = "User is unauthorized"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "404", description = "Not found")},
+            description = "Authorization required")
+    @PatchMapping("/requests/{id}/status")
+    public ResponseEntity<Void> changeRequestStatus(@PathVariable("id") Long requestId,
+                                                    @RequestBody RequestStatusData data,
+                                                    Principal principal) {
+        Users user = usersService.getUserByPrincipal(principal);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        if (requestsService.changeRequestStatus(requestId, data.getStatus())) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    //@PutMapping("/request/accept")
+    //public ResponseEntity<Void> acceptRequest(@RequestParam("id") Long requestId, Principal principal) {
+    //    Users user = noRegUI.getUserByPrincipal(principal);
+    //    HttpHeaders headers = new HttpHeaders();
+    //    headers.setLocation(URI.create("/requests/incoming?id=" + user.getId().toString()));
+    //    if (clientUI.acceptRequest(requestId)) {
+    //        return new ResponseEntity<>(headers, HttpStatus.OK);
+    //    }
+    //    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    //}
+//
+    //@PutMapping("/request/reject")
+    //public ResponseEntity<Void> rejectRequest(@RequestParam("id") Long requestId, Principal principal) {
+    //    Users user = noRegUI.getUserByPrincipal(principal);
+    //    HttpHeaders headers = new HttpHeaders();
+    //    headers.setLocation(URI.create("/requests/incoming?id=" + user.getId().toString()));
+    //    if (clientUI.acceptRequest(requestId)) {
+    //        return new ResponseEntity<>(headers, HttpStatus.OK);
+    //    }
+    //    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    //}
 }

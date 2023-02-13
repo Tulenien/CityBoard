@@ -21,12 +21,14 @@ public class RequestsService extends AbstractService<RequestDTO, RequestsReposit
     }
 
     public RequestDTO createRequest(UserDTO user, AdvertDTO advert, RequestType type) {
-        return RequestDTO.builder()
+        RequestDTO request = RequestDTO.builder()
                 .type(type)
                 .status(RequestStatus.PENDING)
                 .user(user)
                 .advert(advert)
                 .build();
+        save(request);
+        return request;
     }
 
     public List<Requests> getIncomingRequests(Long userId) {

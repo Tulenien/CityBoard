@@ -25,7 +25,7 @@ import java.util.Map;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
     private final JwtFilter jwtFilter;
     //private final CustomUserDetailsService userDetailsService;
@@ -39,8 +39,10 @@ public class SecurityConfiguration {
                 .and()
                 .authorizeHttpRequests(
                         authz -> authz
-                                .antMatchers("/", "/login", "/token").permitAll()
-                                //.anyRequest().permitAll()
+                                //.antMatchers("/adverts", "/login", "/token", "/swagger-ui/**", "/v3/**").permitAll()
+                                .antMatchers("/login", "/token", "/swagger-ui/**", "/v3/**").permitAll()
+                                .anyRequest().permitAll()
+                                //.anyRequest().authenticated()
                                 .and()
                                 .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 ).build();

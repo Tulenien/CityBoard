@@ -1,15 +1,12 @@
 package com.CityBoard.rest;
 
 import com.CityBoard.models.Adverts;
+import com.CityBoard.models.JwtAuthentication;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.models.enums.Roles;
-import com.CityBoard.postgresql.dto.AdvertDTO;
-import com.CityBoard.postgresql.dto.UserDTO;
 import com.CityBoard.rest.data.AdvertFormData;
-import com.CityBoard.services.AdvertsService;
-import com.CityBoard.services.RequestsService;
-import com.CityBoard.services.UsersService;
+import com.CityBoard.services.*;
 import com.CityBoard.ui.AdminUI;
 import com.CityBoard.ui.ClientUI;
 import com.CityBoard.ui.ModUI;
@@ -18,7 +15,6 @@ import com.CityBoard.ui.pagination.Paged;
 import com.CityBoard.ui.pagination.Paging;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.links.Link;
@@ -32,77 +28,36 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-@SecurityScheme(name = "basicAuth", scheme = "basic", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER,
-        description = "Roles: USER_ROLE, MOD_ROLE, ADMIN_ROLE")
+@SecurityScheme(
+        name = "Bearer Authentication",
+        type = SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
+        scheme = "Bearer"
+)
 @OpenAPIDefinition(info = @Info(title = "CityBoard API", version = "v1"))
 
 @Tag(name = "Advert API")
 @RestController
 public class AdvertController {
-    private final NoRegUI noRegUI;
-    private final ClientUI clientUI;
-    private final ModUI modUI;
-    private final AdminUI adminUI;
-
     private final AdvertsService advertsService;
     private final UsersService usersService;
     private final RequestsService requestsService;
+    private final AuthService authService;
 
-    public AdvertController(NoRegUI noRegUI, ClientUI clientUI, ModUI modUI, AdminUI adminUI,
-                            AdvertsService advertsService, UsersService usersService, RequestsService requestsService) {
-        this.noRegUI = noRegUI;
-        this.clientUI = clientUI;
-        this.modUI = modUI;
-        this.adminUI = adminUI;
-
+    public AdvertController(AdvertsService advertsService, UsersService usersService, RequestsService requestsService,
+                            AuthService authService) {
         this.advertsService = advertsService;
         this.usersService = usersService;
         this.requestsService = requestsService;
+        this.authService = authService;
     }
-
-    //@Operation(responses = {@ApiResponse(responseCode = "200", description = "Successfully return adverts page content")},
-    //        description = "Role dependent, no authorization required")
-    //@GetMapping("/adverts")
-    //public ResponseEntity<Paged<Adverts>> showAdvertsPaged(
-    //        @RequestParam(value = "pageNumber", required = false, defaultValue = "1") int currentPage,
-    //        @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-    //        Principal principal) {
-    //    Paged<Adverts> advertsPaged;
-    //    Users user = usersService.getUserByPrincipal(principal);
-    //    if (user != null) {
-    //        if (user.getRoles().contains(Roles.ROLE_ADMIN)) {
-    //            Page<Adverts> advertsPage = advertsService.getAllAdvertsPage(currentPage, pageSize);
-    //            advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
-    //            //advertsPaged = adminUI.getAvailableAdvertsPaged(null, currentPage, pageSize);
-    //        }
-    //        else if (user.getRoles().contains(Roles.ROLE_MOD)) {
-    //            Page<Adverts> advertsPage = advertsService.getNotDeletedAdvertsPage(currentPage, pageSize);
-    //            advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
-    //            //advertsPaged = modUI.getAvailableAdvertsPaged(null, currentPage, pageSize);
-    //        }
-    //        else {
-    //            //advertsPaged = clientUI.getAvailableAdvertsPaged(user, currentPage, pageSize);
-    //            Page<Adverts> advertsPage = advertsService.getVisibleNotAuthoredAdvertsPage(user.getId(), currentPage, pageSize);
-    //            advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
-    //        }
-    //    }
-    //    else {
-    //        //advertsPaged = noRegUI.getAvailableAdvertsPaged(null, currentPage, pageSize);
-    //        Page<Adverts> advertsPage = advertsService.getNotDeletedAdvertsPage(currentPage, pageSize);
-    //        advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
-    //    }
-    //    return new ResponseEntity<>(advertsPaged, HttpStatus.OK);
-    //}
 
     @Operation(responses = {
             @ApiResponse(responseCode = "200", description = "Successfully return adverts page content")},
@@ -113,6 +68,19 @@ public class AdvertController {
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             Principal principal) {
         Paged<Adverts> advertsPaged;
+        //final JwtAuthentication authInfo = authService.getAuthInfo();
+        //if (authInfo.getRoles().contains(Roles.ROLE_ADMIN)) {
+        //    Page<Adverts> advertsPage = advertsService.getAllAdvertsPage(currentPage, pageSize);
+        //    advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
+        //}
+        //else if (authInfo.getRoles().contains(Roles.ROLE_MOD)) {
+        //    Page<Adverts> advertsPage = advertsService.getNotDeletedAdvertsPage(currentPage, pageSize);
+        //    advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
+        //}
+        //else {
+        //    Page<Adverts> advertsPage = advertsService.getVisibleAdvertsPage(currentPage, pageSize);
+        //    advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
+        //}
         Users user = usersService.getUserByPrincipal(principal);
         if (user != null) {
             if (user.getRoles().contains(Roles.ROLE_ADMIN)) {
@@ -135,7 +103,7 @@ public class AdvertController {
         return new ResponseEntity<>(advertsPaged, HttpStatus.OK);
     }
 
-    @Operation(security = @SecurityRequirement(name = "basicAuth"),
+    @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
             responses = {@ApiResponse(
                         responseCode = "201", description = "Successfully create new advert",
                         links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
@@ -167,62 +135,45 @@ public class AdvertController {
         return new ResponseEntity<>(status);
     }
 
-    @Operation(security = @SecurityRequirement(name = "basicAuth"),
-            responses = {@ApiResponse(responseCode = "200", description = "Successfully return owned adverts list"),
-                         @ApiResponse(responseCode = "401", description = "User is unauthorized")},
-            description = "Authorization required, ownership checked")
-    @GetMapping("/adverts/private")
-    public ResponseEntity<List<Adverts>> showUserAdverts(Principal principal) {
-        HttpStatus status = HttpStatus.OK;
-        Users user = noRegUI.getUserByPrincipal(principal);
-        if (user == null) {
-            status = HttpStatus.UNAUTHORIZED;
-            return new ResponseEntity<>(null, status);
-        }
-        else {
-            return new ResponseEntity<>(clientUI.getUserAdverts(user.getId()), status);
-        }
-    }
-
     @Operation(responses = {@ApiResponse(responseCode = "200", description = "Successfully return adverts page content"),
                             @ApiResponse(responseCode = "403", description = "Logically forbidden for this role to access"),
                             @ApiResponse(responseCode = "404", description = "Id invalid or advert not found")},
                description = "Role dependent, no authorization required")
-    @GetMapping("/advert")
-    public ResponseEntity<Adverts> showAdvert(@RequestParam(value = "id") Long advertId, Principal principal) {
-        Adverts advert;
+    @GetMapping("/adverts/{id}")
+    public ResponseEntity<Adverts> showAdvert(@PathVariable("id") Long advertId, Principal principal) {
+        Adverts advert = null;
         HttpStatus status = HttpStatus.OK;
-        Users user = noRegUI.getUserByPrincipal(principal);
+        Users user = usersService.getUserByPrincipal(principal);
         if (user != null) {
-            if (user.getRoles().contains(Roles.ROLE_ADMIN)) {
-                advert = adminUI.getAdvert(advertId);
-                if (advert == null) {
-                    status = HttpStatus.NOT_FOUND;
-                }
-            }
-            else if (user.getRoles().contains(Roles.ROLE_MOD)) {
-                advert = modUI.getAdvert(advertId);
-                if (advert == null) {
-                    status = HttpStatus.NOT_FOUND;
-                }
-                else if (advert.getStatus().equals(AdvertStatus.DELETED)) {
-                    advert = null;
-                    status = HttpStatus.FORBIDDEN;
-                }
-            }
-            else {
-                advert = clientUI.getAdvert(advertId);
-                if (advert == null) {
-                    status = HttpStatus.NOT_FOUND;
-                }
-                else if (!advert.getStatus().equals(AdvertStatus.VISIBLE) && !advert.getAuthorId().equals(user.getId())) {
-                    advert = null;
-                    status = HttpStatus.FORBIDDEN;
-                }
-            }
+            //if (user.getRoles().contains(Roles.ROLE_ADMIN)) {
+            //    advert = advertsService.getAdvertById(advertId);
+            //    if (advert == null) {
+            //        status = HttpStatus.NOT_FOUND;
+            //    }
+            //}
+            //else if (user.getRoles().contains(Roles.ROLE_MOD)) {
+            //    advert = modUI.getAdvert(advertId);
+            //    if (advert == null) {
+            //        status = HttpStatus.NOT_FOUND;
+            //    }
+            //    else if (advert.getStatus().equals(AdvertStatus.DELETED)) {
+            //        advert = null;
+            //        status = HttpStatus.FORBIDDEN;
+            //    }
+            //}
+            //else {
+            //    advert = clientUI.getAdvert(advertId);
+            //    if (advert == null) {
+            //        status = HttpStatus.NOT_FOUND;
+            //    }
+            //    else if (!advert.getStatus().equals(AdvertStatus.VISIBLE) && !advert.getAuthorId().equals(user.getId())) {
+            //        advert = null;
+            //        status = HttpStatus.FORBIDDEN;
+            //    }
+            //}
         }
         else {
-            advert = noRegUI.getAdvert(advertId);
+            advert = advertsService.getAdvertById(advertId);
             if (advert == null) {
                 status = HttpStatus.NOT_FOUND;
             }
@@ -230,6 +181,14 @@ public class AdvertController {
                 advert = null;
                 status = HttpStatus.FORBIDDEN;
             }
+            //advert = noRegUI.getAdvert(advertId);
+            //if (advert == null) {
+            //    status = HttpStatus.NOT_FOUND;
+            //}
+            //else if (!advert.getStatus().equals(AdvertStatus.VISIBLE)) {
+            //    advert = null;
+            //    status = HttpStatus.FORBIDDEN;
+            //}
         }
         return new ResponseEntity<>(advert, status);
     }
@@ -264,7 +223,7 @@ public class AdvertController {
     //    return new ResponseEntity<>(status);
     //}
 
-    @Operation(security = @SecurityRequirement(name = "basicAuth"),
+    @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
             responses = {@ApiResponse(responseCode = "200", description = "Successfully update existing advert",
                     links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
                             parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
@@ -282,122 +241,190 @@ public class AdvertController {
                                     parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
                                                    @LinkParameter(name = "pageSize", expression = "10")})})},
             description = "Authorization required")
-    @PutMapping("/advert/update")
-    public ResponseEntity<Void> updateAdvert(@RequestParam(value = "id") Long advertId,
-                                             @RequestBody Adverts advert,
+    @PutMapping("/adverts/{id}")
+    public ResponseEntity<Void> updateAdvert(@PathVariable("id") Long advertId,
+                                             @RequestBody AdvertFormData advert,
                                              Principal principal) {
         HttpStatus status = HttpStatus.OK;
-        Users user = noRegUI.getUserByPrincipal(principal);
+        //Users user = noRegUI.getUserByPrincipal(principal);
+        Users user = usersService.getUserByPrincipal(principal);
         if (user == null) {
             status = HttpStatus.FORBIDDEN;
         }
         else {
-            Adverts original = clientUI.getAdvert(advertId);
-            if (advert == null || original == null || !original.getId().equals(advertId)) {
+            Adverts original = advertsService.getAdvertById(advertId);
+            if (advert == null || original == null) {
                 status = HttpStatus.BAD_REQUEST;
             }
-            else if (!clientUI.updateAdvert(advert)) {
-                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            else {
+                Adverts updated = advert.mapToAdverts();
+                updated.setId(advertId);
+                updated.setAuthorId(original.getAuthorId());
+                advertsService.updateAdvert(updated);
             }
         }
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/advert?id" + advertId.toString()));
+        headers.setLocation(URI.create("/adverts/" + advertId.toString()));
         return new ResponseEntity<>(headers, status);
     }
 
-    @Operation(security = @SecurityRequirement(name = "basicAuth"),
-            responses = {@ApiResponse(responseCode = "200", description = "Successfully return adverts page content"),
-                         @ApiResponse(responseCode = "404", description = "Invalid Id or Advert not found")},
-            description = "Role required: ROLE_MOD")
-    @PatchMapping("/advert/check")
-    public ResponseEntity<Void> toggleModCheckOnAdvert(@RequestParam(value = "id") Long advertId) {
-        HttpStatus status = HttpStatus.OK;
-        if (!modUI.changeAdvertModCheck(advertId)) {
-            status = HttpStatus.NOT_FOUND;
-        }
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/advert?id=" + advertId.toString()));
-        return new ResponseEntity<>(headers, status);
-    }
+    //@Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
+    //        responses = {@ApiResponse(responseCode = "200", description = "Successfully return adverts page content"),
+    //                     @ApiResponse(responseCode = "404", description = "Invalid Id or Advert not found")},
+    //        description = "Role required: ROLE_MOD")
+    //@PatchMapping("/advert/check")
+    //public ResponseEntity<Void> toggleModCheckOnAdvert(@RequestParam(value = "id") Long advertId) {
+    //    HttpStatus status = HttpStatus.OK;
+    //    if (!modUI.changeAdvertModCheck(advertId)) {
+    //        status = HttpStatus.NOT_FOUND;
+    //    }
+    //    HttpHeaders headers = new HttpHeaders();
+    //    headers.setLocation(URI.create("/advert?id=" + advertId.toString()));
+    //    return new ResponseEntity<>(headers, status);
+    //}
 
-    @Operation(security = @SecurityRequirement(name = "basicAuth"),
-            responses = {@ApiResponse(responseCode = "200", description = "Successfully hide advert"),
-                    @ApiResponse(responseCode = "403", description = "User unauthorized"),
-                    @ApiResponse(responseCode = "400", description = "Logically forbidden for this role to access"),
-                    @ApiResponse(responseCode = "404", description = "Invalid Id or Advert not found")},
-            description = "Authorization required, ownership checked")
-    @PatchMapping("/advert/hide")
-    public ResponseEntity<Void> hideAdvert(@RequestParam(value = "id") Long advertId, Principal principal) {
-        HttpStatus status = HttpStatus.OK;
-        Users user = noRegUI.getUserByPrincipal(principal);
-        if (user == null) {
-            status = HttpStatus.UNAUTHORIZED;
-        }
-        else {
-            Adverts advert = clientUI.getAdvert(advertId);
-            if (!user.getId().equals(advert.getAuthorId())) {
-                status = HttpStatus.FORBIDDEN;
-            }
-            else if (!clientUI.hideAdvert(advertId)) {
-                status = HttpStatus.NOT_FOUND;
-            }
-        }
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/adverts/private"));
-        return new ResponseEntity<>(headers, status);
-    }
-
-    @Operation(security = @SecurityRequirement(name = "basicAuth"),
-            responses = {@ApiResponse(responseCode = "200", description = "Successfully reveal advert"),
-                    @ApiResponse(responseCode = "403", description = "User unauthorized"),
-                    @ApiResponse(responseCode = "400", description = "Logically forbidden for this role to access"),
-                    @ApiResponse(responseCode = "404", description = "Invalid Id or Advert not found")},
-            description = "Authorization required, ownership checked")
-    @PatchMapping("/advert/reveal")
-    public ResponseEntity<Void> revealAdvert(@RequestParam(value = "id") Long advertId, Principal principal) {
-        HttpStatus status = HttpStatus.OK;
-        Users user = noRegUI.getUserByPrincipal(principal);
-        if (user == null) {
-            status = HttpStatus.UNAUTHORIZED;
-        }
-        else {
-            Adverts advert = clientUI.getAdvert(advertId);
-            if (!user.getId().equals(advert.getAuthorId())) {
-                status = HttpStatus.FORBIDDEN;
-            }
-            else if (!clientUI.revealAdvert(advertId)) {
-                status = HttpStatus.NOT_FOUND;
-            }
-        }
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/adverts/private"));
-        return new ResponseEntity<>(headers, status);
-    }
-
-    @Operation(security = @SecurityRequirement(name = "basicAuth"),
+    @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
             responses = {@ApiResponse(responseCode = "200", description = "Successfully delete advert"),
                          @ApiResponse(responseCode = "403", description = "User unauthorized"),
                          @ApiResponse(responseCode = "400", description = "Logically forbidden for this role to access"),
                          @ApiResponse(responseCode = "404", description = "Invalid Id or Advert not found")},
             description = "Authorization required, ownership checked")
-    @DeleteMapping("/advert/delete")
-    public ResponseEntity<Void> deleteAdvert(@RequestParam(value = "id") Long advertId, Principal principal) {
+    @DeleteMapping("/adverts/{id}")
+    public ResponseEntity<Void> deleteAdvert(@PathVariable("id") Long advertId,
+                                             Principal principal) {
         HttpStatus status = HttpStatus.OK;
-        Users user = noRegUI.getUserByPrincipal(principal);
+        //Users user = noRegUI.getUserByPrincipal(principal);
+        Users user = usersService.getUserByPrincipal(principal);
         if (user == null) {
             status = HttpStatus.UNAUTHORIZED;
         }
         else {
-            Adverts advert = clientUI.getAdvert(advertId);
-            if (!user.getId().equals(advert.getAuthorId())) {
+            //Adverts advert = clientUI.getAdvert(advertId);
+            Adverts advert = advertsService.getAdvertById(advertId);
+            if (advert == null) {
+                status = HttpStatus.NOT_FOUND;
+            }
+            else if (!user.getId().equals(advert.getAuthorId())) {
                 status = HttpStatus.FORBIDDEN;
             }
-            else if (!clientUI.deleteAdvert(advertId)) {
-                status = HttpStatus.NOT_FOUND;
+            else {
+                advertsService.delete(advertsService.getAdvertDTOById(advertId));
             }
         }
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/adverts/private"));
+        headers.setLocation(URI.create("/adverts"));
         return new ResponseEntity<>(headers, status);
     }
+
+    @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {@ApiResponse(responseCode = "200", description = "Successfully change advert status"),
+                    @ApiResponse(responseCode = "403", description = "User unauthorized"),
+                    @ApiResponse(responseCode = "400", description = "Logically forbidden for this role to access"),
+                    @ApiResponse(responseCode = "404", description = "Invalid Id or Advert not found")},
+            description = "Authorization required, ownership checked")
+    @PatchMapping("/advert/{id}/status")
+    public ResponseEntity<Void> changeAdvertStatus(@PathVariable("id") Long advertId,
+                                                   @RequestBody AdvertStatus advertStatus,
+                                                   Principal principal) {
+        HttpStatus status = HttpStatus.OK;
+        Users user = usersService.getUserByPrincipal(principal);
+        if (user == null) {
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        else {
+            Adverts advert = advertsService.getAdvertById(advertId);
+            if (advert == null) {
+                status = HttpStatus.NOT_FOUND;
+            }
+            else {
+                advertsService.changeAdvertStatus(advertId, advertStatus);
+            }
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create("/adverts"));
+        return new ResponseEntity<>(headers, status);
+    }
+
+    @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {@ApiResponse(responseCode = "200", description = "Successfully change advert mod check"),
+                    @ApiResponse(responseCode = "403", description = "User unauthorized"),
+                    @ApiResponse(responseCode = "400", description = "Logically forbidden for this role to access"),
+                    @ApiResponse(responseCode = "404", description = "Invalid Id or Advert not found")},
+            description = "Authorization required, ownership checked")
+    @PatchMapping("/advert/{id}/check")
+    public ResponseEntity<Void> checkAdvert(@PathVariable("id") Long advertId,
+                                            @RequestBody AdvertStatus advertStatus,
+                                            Principal principal) {
+        HttpStatus status = HttpStatus.OK;
+        Users user = usersService.getUserByPrincipal(principal);
+        if (user == null) {
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        else {
+            Adverts advert = advertsService.getAdvertById(advertId);
+            if (advert == null) {
+                status = HttpStatus.NOT_FOUND;
+            }
+            else {
+                advertsService.changeAdvertModCheck(advertId);
+            }
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create("/adverts"));
+        return new ResponseEntity<>(headers, status);
+    }
+
+    //@Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
+    //        responses = {@ApiResponse(responseCode = "200", description = "Successfully hide advert"),
+    //                @ApiResponse(responseCode = "403", description = "User unauthorized"),
+    //                @ApiResponse(responseCode = "400", description = "Logically forbidden for this role to access"),
+    //                @ApiResponse(responseCode = "404", description = "Invalid Id or Advert not found")},
+    //        description = "Authorization required, ownership checked")
+    //@PatchMapping("/advert/hide")
+    //public ResponseEntity<Void> hideAdvert(@RequestParam(value = "id") Long advertId, Principal principal) {
+    //    HttpStatus status = HttpStatus.OK;
+    //    Users user = noRegUI.getUserByPrincipal(principal);
+    //    if (user == null) {
+    //        status = HttpStatus.UNAUTHORIZED;
+    //    }
+    //    else {
+    //        Adverts advert = clientUI.getAdvert(advertId);
+    //        if (!user.getId().equals(advert.getAuthorId())) {
+    //            status = HttpStatus.FORBIDDEN;
+    //        }
+    //        else if (!clientUI.hideAdvert(advertId)) {
+    //            status = HttpStatus.NOT_FOUND;
+    //        }
+    //    }
+    //    HttpHeaders headers = new HttpHeaders();
+    //    headers.setLocation(URI.create("/adverts/private"));
+    //    return new ResponseEntity<>(headers, status);
+    //}
+//
+    //@Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
+    //        responses = {@ApiResponse(responseCode = "200", description = "Successfully reveal advert"),
+    //                @ApiResponse(responseCode = "403", description = "User unauthorized"),
+    //                @ApiResponse(responseCode = "400", description = "Logically forbidden for this role to access"),
+    //                @ApiResponse(responseCode = "404", description = "Invalid Id or Advert not found")},
+    //        description = "Authorization required, ownership checked")
+    //@PatchMapping("/advert/reveal")
+    //public ResponseEntity<Void> revealAdvert(@RequestParam(value = "id") Long advertId, Principal principal) {
+    //    HttpStatus status = HttpStatus.OK;
+    //    Users user = noRegUI.getUserByPrincipal(principal);
+    //    if (user == null) {
+    //        status = HttpStatus.UNAUTHORIZED;
+    //    }
+    //    else {
+    //        Adverts advert = clientUI.getAdvert(advertId);
+    //        if (!user.getId().equals(advert.getAuthorId())) {
+    //            status = HttpStatus.FORBIDDEN;
+    //        }
+    //        else if (!clientUI.revealAdvert(advertId)) {
+    //            status = HttpStatus.NOT_FOUND;
+    //        }
+    //    }
+    //    HttpHeaders headers = new HttpHeaders();
+    //    headers.setLocation(URI.create("/adverts/private"));
+    //    return new ResponseEntity<>(headers, status);
+    //}
 }
