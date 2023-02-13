@@ -5,11 +5,17 @@ import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.models.enums.Roles;
 import com.CityBoard.postgresql.dto.AdvertDTO;
+import com.CityBoard.postgresql.dto.UserDTO;
+import com.CityBoard.rest.data.AdvertFormData;
+import com.CityBoard.services.AdvertsService;
+import com.CityBoard.services.RequestsService;
+import com.CityBoard.services.UsersService;
 import com.CityBoard.ui.AdminUI;
 import com.CityBoard.ui.ClientUI;
 import com.CityBoard.ui.ModUI;
 import com.CityBoard.ui.NoRegUI;
 import com.CityBoard.ui.pagination.Paged;
+import com.CityBoard.ui.pagination.Paging;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
@@ -22,9 +28,12 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -45,37 +54,117 @@ public class AdvertController {
     private final ModUI modUI;
     private final AdminUI adminUI;
 
-    public AdvertController(NoRegUI noRegUI, ClientUI clientUI, ModUI modUI, AdminUI adminUI) {
+    private final AdvertsService advertsService;
+    private final UsersService usersService;
+    private final RequestsService requestsService;
+
+    public AdvertController(NoRegUI noRegUI, ClientUI clientUI, ModUI modUI, AdminUI adminUI,
+                            AdvertsService advertsService, UsersService usersService, RequestsService requestsService) {
         this.noRegUI = noRegUI;
         this.clientUI = clientUI;
         this.modUI = modUI;
         this.adminUI = adminUI;
+
+        this.advertsService = advertsService;
+        this.usersService = usersService;
+        this.requestsService = requestsService;
     }
 
-    @Operation(responses = {@ApiResponse(responseCode = "200", description = "Successfully return adverts page content")},
-               description = "Role dependent, no authorization required")
+    //@Operation(responses = {@ApiResponse(responseCode = "200", description = "Successfully return adverts page content")},
+    //        description = "Role dependent, no authorization required")
+    //@GetMapping("/adverts")
+    //public ResponseEntity<Paged<Adverts>> showAdvertsPaged(
+    //        @RequestParam(value = "pageNumber", required = false, defaultValue = "1") int currentPage,
+    //        @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+    //        Principal principal) {
+    //    Paged<Adverts> advertsPaged;
+    //    Users user = usersService.getUserByPrincipal(principal);
+    //    if (user != null) {
+    //        if (user.getRoles().contains(Roles.ROLE_ADMIN)) {
+    //            Page<Adverts> advertsPage = advertsService.getAllAdvertsPage(currentPage, pageSize);
+    //            advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
+    //            //advertsPaged = adminUI.getAvailableAdvertsPaged(null, currentPage, pageSize);
+    //        }
+    //        else if (user.getRoles().contains(Roles.ROLE_MOD)) {
+    //            Page<Adverts> advertsPage = advertsService.getNotDeletedAdvertsPage(currentPage, pageSize);
+    //            advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
+    //            //advertsPaged = modUI.getAvailableAdvertsPaged(null, currentPage, pageSize);
+    //        }
+    //        else {
+    //            //advertsPaged = clientUI.getAvailableAdvertsPaged(user, currentPage, pageSize);
+    //            Page<Adverts> advertsPage = advertsService.getVisibleNotAuthoredAdvertsPage(user.getId(), currentPage, pageSize);
+    //            advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
+    //        }
+    //    }
+    //    else {
+    //        //advertsPaged = noRegUI.getAvailableAdvertsPaged(null, currentPage, pageSize);
+    //        Page<Adverts> advertsPage = advertsService.getNotDeletedAdvertsPage(currentPage, pageSize);
+    //        advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
+    //    }
+    //    return new ResponseEntity<>(advertsPaged, HttpStatus.OK);
+    //}
+
+    @Operation(responses = {
+            @ApiResponse(responseCode = "200", description = "Successfully return adverts page content")},
+            description = "Role dependent, no authorization required")
     @GetMapping("/adverts")
     public ResponseEntity<Paged<Adverts>> showAdvertsPaged(
             @RequestParam(value = "pageNumber", required = false, defaultValue = "1") int currentPage,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             Principal principal) {
         Paged<Adverts> advertsPaged;
-        Users user = noRegUI.getUserByPrincipal(principal);
+        Users user = usersService.getUserByPrincipal(principal);
         if (user != null) {
             if (user.getRoles().contains(Roles.ROLE_ADMIN)) {
-                advertsPaged = adminUI.getAvailableAdvertsPaged(null, currentPage, pageSize);
+                Page<Adverts> advertsPage = advertsService.getAllAdvertsPage(currentPage, pageSize);
+                advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
             }
             else if (user.getRoles().contains(Roles.ROLE_MOD)) {
-                advertsPaged = modUI.getAvailableAdvertsPaged(null, currentPage, pageSize);
+                Page<Adverts> advertsPage = advertsService.getNotDeletedAdvertsPage(currentPage, pageSize);
+                advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
             }
             else {
-                advertsPaged = clientUI.getAvailableAdvertsPaged(user, currentPage, pageSize);
+                Page<Adverts> advertsPage = advertsService.getVisibleAdvertsPage(currentPage, pageSize);
+                advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
             }
         }
         else {
-            advertsPaged = noRegUI.getAvailableAdvertsPaged(null, currentPage, pageSize);
+            Page<Adverts> advertsPage = advertsService.getVisibleAdvertsPage(currentPage, pageSize);
+            advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
         }
         return new ResponseEntity<>(advertsPaged, HttpStatus.OK);
+    }
+
+    @Operation(security = @SecurityRequirement(name = "basicAuth"),
+            responses = {@ApiResponse(
+                        responseCode = "201", description = "Successfully create new advert",
+                        links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
+                            parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
+                                    @LinkParameter(name = "pageSize", expression = "10")})}),
+                    @ApiResponse(responseCode = "403", description = "User is unauthorized",
+                            links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
+                                    parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
+                                            @LinkParameter(name = "pageSize", expression = "10")})}),
+                    @ApiResponse(responseCode = "500", description = "Server-side problem",
+                            links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
+                                    parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
+                                            @LinkParameter(name = "pageSize", expression = "10")})})},
+            description = "Authorization required")
+    @PostMapping("/adverts")
+    public ResponseEntity<Void> createAdvert(@RequestBody AdvertFormData advert, Principal principal) {
+        HttpStatus status = HttpStatus.CREATED;
+        HttpHeaders headers = new HttpHeaders();
+        Users user = usersService.getUserByPrincipal(principal);
+        if (user == null) {
+            status = HttpStatus.UNAUTHORIZED;
+            headers.setLocation(URI.create("/login"));
+        }
+        else {
+            Adverts mapped = advert.mapToAdverts();
+            advertsService.createAdvert(mapped, user.getId());
+            headers.setLocation(URI.create("/adverts?pageNumber=1&pageSize=10"));
+        }
+        return new ResponseEntity<>(status);
     }
 
     @Operation(security = @SecurityRequirement(name = "basicAuth"),
@@ -145,35 +234,35 @@ public class AdvertController {
         return new ResponseEntity<>(advert, status);
     }
 
-    @Operation(security = @SecurityRequirement(name = "basicAuth"),
-            responses = {@ApiResponse(responseCode = "201", description = "Successfully create new advert",
-                    links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
-                            parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
-                                           @LinkParameter(name = "pageSize", expression = "10")})}),
-                         @ApiResponse(responseCode = "403", description = "User is unauthrorized",
-                    links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
-                            parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
-                                           @LinkParameter(name = "pageSize", expression = "10")})}),
-                         @ApiResponse(responseCode = "500", description = "Server-side problem, possibly memory error",
-                    links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
-                            parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
-                                           @LinkParameter(name = "pageSize", expression = "10")})})},
-            description = "Authorization required")
-    @PostMapping("/advert/create")
-    public ResponseEntity<Void> createAdvert(@RequestBody Adverts advert, Principal principal) {
-        HttpStatus status = HttpStatus.CREATED;
-        Users user = noRegUI.getUserByPrincipal(principal);
-        if (user == null) {
-            status = HttpStatus.UNAUTHORIZED;
-        }
-        else if (!clientUI.createAdvert(advert)) {
-            // Can not instantiate a class -- out of memory?
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/adverts?pageNumber=1&pageSize=10"));
-        return new ResponseEntity<>(status);
-    }
+    //@Operation(security = @SecurityRequirement(name = "basicAuth"),
+    //        responses = {@ApiResponse(responseCode = "201", description = "Successfully create new advert",
+    //                links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
+    //                        parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
+    //                                       @LinkParameter(name = "pageSize", expression = "10")})}),
+    //                     @ApiResponse(responseCode = "403", description = "User is unauthrorized",
+    //                links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
+    //                        parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
+    //                                       @LinkParameter(name = "pageSize", expression = "10")})}),
+    //                     @ApiResponse(responseCode = "500", description = "Server-side problem, possibly memory error",
+    //                links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
+    //                        parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
+    //                                       @LinkParameter(name = "pageSize", expression = "10")})})},
+    //        description = "Authorization required")
+    //@PostMapping("/advert/create")
+    //public ResponseEntity<Void> createAdvert(@RequestBody Adverts advert, Principal principal) {
+    //    HttpStatus status = HttpStatus.CREATED;
+    //    Users user = noRegUI.getUserByPrincipal(principal);
+    //    if (user == null) {
+    //        status = HttpStatus.UNAUTHORIZED;
+    //    }
+    //    else if (!clientUI.createAdvert(advert)) {
+    //        // Can not instantiate a class -- out of memory?
+    //        status = HttpStatus.INTERNAL_SERVER_ERROR;
+    //    }
+    //    HttpHeaders headers = new HttpHeaders();
+    //    headers.setLocation(URI.create("/adverts?pageNumber=1&pageSize=10"));
+    //    return new ResponseEntity<>(status);
+    //}
 
     @Operation(security = @SecurityRequirement(name = "basicAuth"),
             responses = {@ApiResponse(responseCode = "200", description = "Successfully update existing advert",

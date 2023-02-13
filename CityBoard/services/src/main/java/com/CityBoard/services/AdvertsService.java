@@ -4,6 +4,7 @@ import com.CityBoard.models.Adverts;
 import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.postgresql.dto.AdvertDTO;
 import com.CityBoard.postgresql.repository.AdvertsRepository;
+import com.CityBoard.postgresql.repository.UsersRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -16,16 +17,23 @@ import java.util.List;
 
 @Service
 public class AdvertsService extends AbstractService<AdvertDTO, AdvertsRepository> {
-    public AdvertsService(AdvertsRepository repository) {
+
+    private final UsersRepository usersRepository;
+    public AdvertsService(AdvertsRepository repository, UsersRepository usersRepository) {
         super(repository);
+        this.usersRepository = usersRepository;
     }
 
-    public AdvertDTO createAdvert(Adverts advert) {
+    public void createAdvert(Adverts advert, Long authorId) {
         AdvertDTO dto = new AdvertDTO();
+        Long createdId = dto.getId();
+
         dto.mapEntity(advert);
+        dto.setId(createdId);
         dto.setStatus(AdvertStatus.VISIBLE);
         dto.setModCheck(false);
-        return dto;
+        dto.setUser(usersRepository.findById(authorId).orElse(null));
+        save(dto);
     }
 
     public AdvertDTO updateAdvert(Adverts advert) {
@@ -55,6 +63,8 @@ public class AdvertsService extends AbstractService<AdvertDTO, AdvertsRepository
         Page<AdvertDTO> dtoPage = repository.findAllNotDeletedPaginated(pageable);
         return mapDTOtoEntityPage(dtoPage, pageable);
     }
+
+
 
     public Page<Adverts> getVisibleNotAuthoredAdvertsPage(Long authorId, int currentPage, int pageSize) {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize);

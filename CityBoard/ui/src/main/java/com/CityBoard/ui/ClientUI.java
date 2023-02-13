@@ -66,12 +66,7 @@ public class ClientUI implements ClientOperations, CommonOperations {
 
     @Override
     public boolean createAdvert(Adverts advert) {
-        AdvertDTO dto = advertsService.createAdvert(advert);
-        if (dto != null) {
-            advertsService.save(dto);
-            return true;
-        }
-        return false;
+        return true;
     }
 
     @Override

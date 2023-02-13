@@ -1,48 +1,50 @@
 package com.CityBoard.application.configuration;
 
 import com.CityBoard.services.CustomUserDetailsService;
+import com.CityBoard.services.JwtFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.*;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
-    @Autowired
-    private final CustomUserDetailsService userDetailsService;
-
-    public SecurityConfiguration(CustomUserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
+    private final JwtFilter jwtFilter;
+    //private final CustomUserDetailsService userDetailsService;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeRequests()
-                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/mod/**").hasAuthority("ROLE_MOD")
-                .antMatchers("/request/**").authenticated()
-                .antMatchers("/**").permitAll()
-                .and().formLogin().permitAll()
-                .and().logout().logoutSuccessUrl("/").permitAll().and();
-
-        httpSecurity.csrf().disable().cors().and();
-
-        httpSecurity.headers().frameOptions().sameOrigin();
-        return httpSecurity.build();
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+                .httpBasic().disable()
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeHttpRequests(
+                        authz -> authz
+                                .antMatchers("/", "/login", "/token").permitAll()
+                                //.anyRequest().permitAll()
+                                .and()
+                                .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                ).build();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         // we must use deprecated encoder to support their encoding
@@ -63,11 +65,47 @@ public class SecurityConfiguration {
         return new DelegatingPasswordEncoder(encodingId, encoders);
     }
 
-    @Bean
-    public AuthenticationProvider daoAuthenticationProvider() { // dao is data access object
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
+    //@Bean
+    //public AuthenticationProvider daoAuthenticationProvider() { // dao is data access object
+    //    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+    //    provider.setUserDetailsService(userDetailsService);
+    //    provider.setPasswordEncoder(passwordEncoder());
+    //    return provider;
+    //}
 }
+
+//@Configuration
+//@EnableWebSecurity
+//public class SecurityConfiguration {
+//    @Autowired
+//    private final CustomUserDetailsService userDetailsService;
+//
+//    public SecurityConfiguration(CustomUserDetailsService userDetailsService) {
+//        this.userDetailsService = userDetailsService;
+//    }
+//
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+//        httpSecurity.authorizeRequests()
+//                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+//                .antMatchers("/mod/**").hasAuthority("ROLE_MOD")
+//                .antMatchers("/request/**").authenticated()
+//                .antMatchers("/**").permitAll()
+//                .and().formLogin().permitAll()
+//                .and().logout().logoutSuccessUrl("/").permitAll().and();
+//
+//        httpSecurity.csrf().disable().cors().and();
+//
+//        httpSecurity.headers().frameOptions().sameOrigin();
+//        return httpSecurity.build();
+//    }
+
+
+    //@Bean
+    //public AuthenticationProvider daoAuthenticationProvider() { // dao is data access object
+    //    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+    //    provider.setUserDetailsService(userDetailsService);
+    //    provider.setPasswordEncoder(passwordEncoder());
+    //    return provider;
+    //}
+//}

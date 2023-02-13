@@ -90,23 +90,4 @@ public class UserController {
         headers.setLocation(URI.create("/users"));
         return new ResponseEntity<>(headers, HttpStatus.OK);
     }
-
-    @Operation(responses = {@ApiResponse(responseCode = "201", description = "New user created and saved in database",
-                    links = {@Link(name = "Get adverts page", operationId = "getAdvertsPaged",
-                            parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
-                                           @LinkParameter(name = "pageSize", expression = "10")})}),
-                            @ApiResponse(responseCode = "409", description = "Username exists in database")})
-    @PostMapping("/register")
-    public ResponseEntity<Void> registerUser(@RequestParam("username") String username,
-                                             @RequestParam("password") String password) {
-        Users user = new Users();
-        user.setUsername(username);
-        user.setPassword(password);
-        if (!noRegUI.registerUser(user)) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/adverts?pageNumber=1&pageSize=10"));
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
 }

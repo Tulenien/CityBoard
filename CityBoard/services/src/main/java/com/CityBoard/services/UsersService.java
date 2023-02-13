@@ -1,19 +1,19 @@
 package com.CityBoard.services;
 
-
-import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.Roles;
-import com.CityBoard.postgresql.dto.AdvertDTO;
 import com.CityBoard.postgresql.dto.UserDTO;
 import com.CityBoard.postgresql.repository.UsersRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,12 +21,18 @@ import java.util.Set;
 
 @Service
 public class UsersService extends AbstractService<UserDTO, UsersRepository> {
-    private final PasswordEncoder passwordEncoder;
+    //private final PasswordEncoder passwordEncoder;
 
-    public UsersService(UsersRepository repository, PasswordEncoder passwordEncoder) {
+    //public UsersService(UsersRepository repository, PasswordEncoder passwordEncoder) {
+    public UsersService(UsersRepository repository) {
+
         super(repository);
-        this.passwordEncoder = passwordEncoder;
+        //this.passwordEncoder = passwordEncoder;
     }
+
+    //public boolean checkPassword(String encoded, String given) {
+    //    return passwordEncoder.matches(encoded, given);
+    //}
 
     public Page<Users> getAllUsersPage(int currentPage, int pageSize) {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
@@ -36,6 +42,15 @@ public class UsersService extends AbstractService<UserDTO, UsersRepository> {
 
     public Users getUserByUsername(String username) {
         return repository.findByUsername(username).mapDTOtoEntity();
+    }
+
+    public Users getUserByPrincipal(Principal principal) {
+        Users user = null;
+        if (SecurityContextHolder.getContext().getAuthentication() != null &&
+                !(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
+            user = getUserByUsername(principal.getName());
+        }
+        return user;
     }
 
     public Users getUserById(Long userId) {
@@ -58,12 +73,12 @@ public class UsersService extends AbstractService<UserDTO, UsersRepository> {
         return repository.findByUsername(username) != null;
     }
 
-    private String cryptPassword(String password) {
-        if (passwordEncoder == null) {
-            return "{noop}" + password;
-        }
-        return passwordEncoder.encode(password);
-    }
+    //public String cryptPassword(String password) {
+    //    if (passwordEncoder == null) {
+    //        return "{noop}" + password;
+    //    }
+    //    return passwordEncoder.encode(password);
+    //}
 
     public UserDTO createUser(Users user) throws Exception {
         if (usernameExists(user.getUsername())) {
@@ -72,9 +87,14 @@ public class UsersService extends AbstractService<UserDTO, UsersRepository> {
         Set<Roles> userRoles = new HashSet<>();
         userRoles.add(Roles.ROLE_USER);
         UserDTO userDTO = new UserDTO();
-        user.setPassword(cryptPassword(user.getPassword()));
+        Long savedId = userDTO.getId();
+        //user.setPassword(cryptPassword(user.getPassword()));
+        user.setPassword(user.getPassword());
         userDTO.mapEntity(user);
+
+        userDTO.setId(savedId);
         userDTO.setRoles(userRoles);
+        repository.save(userDTO);
         return userDTO;
     }
 
