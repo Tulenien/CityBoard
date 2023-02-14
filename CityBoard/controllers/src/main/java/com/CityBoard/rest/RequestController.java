@@ -1,15 +1,14 @@
 package com.CityBoard.rest;
 
+import com.CityBoard.models.JwtAuthentication;
 import com.CityBoard.models.Requests;
 import com.CityBoard.models.Users;
-import com.CityBoard.postgresql.dto.UserDTO;
 import com.CityBoard.rest.data.RequestData;
 import com.CityBoard.rest.data.RequestStatusData;
 import com.CityBoard.services.AdvertsService;
+import com.CityBoard.services.AuthService;
 import com.CityBoard.services.RequestsService;
 import com.CityBoard.services.UsersService;
-import com.CityBoard.ui.ClientUI;
-import com.CityBoard.ui.NoRegUI;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -43,50 +42,83 @@ public class RequestController {
     private final RequestsService requestsService;
     private final UsersService usersService;
     private final AdvertsService advertsService;
+    private final AuthService authService;
 
-    public RequestController(RequestsService requestsService, UsersService usersService, AdvertsService advertsService) {
+    public RequestController(RequestsService requestsService, UsersService usersService, AdvertsService advertsService, AuthService authService) {
         this.requestsService = requestsService;
         this.usersService = usersService;
         this.advertsService = advertsService;
+        this.authService = authService;
     }
+
 
     @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
             responses = {@ApiResponse(responseCode = "200", description = "Successfully show incoming requests"),
-                         @ApiResponse(responseCode = "403", description = "User is unauthorized"),
-                         @ApiResponse(responseCode = "500", description = "Server-side problem")},
-            description = "Authorization required")
-    @GetMapping("/requests/incoming")
-    public ResponseEntity<List<Requests>> showIncomingRequestsList(Principal principal) {
-        Users user = usersService.getUserByPrincipal(principal);
-        HttpStatus status = HttpStatus.OK;
-        if (user == null) {
-            status = HttpStatus.FORBIDDEN;
-            return new ResponseEntity<>(status);
-        }
-        else {
-            List<Requests> requests = requestsService.getIncomingRequests(user.getId());
-            return new ResponseEntity<>(requests, status);
-        }
-    }
-
-    @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
-            responses = {@ApiResponse(responseCode = "200", description = "Successfully show outgoing requests"),
                     @ApiResponse(responseCode = "403", description = "User is unauthorized"),
                     @ApiResponse(responseCode = "500", description = "Server-side problem")},
             description = "Authorization required")
-    @GetMapping("/requests/outgoing")
-    public ResponseEntity<List<Requests>> showOutgoingRequestsList(Principal principal) {
-        Users user = usersService.getUserByPrincipal(principal);
+    @GetMapping("/requests")
+    public ResponseEntity<List<Requests>> showIncomingRequestsList(@RequestParam(value = "filter", required = false, defaultValue = "")
+                                                                       String filter) {
         HttpStatus status = HttpStatus.OK;
-        if (user == null) {
+        final JwtAuthentication authInfo = authService.getAuthInfo();
+        if (authInfo == null) {
             status = HttpStatus.FORBIDDEN;
             return new ResponseEntity<>(status);
         }
         else {
-            List<Requests> requests = requestsService.getOutgoingRequests(user.getId());
+            Users user = usersService.getUserByUsername(authInfo.getUsername());
+            List<Requests> requests;
+            if (filter.equals("incoming")) {
+                requests = requestsService.getIncomingRequests(user.getId());
+            }
+            else if (filter.equals("outgoing")) {
+                requests = requestsService.getOutgoingRequests(user.getId());
+            }
+            else {
+                requests = requestsService.getOutgoingRequests(user.getId());
+                requests.addAll(requestsService.getIncomingRequests(user.getId()));
+            }
             return new ResponseEntity<>(requests, status);
         }
     }
+    //@Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
+    //        responses = {@ApiResponse(responseCode = "200", description = "Successfully show incoming requests"),
+    //                     @ApiResponse(responseCode = "403", description = "User is unauthorized"),
+    //                     @ApiResponse(responseCode = "500", description = "Server-side problem")},
+    //        description = "Authorization required")
+    //@GetMapping("/requests/incoming")
+    //public ResponseEntity<List<Requests>> showIncomingRequestsList(Principal principal) {
+    //    Users user = usersService.getUserByPrincipal(principal);
+    //    HttpStatus status = HttpStatus.OK;
+    //    if (user == null) {
+    //        status = HttpStatus.FORBIDDEN;
+    //        return new ResponseEntity<>(status);
+    //    }
+    //    else {
+    //        List<Requests> requests = requestsService.getIncomingRequests(user.getId());
+    //        return new ResponseEntity<>(requests, status);
+    //    }
+    //}
+//
+    //@Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
+    //        responses = {@ApiResponse(responseCode = "200", description = "Successfully show outgoing requests"),
+    //                @ApiResponse(responseCode = "403", description = "User is unauthorized"),
+    //                @ApiResponse(responseCode = "500", description = "Server-side problem")},
+    //        description = "Authorization required")
+    //@GetMapping("/requests/outgoing")
+    //public ResponseEntity<List<Requests>> showOutgoingRequestsList(Principal principal) {
+    //    Users user = usersService.getUserByPrincipal(principal);
+    //    HttpStatus status = HttpStatus.OK;
+    //    if (user == null) {
+    //        status = HttpStatus.FORBIDDEN;
+    //        return new ResponseEntity<>(status);
+    //    }
+    //    else {
+    //        List<Requests> requests = requestsService.getOutgoingRequests(user.getId());
+    //        return new ResponseEntity<>(requests, status);
+    //    }
+    //}
 
     @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
             responses = {@ApiResponse(responseCode = "201", description = "Successfully create request"),

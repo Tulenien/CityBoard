@@ -66,8 +66,7 @@ public class AdvertController {
     @GetMapping("/adverts")
     public ResponseEntity<Paged<Adverts>> showAdvertsPaged(
             @RequestParam(value = "pageNumber", required = false, defaultValue = "1") int currentPage,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-            Principal principal) {
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize) {
         Paged<Adverts> advertsPaged;
         final JwtAuthentication authInfo = authService.getAuthInfo();
         if (authInfo != null) {
@@ -89,27 +88,6 @@ public class AdvertController {
             advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
         }
         return new ResponseEntity<>(advertsPaged, HttpStatus.OK);
-
-        //Users user = usersService.getUserByPrincipal(principal);
-        //if (user != null) {
-        //    if (user.getRoles().contains(Roles.ROLE_ADMIN)) {
-        //        Page<Adverts> advertsPage = advertsService.getAllAdvertsPage(currentPage, pageSize);
-        //        advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
-        //    }
-        //    else if (user.getRoles().contains(Roles.ROLE_MOD)) {
-        //        Page<Adverts> advertsPage = advertsService.getNotDeletedAdvertsPage(currentPage, pageSize);
-        //        advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
-        //    }
-        //    else {
-        //        Page<Adverts> advertsPage = advertsService.getVisibleAdvertsPage(currentPage, pageSize);
-        //        advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
-        //    }
-        //}
-        //else {
-        //    Page<Adverts> advertsPage = advertsService.getVisibleAdvertsPage(currentPage, pageSize);
-        //    advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
-        //}
-        //return new ResponseEntity<>(advertsPaged, HttpStatus.OK);
     }
 
     @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
@@ -128,15 +106,16 @@ public class AdvertController {
                                             @LinkParameter(name = "pageSize", expression = "10")})})},
             description = "Authorization required")
     @PostMapping("/adverts")
-    public ResponseEntity<Void> createAdvert(@RequestBody AdvertFormData advert, Principal principal) {
+    public ResponseEntity<Void> createAdvert(@RequestBody AdvertFormData advert) {
         HttpStatus status = HttpStatus.CREATED;
         HttpHeaders headers = new HttpHeaders();
-        Users user = usersService.getUserByPrincipal(principal);
-        if (user == null) {
+        final JwtAuthentication authInfo = authService.getAuthInfo();
+        if (authInfo == null) {
             status = HttpStatus.UNAUTHORIZED;
             headers.setLocation(URI.create("/login"));
         }
         else {
+            Users user = usersService.getUserByUsername(authInfo.getUsername());
             Adverts mapped = advert.mapToAdverts();
             advertsService.createAdvert(mapped, user.getId());
             headers.setLocation(URI.create("/adverts?pageNumber=1&pageSize=10"));
