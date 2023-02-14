@@ -65,29 +65,15 @@ public class AdvertController {
     @GetMapping("/adverts")
     public ResponseEntity<Paged<Adverts>> showAdvertsPaged(
             @RequestParam(value = "pageNumber", required = false, defaultValue = "1") int currentPage,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-            Principal principal) {
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize) {
         Paged<Adverts> advertsPaged;
-        //final JwtAuthentication authInfo = authService.getAuthInfo();
-        //if (authInfo.getRoles().contains(Roles.ROLE_ADMIN)) {
-        //    Page<Adverts> advertsPage = advertsService.getAllAdvertsPage(currentPage, pageSize);
-        //    advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
-        //}
-        //else if (authInfo.getRoles().contains(Roles.ROLE_MOD)) {
-        //    Page<Adverts> advertsPage = advertsService.getNotDeletedAdvertsPage(currentPage, pageSize);
-        //    advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
-        //}
-        //else {
-        //    Page<Adverts> advertsPage = advertsService.getVisibleAdvertsPage(currentPage, pageSize);
-        //    advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
-        //}
-        Users user = usersService.getUserByPrincipal(principal);
-        if (user != null) {
-            if (user.getRoles().contains(Roles.ROLE_ADMIN)) {
+        final JwtAuthentication authInfo = authService.getAuthInfo();
+        if (authInfo != null) {
+            if (authInfo.getRoles().contains(Roles.ROLE_ADMIN)) {
                 Page<Adverts> advertsPage = advertsService.getAllAdvertsPage(currentPage, pageSize);
                 advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
             }
-            else if (user.getRoles().contains(Roles.ROLE_MOD)) {
+            else if (authInfo.getRoles().contains(Roles.ROLE_MOD)) {
                 Page<Adverts> advertsPage = advertsService.getNotDeletedAdvertsPage(currentPage, pageSize);
                 advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
             }

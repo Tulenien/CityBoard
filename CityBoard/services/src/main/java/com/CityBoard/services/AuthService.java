@@ -9,6 +9,7 @@ import com.CityBoard.postgresql.repository.TokensJPARepository;
 import io.jsonwebtoken.Claims;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -90,6 +91,12 @@ public class AuthService {
     }
 
     public JwtAuthentication getAuthInfo() {
-        return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
+        if (SecurityContextHolder.getContext().getAuthentication() != null &&
+                !(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
+            return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
+        }
+        else {
+            return null;
+        }
     }
 }
