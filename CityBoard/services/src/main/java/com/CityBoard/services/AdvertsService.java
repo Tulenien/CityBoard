@@ -3,8 +3,8 @@ package com.CityBoard.services;
 import com.CityBoard.models.Adverts;
 import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.postgresql.dto.AdvertDTO;
-import com.CityBoard.postgresql.repository.AdvertsJPARepository;
-import com.CityBoard.postgresql.repository.UsersJPARepository;
+import com.CityBoard.postgresql.repository.AdvertsRepository;
+import com.CityBoard.postgresql.repository.UsersRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -16,10 +16,10 @@ import java.util.List;
 
 
 @Service
-public class AdvertsService extends AbstractService<AdvertDTO, AdvertsJPARepository> {
+public class AdvertsService extends AbstractService<AdvertDTO, AdvertsRepository> {
 
-    private final UsersJPARepository usersRepository;
-    public AdvertsService(AdvertsJPARepository repository, UsersJPARepository usersRepository) {
+    private final UsersRepository usersRepository;
+    public AdvertsService(AdvertsRepository repository, UsersRepository usersRepository) {
         super(repository);
         this.usersRepository = usersRepository;
     }

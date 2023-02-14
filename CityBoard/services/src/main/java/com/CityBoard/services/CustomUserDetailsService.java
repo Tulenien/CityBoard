@@ -1,7 +1,7 @@
 package com.CityBoard.services;
 
 import com.CityBoard.postgresql.dto.UserDTO;
-import com.CityBoard.postgresql.repository.UsersJPARepository;
+import com.CityBoard.postgresql.repository.UsersRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UsersJPARepository usersRepository;
+    private final UsersRepository usersRepository;
 
-    public CustomUserDetailsService(UsersJPARepository usersRepository) {
+    public CustomUserDetailsService(UsersRepository usersRepository) {
         this.usersRepository = usersRepository;
     }
 
