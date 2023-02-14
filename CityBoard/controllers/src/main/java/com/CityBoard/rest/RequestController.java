@@ -82,43 +82,6 @@ public class RequestController {
             return new ResponseEntity<>(requests, status);
         }
     }
-    //@Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
-    //        responses = {@ApiResponse(responseCode = "200", description = "Successfully show incoming requests"),
-    //                     @ApiResponse(responseCode = "403", description = "User is unauthorized"),
-    //                     @ApiResponse(responseCode = "500", description = "Server-side problem")},
-    //        description = "Authorization required")
-    //@GetMapping("/requests/incoming")
-    //public ResponseEntity<List<Requests>> showIncomingRequestsList(Principal principal) {
-    //    Users user = usersService.getUserByPrincipal(principal);
-    //    HttpStatus status = HttpStatus.OK;
-    //    if (user == null) {
-    //        status = HttpStatus.FORBIDDEN;
-    //        return new ResponseEntity<>(status);
-    //    }
-    //    else {
-    //        List<Requests> requests = requestsService.getIncomingRequests(user.getId());
-    //        return new ResponseEntity<>(requests, status);
-    //    }
-    //}
-//
-    //@Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
-    //        responses = {@ApiResponse(responseCode = "200", description = "Successfully show outgoing requests"),
-    //                @ApiResponse(responseCode = "403", description = "User is unauthorized"),
-    //                @ApiResponse(responseCode = "500", description = "Server-side problem")},
-    //        description = "Authorization required")
-    //@GetMapping("/requests/outgoing")
-    //public ResponseEntity<List<Requests>> showOutgoingRequestsList(Principal principal) {
-    //    Users user = usersService.getUserByPrincipal(principal);
-    //    HttpStatus status = HttpStatus.OK;
-    //    if (user == null) {
-    //        status = HttpStatus.FORBIDDEN;
-    //        return new ResponseEntity<>(status);
-    //    }
-    //    else {
-    //        List<Requests> requests = requestsService.getOutgoingRequests(user.getId());
-    //        return new ResponseEntity<>(requests, status);
-    //    }
-    //}
 
     @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
             responses = {@ApiResponse(responseCode = "201", description = "Successfully create request"),
