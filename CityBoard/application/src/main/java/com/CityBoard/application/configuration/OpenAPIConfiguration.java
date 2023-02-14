@@ -23,12 +23,13 @@ public class OpenAPIConfiguration {
     public OpenAPI OpenAPIConfiguration() {
         List<Server> servers = new ArrayList<>();
         servers.add(new Server().url("http://localhost:10077").description("Main API Server"));
+        servers.add(new Server().url("http://localhost:10078").description("Test Server"));
         servers.add(new Server().url("http://localhost:10177").description("API Server, ReadOnly"));
         servers.add(new Server().url("http://localhost:10178").description("API Server, ReadOnly"));
         servers.add(new Server().url("http://localhost:10277/legacy").description("Legacy"));
-        servers.add(new Server().url("http://localhost:10377/mirror").description("Mirror"));
-        servers.add(new Server().url("http://tim.com/api/v2").description("Swagger"));
-        servers.add(new Server().url("http://tim.com/api/v1").description("API"));
+        servers.add(new Server().url("http://localhost:10377/mirror1").description("Mirror"));
+        servers.add(new Server().url("http://cityboard/api/v2").description("Swagger"));
+        servers.add(new Server().url("http://cityboard/api/v1").description("API"));
 
         return new OpenAPI()
                 .info(new Info().title("CityBoard API").description("Realty operations")
