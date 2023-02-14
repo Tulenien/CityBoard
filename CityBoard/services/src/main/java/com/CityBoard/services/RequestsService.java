@@ -1,22 +1,20 @@
 package com.CityBoard.services;
 
-import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Requests;
-import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.RequestStatus;
 import com.CityBoard.models.enums.RequestType;
 import com.CityBoard.postgresql.dto.AdvertDTO;
 import com.CityBoard.postgresql.dto.RequestDTO;
 import com.CityBoard.postgresql.dto.UserDTO;
-import com.CityBoard.postgresql.repository.RequestsRepository;
+import com.CityBoard.postgresql.repository.RequestsJPARepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class RequestsService extends AbstractService<RequestDTO, RequestsRepository> {
-    public RequestsService(RequestsRepository repository) {
+public class RequestsService extends AbstractService<RequestDTO, RequestsJPARepository> {
+    public RequestsService(RequestsJPARepository repository) {
         super(repository);
     }
 

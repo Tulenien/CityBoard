@@ -3,14 +3,13 @@ package com.CityBoard.services;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.Roles;
 import com.CityBoard.postgresql.dto.UserDTO;
-import com.CityBoard.postgresql.repository.UsersRepository;
+import com.CityBoard.postgresql.repository.UsersJPARepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -20,11 +19,11 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class UsersService extends AbstractService<UserDTO, UsersRepository> {
+public class UsersService extends AbstractService<UserDTO, UsersJPARepository> {
     //private final PasswordEncoder passwordEncoder;
 
     //public UsersService(UsersRepository repository, PasswordEncoder passwordEncoder) {
-    public UsersService(UsersRepository repository) {
+    public UsersService(UsersJPARepository repository) {
 
         super(repository);
         //this.passwordEncoder = passwordEncoder;

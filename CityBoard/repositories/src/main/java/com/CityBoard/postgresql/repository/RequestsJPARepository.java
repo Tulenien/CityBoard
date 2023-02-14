@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface RequestsRepository extends CommonRepository<RequestDTO> {
+public interface RequestsJPARepository extends CommonRepository<RequestDTO> {
     @Override
     Optional<RequestDTO> findById(Long id);
 

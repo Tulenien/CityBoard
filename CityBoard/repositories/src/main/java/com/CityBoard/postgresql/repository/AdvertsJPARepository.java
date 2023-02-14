@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AdvertsRepository extends CommonRepository<AdvertDTO> {
+public interface AdvertsJPARepository extends CommonRepository<AdvertDTO> {
     Page<AdvertDTO> findAll(Pageable pageable);
 
     @Query(value = "select * from adverts where status = 0", nativeQuery = true)
