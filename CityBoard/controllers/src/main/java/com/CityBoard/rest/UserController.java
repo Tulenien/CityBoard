@@ -3,8 +3,6 @@ package com.CityBoard.rest;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.Roles;
 import com.CityBoard.services.UsersService;
-import com.CityBoard.ui.AdminUI;
-import com.CityBoard.ui.NoRegUI;
 import com.CityBoard.ui.pagination.Paged;
 import com.CityBoard.ui.pagination.Paging;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;

@@ -40,7 +40,6 @@ public class RequestDTO extends AbstractEntityDTO {
                 .build();
         return request;
     }
-
     public void mapEntity(Requests request) {
         id = request.getId();
         type = request.getType();

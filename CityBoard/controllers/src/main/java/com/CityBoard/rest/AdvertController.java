@@ -7,10 +7,6 @@ import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.models.enums.Roles;
 import com.CityBoard.rest.data.AdvertFormData;
 import com.CityBoard.services.*;
-import com.CityBoard.ui.AdminUI;
-import com.CityBoard.ui.ClientUI;
-import com.CityBoard.ui.ModUI;
-import com.CityBoard.ui.NoRegUI;
 import com.CityBoard.ui.pagination.Paged;
 import com.CityBoard.ui.pagination.Paging;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -32,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.security.Principal;
-import java.util.List;
 
 @Configuration
 @SecurityScheme(
@@ -295,9 +290,9 @@ public class AdvertController {
             else if (!user.getId().equals(advert.getAuthorId())) {
                 status = HttpStatus.FORBIDDEN;
             }
-            else {
-                advertsService.delete(advertsService.getAdvertDTOById(advertId));
-            }
+            //else {
+            //    advertsService.delete(advertsService.getAdvertDTOById(advertId));
+            //}
         }
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create("/adverts"));

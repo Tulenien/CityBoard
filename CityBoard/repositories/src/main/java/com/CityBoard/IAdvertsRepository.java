@@ -1,6 +1,7 @@
 package com.CityBoard;
 
 import com.CityBoard.models.Adverts;
+import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.postgresql.dto.AdvertDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,5 +21,14 @@ public interface IAdvertsRepository {
 
     List<Adverts> findAllAuthored(Long authorId);
 
-    Optional<AdvertDTO> findById(Long id);
+    Adverts findById(Long id);
+
+    public void saveAdvert(Adverts advert, Long authorId);
+
+    public void updateAdvert(Adverts advert);
+
+    public void deleteAdvert(Adverts advert);
+
+    public boolean changeStatus(Long id, AdvertStatus status);
+    public boolean changeModCheck(Long id);
 }

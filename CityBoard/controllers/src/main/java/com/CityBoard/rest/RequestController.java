@@ -89,17 +89,16 @@ public class RequestController {
                     @ApiResponse(responseCode = "400", description = "Bad request")},
             description = "Authorization required")
     @PostMapping("/requests")
-    public ResponseEntity<Void> makeRequest(@RequestBody RequestData data,
-                                            Principal principal) {
-        Users user = usersService.getUserByPrincipal(principal);
+    public ResponseEntity<Void> makeRequest(@RequestBody RequestData data) {
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create("/advert/" + data.advertId.toString()));
-        if (user == null) {
+        final JwtAuthentication authInfo = authService.getAuthInfo();
+        if (authInfo == null) {
             return new ResponseEntity<>(headers, HttpStatus.UNAUTHORIZED);
         }
-        else if (requestsService.createRequest(usersService.getUserDTOById(user.getId()),
-                                          advertsService.getAdvertDTOById(data.getAdvertId()),
-                                          data.getType()) != null) {
+        else if (requestsService.createRequest(usersService.getUserByUsername(authInfo.getUsername()).getId(),
+                                               data.getAdvertId(),
+                                               data.getType())) {
             return new ResponseEntity<>(headers, HttpStatus.CREATED);
         }
         return new ResponseEntity<>(headers, HttpStatus.BAD_REQUEST);
@@ -124,26 +123,4 @@ public class RequestController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
-    //@PutMapping("/request/accept")
-    //public ResponseEntity<Void> acceptRequest(@RequestParam("id") Long requestId, Principal principal) {
-    //    Users user = noRegUI.getUserByPrincipal(principal);
-    //    HttpHeaders headers = new HttpHeaders();
-    //    headers.setLocation(URI.create("/requests/incoming?id=" + user.getId().toString()));
-    //    if (clientUI.acceptRequest(requestId)) {
-    //        return new ResponseEntity<>(headers, HttpStatus.OK);
-    //    }
-    //    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    //}
-//
-    //@PutMapping("/request/reject")
-    //public ResponseEntity<Void> rejectRequest(@RequestParam("id") Long requestId, Principal principal) {
-    //    Users user = noRegUI.getUserByPrincipal(principal);
-    //    HttpHeaders headers = new HttpHeaders();
-    //    headers.setLocation(URI.create("/requests/incoming?id=" + user.getId().toString()));
-    //    if (clientUI.acceptRequest(requestId)) {
-    //        return new ResponseEntity<>(headers, HttpStatus.OK);
-    //    }
-    //    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    //}
 }

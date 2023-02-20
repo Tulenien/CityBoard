@@ -1,5 +1,7 @@
 package com.CityBoard.services;
 
+import com.CityBoard.IUsersRepository;
+import com.CityBoard.UsersRepository;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.Roles;
 import com.CityBoard.postgresql.dto.UserDTO;
@@ -19,13 +21,14 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class UsersService extends AbstractService<UserDTO, UsersJPARepository> {
+//public class UsersService extends AbstractService<UserDTO, UsersJPARepository> {
+public class UsersService {
     //private final PasswordEncoder passwordEncoder;
+    private final IUsersRepository usersRepository;
 
     //public UsersService(UsersRepository repository, PasswordEncoder passwordEncoder) {
-    public UsersService(UsersJPARepository repository) {
-
-        super(repository);
+    public UsersService(UsersRepository usersRepository) {
+        this.usersRepository = usersRepository;
         //this.passwordEncoder = passwordEncoder;
     }
 
@@ -35,41 +38,37 @@ public class UsersService extends AbstractService<UserDTO, UsersJPARepository> {
 
     public Page<Users> getAllUsersPage(int currentPage, int pageSize) {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
-        Page<UserDTO> dtoPage = repository.findAll(pageable);
-        return mapDTOtoEntityPage(dtoPage, pageable);
+        return usersRepository.findAll(pageable);
     }
 
     public Users getUserByUsername(String username) {
-        return repository.findByUsername(username).mapDTOtoEntity();
+        return usersRepository.findByUsername(username);
     }
 
     public Users getUserByPrincipal(Principal principal) {
         Users user = null;
         if (SecurityContextHolder.getContext().getAuthentication() != null &&
-                !(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
+                !(SecurityContextHolder.getContext().getAuthentication()
+                        instanceof AnonymousAuthenticationToken)) {
             user = getUserByUsername(principal.getName());
         }
         return user;
     }
 
     public Users getUserById(Long userId) {
-        UserDTO user = repository.findById(userId).orElse(null);
-        if (user != null) {
-            return user.mapDTOtoEntity();
-        }
-        return null;
+        return usersRepository.findById(userId);
     }
 
-    public UserDTO getUserDTOByUsername(String username) {
-        return repository.findByUsername(username);
-    }
+    //public UserDTO getUserDTOByUsername(String username) {
+    //    return repository.findByUsername(username);
+    //}
 
-    public UserDTO getUserDTOById(Long userId) {
-        return repository.findById(userId).orElse(null);
-    }
+    //public UserDTO getUserDTOById(Long userId) {
+    //    return repository.findById(userId).orElse(null);
+    //}
 
     public boolean usernameExists(String username) {
-        return repository.findByUsername(username) != null;
+        return usersRepository.findByUsername(username) != null;
     }
 
     //public String cryptPassword(String password) {
@@ -83,38 +82,34 @@ public class UsersService extends AbstractService<UserDTO, UsersJPARepository> {
         if (usernameExists(user.getUsername())) {
             throw new Exception("User with this username already exists");
         }
-        Set<Roles> userRoles = new HashSet<>();
-        userRoles.add(Roles.ROLE_USER);
-        UserDTO userDTO = new UserDTO();
-        Long savedId = userDTO.getId();
-        //user.setPassword(cryptPassword(user.getPassword()));
-        user.setPassword(user.getPassword());
-        userDTO.mapEntity(user);
-
-        userDTO.setId(savedId);
-        userDTO.setRoles(userRoles);
-        repository.save(userDTO);
-        return userDTO;
+        usersRepository.saveUser(user);
+        return null;
     }
 
+    //public UserDTO createUser(Users user) throws Exception {
+    //    if (usernameExists(user.getUsername())) {
+    //        throw new Exception("User with this username already exists");
+    //    }
+    //    Set<Roles> userRoles = new HashSet<>();
+    //    userRoles.add(Roles.ROLE_USER);
+    //    UserDTO userDTO = new UserDTO();
+    //    Long savedId = userDTO.getId();
+    //    //user.setPassword(cryptPassword(user.getPassword()));
+    //    user.setPassword(user.getPassword());
+    //    userDTO.mapEntity(user);
+//
+    //    userDTO.setId(savedId);
+    //    userDTO.setRoles(userRoles);
+    //    repository.save(userDTO);
+    //    return userDTO;
+    //}
+//
     public boolean addRole(Long userId, Roles role) {
-        UserDTO user = repository.findById(userId).orElse(null);
-        if (user != null && !user.getRoles().contains(role)) {
-            user.getRoles().add(role);
-            save(user);
-            return true;
-        }
-        return false;
+        return usersRepository.addRole(userId, role);
     }
 
     public boolean removeRole(Long userId, Roles role) {
-        UserDTO user = repository.findById(userId).orElse(null);
-        if (user != null && user.getRoles().contains(role)) {
-            user.getRoles().remove(role);
-            save(user);
-            return true;
-        }
-        return false;
+        return usersRepository.removeRole(userId, role);
     }
 
     private Page<Users> mapDTOtoEntityPage(Page<UserDTO> dtoPage, Pageable pageable) {
@@ -128,13 +123,13 @@ public class UsersService extends AbstractService<UserDTO, UsersJPARepository> {
         return new PageImpl<>(usersList, pageable, totalElements);
     }
 
-    @Override
-    public void save(UserDTO entity) {
-        repository.save(entity);
-    }
-
-    @Override
-    public void delete(UserDTO entity) {
-        repository.delete(entity);
-    }
+    //@Override
+    //public void save(UserDTO entity) {
+    //    repository.save(entity);
+    //}
+//
+    //@Override
+    //public void delete(UserDTO entity) {
+    //    repository.delete(entity);
+    //}
 }

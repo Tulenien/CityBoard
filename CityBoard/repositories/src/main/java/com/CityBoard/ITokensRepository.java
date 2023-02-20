@@ -1,10 +1,9 @@
 package com.CityBoard;
 
-import com.CityBoard.postgresql.dto.JwtToken;
-
-import java.util.Optional;
-
 public interface ITokensRepository {
-    JwtToken findByUsername(String username);
-    Optional<JwtToken> findById(Long id);
+    String findByUsername(String username);
+    String findById(Long id);
+    boolean checkToken(String username);
+    void saveToken(String username, String token);
+    void updateToken(String username, String token);
 }
