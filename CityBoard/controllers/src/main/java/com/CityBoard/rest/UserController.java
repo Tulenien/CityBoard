@@ -84,7 +84,7 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "User not found")},
             description = "Role required: ADMIN_ROLE")
     @PutMapping("/users/{id}/roles")
-    public ResponseEntity<Void> addUserRole(@RequestParam("id") Long id,
+    public ResponseEntity<Void> addUserRole(@PathVariable("id") Long id,
                                             @RequestBody Roles role) {
         if (usersService.addRole(id, role)) {
             HttpHeaders headers = new HttpHeaders();

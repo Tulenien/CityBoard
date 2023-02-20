@@ -19,6 +19,10 @@ public class OpenAPIConfiguration {
     @Value("${server.port}")
     private String port;
 
+    static {
+        io.swagger.v3.core.jackson.ModelResolver.enumsAsRef = true;
+    }
+
     @Bean
     public OpenAPI OpenAPIConfiguration() {
         List<Server> servers = new ArrayList<>();
