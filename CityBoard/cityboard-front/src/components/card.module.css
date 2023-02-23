@@ -1,0 +1,62 @@
+.cardWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+
+    position: relative;
+
+    /* AdditionalBackColor */
+
+    background: #F4F3EB;
+}
+
+.cardContent {
+    width: 844px;
+    height: 88px;
+
+    /* MainFontText */
+
+    font-family: 'Taviraj';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 27px;
+
+    /* mainFontColor */
+
+    color: #1F1C1B;
+
+
+    /* Inside auto layout */
+
+    flex: none;
+    order: 2;
+    flex-grow: 0;
+}
+
+.cardHeader {
+    width: 844px;
+    height: 88px;
+
+    /* NavbarFont */
+
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 41px;
+    line-height: 53px;
+    text-align: center;
+
+    /* mainFontColor */
+
+    color: #1F1C1B;
+
+
+    /* Inside auto layout */
+
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}

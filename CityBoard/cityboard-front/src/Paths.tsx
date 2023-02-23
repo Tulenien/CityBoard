@@ -7,7 +7,7 @@ import Advert from './pages/Advert/Advert'
 const Paths=()=>(
     <Routes>
         <Route path="/" element={<Home/>} />
-        <Route path="/advert/:id" element={<Advert/>} />
+        <Route path="/adverts/:id" element={<Advert/>} />
     </Routes>
 )
 

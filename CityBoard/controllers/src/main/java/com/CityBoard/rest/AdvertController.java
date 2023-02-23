@@ -85,6 +85,7 @@ public class AdvertController {
         return new ResponseEntity<>(advertsPaged, HttpStatus.OK);
     }
 
+
     @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
             responses = {@ApiResponse(
                         responseCode = "201", description = "Successfully create new advert",
@@ -123,56 +124,10 @@ public class AdvertController {
                             @ApiResponse(responseCode = "404", description = "Id invalid or advert not found")},
                description = "Role dependent, no authorization required")
     @GetMapping("/adverts/{id}")
-    public ResponseEntity<Adverts> showAdvert(@PathVariable("id") Long advertId, Principal principal) {
-        Adverts advert = null;
+    public ResponseEntity<Adverts> showAdvert(@PathVariable("id") Long advertId) {
+        //Adverts advert = null;
         HttpStatus status = HttpStatus.OK;
-        Users user = usersService.getUserByPrincipal(principal);
-        if (user != null) {
-            //if (user.getRoles().contains(Roles.ROLE_ADMIN)) {
-            //    advert = advertsService.getAdvertById(advertId);
-            //    if (advert == null) {
-            //        status = HttpStatus.NOT_FOUND;
-            //    }
-            //}
-            //else if (user.getRoles().contains(Roles.ROLE_MOD)) {
-            //    advert = modUI.getAdvert(advertId);
-            //    if (advert == null) {
-            //        status = HttpStatus.NOT_FOUND;
-            //    }
-            //    else if (advert.getStatus().equals(AdvertStatus.DELETED)) {
-            //        advert = null;
-            //        status = HttpStatus.FORBIDDEN;
-            //    }
-            //}
-            //else {
-            //    advert = clientUI.getAdvert(advertId);
-            //    if (advert == null) {
-            //        status = HttpStatus.NOT_FOUND;
-            //    }
-            //    else if (!advert.getStatus().equals(AdvertStatus.VISIBLE) && !advert.getAuthorId().equals(user.getId())) {
-            //        advert = null;
-            //        status = HttpStatus.FORBIDDEN;
-            //    }
-            //}
-        }
-        else {
-            advert = advertsService.getAdvertById(advertId);
-            if (advert == null) {
-                status = HttpStatus.NOT_FOUND;
-            }
-            else if (!advert.getStatus().equals(AdvertStatus.VISIBLE)) {
-                advert = null;
-                status = HttpStatus.FORBIDDEN;
-            }
-            //advert = noRegUI.getAdvert(advertId);
-            //if (advert == null) {
-            //    status = HttpStatus.NOT_FOUND;
-            //}
-            //else if (!advert.getStatus().equals(AdvertStatus.VISIBLE)) {
-            //    advert = null;
-            //    status = HttpStatus.FORBIDDEN;
-            //}
-        }
+        Adverts advert = advertsService.getAdvertById(advertId);
         return new ResponseEntity<>(advert, status);
     }
 

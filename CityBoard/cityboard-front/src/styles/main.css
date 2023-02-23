@@ -1,0 +1,57 @@
+.App {
+    font-family: sans-serif;
+    /*text-align: center;
+    padding-top: 100px;*/
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px;
+    gap: 323px;
+
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+
+    /* saveColor */
+
+    background: #87B1BA;
+}
+
+table {
+    background: #F4F3EB;
+}
+
+table > header {
+    /*border: 1px solid gray;
+    margin-bottom: 20px;*/
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 5px;
+    gap: 15px;
+
+    width: 1433px;
+    height: 226px;
+
+    /* AdditionalBackColor */
+
+    background: #F4F3EB;
+
+    /* Inside auto layout */
+
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+tbody > tr {
+    /* strokeColor */
+    border: 1px solid #60696F;
+    /* Inside auto layout */
+
+    flex: none;
+    order: 2;
+    flex-grow: 0;
+}
