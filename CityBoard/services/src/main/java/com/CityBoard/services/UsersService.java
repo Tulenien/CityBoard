@@ -5,7 +5,6 @@ import com.CityBoard.UsersRepository;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.Roles;
 import com.CityBoard.postgresql.dto.UserDTO;
-import com.CityBoard.postgresql.repository.UsersJPARepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -16,9 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 //public class UsersService extends AbstractService<UserDTO, UsersJPARepository> {

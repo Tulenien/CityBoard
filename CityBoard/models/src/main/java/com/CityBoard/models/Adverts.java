@@ -4,8 +4,6 @@ import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.models.enums.AdvertType;
 import lombok.*;
 
-import java.util.List;
-
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

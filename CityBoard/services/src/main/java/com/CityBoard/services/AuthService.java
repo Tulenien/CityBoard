@@ -6,7 +6,6 @@ import com.CityBoard.models.JwtAuthentication;
 import com.CityBoard.models.JwtRequest;
 import com.CityBoard.models.JwtResponse;
 import com.CityBoard.models.Users;
-import com.CityBoard.postgresql.dto.JwtToken;
 import io.jsonwebtoken.Claims;
 import lombok.NonNull;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -38,8 +37,7 @@ public class AuthService {
             // save to database
             if (tokensRepository.checkToken(user.getUsername())) {
                 tokensRepository.saveToken(user.getUsername(), refreshToken);
-            }
-            else {
+            } else {
                 tokensRepository.updateToken(user.getUsername(), refreshToken);
             }
             return new JwtResponse(accessToken, refreshToken);
@@ -91,8 +89,7 @@ public class AuthService {
         if (SecurityContextHolder.getContext().getAuthentication() != null &&
                 !(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
             return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
-        }
-        else {
+        } else {
             return null;
         }
     }

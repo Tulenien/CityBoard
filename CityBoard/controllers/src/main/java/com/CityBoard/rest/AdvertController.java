@@ -6,7 +6,10 @@ import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.models.enums.Roles;
 import com.CityBoard.rest.data.AdvertFormData;
-import com.CityBoard.services.*;
+import com.CityBoard.services.AdvertsService;
+import com.CityBoard.services.AuthService;
+import com.CityBoard.services.RequestsService;
+import com.CityBoard.services.UsersService;
 import com.CityBoard.ui.pagination.Paged;
 import com.CityBoard.ui.pagination.Paging;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -55,8 +58,8 @@ public class AdvertController {
     }
 
     @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
-               responses = {
-            @ApiResponse(responseCode = "200", description = "Successfully return adverts page content")},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully return adverts page content")},
             description = "Role dependent, no authorization required")
     @GetMapping("/adverts")
     public ResponseEntity<Paged<Adverts>> showAdvertsPaged(
@@ -68,17 +71,14 @@ public class AdvertController {
             if (authInfo.getRoles().contains(Roles.ROLE_ADMIN)) {
                 Page<Adverts> advertsPage = advertsService.getAllAdvertsPage(currentPage, pageSize);
                 advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
-            }
-            else if (authInfo.getRoles().contains(Roles.ROLE_MOD)) {
+            } else if (authInfo.getRoles().contains(Roles.ROLE_MOD)) {
                 Page<Adverts> advertsPage = advertsService.getNotDeletedAdvertsPage(currentPage, pageSize);
                 advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
-            }
-            else {
+            } else {
                 Page<Adverts> advertsPage = advertsService.getVisibleAdvertsPage(currentPage, pageSize);
                 advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
             }
-        }
-        else {
+        } else {
             Page<Adverts> advertsPage = advertsService.getVisibleAdvertsPage(currentPage, pageSize);
             advertsPaged = new Paged<>(advertsPage, Paging.of(advertsPage.getTotalPages(), currentPage, pageSize));
         }
@@ -88,17 +88,17 @@ public class AdvertController {
 
     @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
             responses = {@ApiResponse(
-                        responseCode = "201", description = "Successfully create new advert",
-                        links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
-                            parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
+                    responseCode = "201", description = "Successfully create new advert",
+                    links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
+                            parameters = {@LinkParameter(name = "pageNumber", expression = "1"),
                                     @LinkParameter(name = "pageSize", expression = "10")})}),
                     @ApiResponse(responseCode = "403", description = "User is unauthorized",
                             links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
-                                    parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
+                                    parameters = {@LinkParameter(name = "pageNumber", expression = "1"),
                                             @LinkParameter(name = "pageSize", expression = "10")})}),
                     @ApiResponse(responseCode = "500", description = "Server-side problem",
                             links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
-                                    parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
+                                    parameters = {@LinkParameter(name = "pageNumber", expression = "1"),
                                             @LinkParameter(name = "pageSize", expression = "10")})})},
             description = "Authorization required")
     @PostMapping("/adverts")
@@ -109,8 +109,7 @@ public class AdvertController {
         if (authInfo == null) {
             status = HttpStatus.UNAUTHORIZED;
             headers.setLocation(URI.create("/login"));
-        }
-        else {
+        } else {
             Users user = usersService.getUserByUsername(authInfo.getUsername());
             Adverts mapped = advert.mapToAdverts();
             advertsService.createAdvert(mapped, user.getId());
@@ -120,9 +119,9 @@ public class AdvertController {
     }
 
     @Operation(responses = {@ApiResponse(responseCode = "200", description = "Successfully return adverts page content"),
-                            @ApiResponse(responseCode = "403", description = "Logically forbidden for this role to access"),
-                            @ApiResponse(responseCode = "404", description = "Id invalid or advert not found")},
-               description = "Role dependent, no authorization required")
+            @ApiResponse(responseCode = "403", description = "Logically forbidden for this role to access"),
+            @ApiResponse(responseCode = "404", description = "Id invalid or advert not found")},
+            description = "Role dependent, no authorization required")
     @GetMapping("/adverts/{id}")
     public ResponseEntity<Adverts> showAdvert(@PathVariable("id") Long advertId) {
         //Adverts advert = null;
@@ -164,20 +163,20 @@ public class AdvertController {
     @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
             responses = {@ApiResponse(responseCode = "200", description = "Successfully update existing advert",
                     links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
-                            parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
-                                           @LinkParameter(name = "pageSize", expression = "10")})}),
+                            parameters = {@LinkParameter(name = "pageNumber", expression = "1"),
+                                    @LinkParameter(name = "pageSize", expression = "10")})}),
                     @ApiResponse(responseCode = "403", description = "User is unauthrorized",
                             links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
-                                    parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
-                                                   @LinkParameter(name = "pageSize", expression = "10")})}),
+                                    parameters = {@LinkParameter(name = "pageNumber", expression = "1"),
+                                            @LinkParameter(name = "pageSize", expression = "10")})}),
                     @ApiResponse(responseCode = "400", description = "Id illegally changed",
                             links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
-                                    parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
-                                                   @LinkParameter(name = "pageSize", expression = "10")})}),
+                                    parameters = {@LinkParameter(name = "pageNumber", expression = "1"),
+                                            @LinkParameter(name = "pageSize", expression = "10")})}),
                     @ApiResponse(responseCode = "500", description = "Server-side problem, possibly memory error",
                             links = {@Link(name = "Show adverts paged", operationId = "showAdvertsPaged",
-                                    parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
-                                                   @LinkParameter(name = "pageSize", expression = "10")})})},
+                                    parameters = {@LinkParameter(name = "pageNumber", expression = "1"),
+                                            @LinkParameter(name = "pageSize", expression = "10")})})},
             description = "Authorization required")
     @PutMapping("/adverts/{id}")
     public ResponseEntity<Void> updateAdvert(@PathVariable("id") Long advertId,
@@ -188,13 +187,11 @@ public class AdvertController {
         Users user = usersService.getUserByPrincipal(principal);
         if (user == null) {
             status = HttpStatus.FORBIDDEN;
-        }
-        else {
+        } else {
             Adverts original = advertsService.getAdvertById(advertId);
             if (advert == null || original == null) {
                 status = HttpStatus.BAD_REQUEST;
-            }
-            else {
+            } else {
                 Adverts updated = advert.mapToAdverts();
                 updated.setId(advertId);
                 updated.setAuthorId(original.getAuthorId());
@@ -223,9 +220,9 @@ public class AdvertController {
 
     @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
             responses = {@ApiResponse(responseCode = "200", description = "Successfully delete advert"),
-                         @ApiResponse(responseCode = "403", description = "User unauthorized"),
-                         @ApiResponse(responseCode = "400", description = "Logically forbidden for this role to access"),
-                         @ApiResponse(responseCode = "404", description = "Invalid Id or Advert not found")},
+                    @ApiResponse(responseCode = "403", description = "User unauthorized"),
+                    @ApiResponse(responseCode = "400", description = "Logically forbidden for this role to access"),
+                    @ApiResponse(responseCode = "404", description = "Invalid Id or Advert not found")},
             description = "Authorization required, ownership checked")
     @DeleteMapping("/adverts/{id}")
     public ResponseEntity<Void> deleteAdvert(@PathVariable("id") Long advertId,
@@ -235,14 +232,12 @@ public class AdvertController {
         Users user = usersService.getUserByPrincipal(principal);
         if (user == null) {
             status = HttpStatus.UNAUTHORIZED;
-        }
-        else {
+        } else {
             //Adverts advert = clientUI.getAdvert(advertId);
             Adverts advert = advertsService.getAdvertById(advertId);
             if (advert == null) {
                 status = HttpStatus.NOT_FOUND;
-            }
-            else if (!user.getId().equals(advert.getAuthorId())) {
+            } else if (!user.getId().equals(advert.getAuthorId())) {
                 status = HttpStatus.FORBIDDEN;
             }
             //else {
@@ -268,13 +263,11 @@ public class AdvertController {
         Users user = usersService.getUserByPrincipal(principal);
         if (user == null) {
             status = HttpStatus.UNAUTHORIZED;
-        }
-        else {
+        } else {
             Adverts advert = advertsService.getAdvertById(advertId);
             if (advert == null) {
                 status = HttpStatus.NOT_FOUND;
-            }
-            else {
+            } else {
                 advertsService.changeAdvertStatus(advertId, advertStatus);
             }
         }
@@ -297,13 +290,11 @@ public class AdvertController {
         Users user = usersService.getUserByPrincipal(principal);
         if (user == null) {
             status = HttpStatus.UNAUTHORIZED;
-        }
-        else {
+        } else {
             Adverts advert = advertsService.getAdvertById(advertId);
             if (advert == null) {
                 status = HttpStatus.NOT_FOUND;
-            }
-            else {
+            } else {
                 advertsService.changeAdvertModCheck(advertId);
             }
         }

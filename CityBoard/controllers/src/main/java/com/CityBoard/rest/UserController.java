@@ -43,8 +43,8 @@ public class UserController {
     }
 
     @Operation(security = @SecurityRequirement(name = "Bearer Authentication"),
-               responses = {@ApiResponse(responseCode = "200", description = "Successfully return users page content")},
-               description = "Role required: ADMIN_ROLE")
+            responses = {@ApiResponse(responseCode = "200", description = "Successfully return users page content")},
+            description = "Role required: ADMIN_ROLE")
     @GetMapping("/users")
     public ResponseEntity<Paged<Users>> showUsersPaged(
             @RequestParam(value = "pageNumber", required = false, defaultValue = "1") int currentPage,
@@ -56,11 +56,11 @@ public class UserController {
 
     @Operation(security = @SecurityRequirement(name = "basicAuth"),
             responses = {@ApiResponse(responseCode = "200", description = "Successfully removed role, return to /users",
-                                      links = {@Link(name = "Get users page", operationId = "getUsersPaged",
-                                                     parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
-                                                                    @LinkParameter(name = "pageSize", expression = "10")}
-                                      )}),
-                         @ApiResponse(responseCode = "404", description = "User not found")},
+                    links = {@Link(name = "Get users page", operationId = "getUsersPaged",
+                            parameters = {@LinkParameter(name = "pageNumber", expression = "1"),
+                                    @LinkParameter(name = "pageSize", expression = "10")}
+                    )}),
+                    @ApiResponse(responseCode = "404", description = "User not found")},
             description = "Role required: ADMIN_ROLE")
     @DeleteMapping("/users/{id}/roles")
     public ResponseEntity<Void> removeUserRole(@PathVariable("id") Long id,
@@ -69,8 +69,7 @@ public class UserController {
             HttpHeaders headers = new HttpHeaders();
             headers.setLocation(URI.create("/users"));
             return new ResponseEntity<>(headers, HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -78,7 +77,7 @@ public class UserController {
     @Operation(security = @SecurityRequirement(name = "basicAuth"),
             responses = {@ApiResponse(responseCode = "200", description = "Successfully added role, return to /users",
                     links = {@Link(name = "Get users page", operationId = "getUsersPaged",
-                            parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
+                            parameters = {@LinkParameter(name = "pageNumber", expression = "1"),
                                     @LinkParameter(name = "pageSize", expression = "10")}
                     )}),
                     @ApiResponse(responseCode = "404", description = "User not found")},
@@ -90,8 +89,7 @@ public class UserController {
             HttpHeaders headers = new HttpHeaders();
             headers.setLocation(URI.create("/users"));
             return new ResponseEntity<>(headers, HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

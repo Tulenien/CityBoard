@@ -2,13 +2,10 @@ package com.CityBoard;
 
 import com.CityBoard.models.Adverts;
 import com.CityBoard.models.enums.AdvertStatus;
-import com.CityBoard.postgresql.dto.AdvertDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface IAdvertsRepository {
     Page<Adverts> findAll(Pageable pageable);
@@ -30,5 +27,6 @@ public interface IAdvertsRepository {
     public void deleteAdvert(Adverts advert);
 
     public boolean changeStatus(Long id, AdvertStatus status);
+
     public boolean changeModCheck(Long id);
 }

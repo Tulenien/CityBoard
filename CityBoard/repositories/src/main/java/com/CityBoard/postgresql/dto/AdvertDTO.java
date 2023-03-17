@@ -2,14 +2,11 @@ package com.CityBoard.postgresql.dto;
 
 import com.CityBoard.interfaces.AbstractEntityDTO;
 import com.CityBoard.models.Adverts;
-import com.CityBoard.models.Requests;
-import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.models.enums.AdvertType;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity

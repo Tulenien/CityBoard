@@ -1,6 +1,5 @@
 package com.CityBoard;
 
-import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Requests;
 import com.CityBoard.models.enums.RequestStatus;
 import com.CityBoard.models.enums.RequestType;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Component
 public class RequestsRepository implements IRequestsRepository {
     private final RequestsJPARepository requestsJPARepository;
@@ -53,8 +53,7 @@ public class RequestsRepository implements IRequestsRepository {
         AdvertDTO advert = advertsJPARepository.findById(advertId).orElse(null);
         if (user == null || advert == null) {
             return false;
-        }
-        else {
+        } else {
             RequestDTO request = RequestDTO.builder()
                     .user(user)
                     .advert(advert)
