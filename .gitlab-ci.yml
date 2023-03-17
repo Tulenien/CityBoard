@@ -48,7 +48,7 @@ deploy-job:      # This job runs in the deploy stage.
   script:
     - echo ${DEPLOY_VM_IP}
     - scp ./CityBoard/application/target/application-0.0.1-SNAPSHOT.jar user@${DEPLOY_VM_IP}:/home/user
-    - ssh user@${DEPLOY_VM_IP} 'bash -s' < /home/user/deploy.sh
+    - sudo ssh user@${DEPLOY_VM_IP} 'bash -s' < /home/user/deploy.sh
     - echo "Application is deployed on remote VM"
     - sudo cat /etc/nginx/nginx.conf >> /etc/nginx/nginx.conf.backup
     - sudo cat ./CityBoard/nginx/nginx.conf > /etc/nginx/nginx.conf
