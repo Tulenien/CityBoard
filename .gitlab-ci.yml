@@ -46,6 +46,7 @@ deploy-job:      # This job runs in the deploy stage.
     - release
   when: manual
   script:
+    - echo ${DEPLOY_VM_IP}
     - sudo su - user
     - scp ./CityBoard/application/target/application-0.0.1-SNAPSHOT.jar ${DEPLOY_VM_IP}:/home/user
     - ssh root@${DEPLOY_VM_IP} 'bash -s' < /home/user/deploy.sh
