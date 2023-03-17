@@ -18,21 +18,41 @@ stages:          # List of stages for jobs, and their order of execution
   - test
   - deploy
 
-build-job:       # This job runs in the build stage, which runs first.
+variables:
+  DEPLOY_VM_IP: "192.168.3.79"
+
+build-app-job:       # This job runs in the build stage, which runs first.
   stage: build
+  when: always
   script:
     - cd CityBoard
     - mvn package
-    - echo "Compiling the code..."
-    - echo "Compile complete."
+    - echo "Application build is successful"
+  artifacts:
+    name: "maven-build"
+    paths:
+      - "target/*"
 
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - sudo nginx -t
+    - echo "Nginx configuration file is correct"
+  rules:
+    - changes:
+      - nginx.conf
 
 deploy-job:      # This job runs in the deploy stage.
-  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  stage: deploy
+  only: 
+    - main
+    - release
+  when: manual
   script:
-    - java -jar CityBoard/application/target/application-0.0.1-SNAPSHOT.jar --port=10077
-    - echo "Application successfully deployed."
+    - sudo scp /home/user/iu7-web-design/CityBoard/application/target/application-0.0.1-SNAPSHOT.jar root@${DEPLOY_VM_IP}/home/user
+    - sudo ssh root@${DEPLOY_VM_IP} 'bash -s' < /home/user/deploy.sh
+    - echo "Application is deployed on remote VM"
+    - sudo cat /etc/nginx/nginx.conf >> /etc/nginx/nginx.conf.backup
+    - sudo cat ./CityBoard/nginx/nginx.conf > /etc/nginx/nginx.conf
+    - sudo systemctl reload nginx
+    - echo "Nginx service reloaded with new configuration"
