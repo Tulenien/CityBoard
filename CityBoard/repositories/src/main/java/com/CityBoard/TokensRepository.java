@@ -32,6 +32,10 @@ public class TokensRepository implements ITokensRepository {
 
     @Override
     public boolean checkToken(String username) {
+        JwtToken jwt = tokensJPARepository.findByUsername(username);
+        if (jwt == null) {
+            return true;
+        }
         return false;
     }
 
