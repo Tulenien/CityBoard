@@ -36,9 +36,9 @@ unit-test-job:   # This job runs in the test stage.
   script:
     - sudo nginx -t
     - echo "Nginx configuration file is correct"
-  rules:
-    - changes:
-      - ./CityBoard/nginx/nginx.conf
+  #rules:
+  #  - changes:
+  #    - ./CityBoard/nginx/nginx.conf
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy
