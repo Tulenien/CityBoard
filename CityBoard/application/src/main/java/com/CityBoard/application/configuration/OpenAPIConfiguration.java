@@ -26,6 +26,8 @@ public class OpenAPIConfiguration {
     @Bean
     public OpenAPI OpenAPIConfiguration() {
         List<Server> servers = new ArrayList<>();
+        servers.add(new Server().url("http://176.118.165.63:20078/api/v1").description("Remote VM host API"));
+        servers.add(new Server().url("http://176.118.165.63:20078").description("Remote VM host"));
         servers.add(new Server().url("http://localhost:10077").description("Main API Server"));
         servers.add(new Server().url("http://localhost:10078").description("Test Server"));
         servers.add(new Server().url("http://localhost:10177").description("API Server, ReadOnly"));
