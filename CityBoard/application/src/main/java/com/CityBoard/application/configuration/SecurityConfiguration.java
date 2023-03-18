@@ -1,13 +1,9 @@
 package com.CityBoard.application.configuration;
 
-import com.CityBoard.services.CustomUserDetailsService;
 import com.CityBoard.services.JwtFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -51,6 +47,7 @@ public class SecurityConfiguration {
                                 .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 ).build();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -119,11 +116,11 @@ public class SecurityConfiguration {
 //    }
 
 
-    //@Bean
-    //public AuthenticationProvider daoAuthenticationProvider() { // dao is data access object
-    //    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-    //    provider.setUserDetailsService(userDetailsService);
-    //    provider.setPasswordEncoder(passwordEncoder());
-    //    return provider;
-    //}
+//@Bean
+//public AuthenticationProvider daoAuthenticationProvider() { // dao is data access object
+//    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+//    provider.setUserDetailsService(userDetailsService);
+//    provider.setPasswordEncoder(passwordEncoder());
+//    return provider;
+//}
 //}

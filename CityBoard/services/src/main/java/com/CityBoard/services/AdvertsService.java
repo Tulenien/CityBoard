@@ -2,25 +2,21 @@ package com.CityBoard.services;
 
 import com.CityBoard.AdvertsRepository;
 import com.CityBoard.IAdvertsRepository;
-import com.CityBoard.UsersRepository;
 import com.CityBoard.models.Adverts;
 import com.CityBoard.models.enums.AdvertStatus;
 import com.CityBoard.postgresql.dto.AdvertDTO;
-import com.CityBoard.postgresql.repository.AdvertsJPARepository;
-import com.CityBoard.postgresql.repository.UsersJPARepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 @Service
 public class AdvertsService {
     private final IAdvertsRepository advertsRepository;
+
     public AdvertsService(AdvertsRepository advertsRepository) {
         this.advertsRepository = advertsRepository;
     }
@@ -48,7 +44,6 @@ public class AdvertsService {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
         return advertsRepository.findAllNotDeletedPaginated(pageable);
     }
-
 
 
     public Page<Adverts> getVisibleNotAuthoredAdvertsPage(Long authorId, int currentPage, int pageSize) {

@@ -108,6 +108,7 @@ public class AdvertsRepository implements IAdvertsRepository {
         }
         return false;
     }
+
     private Page<Adverts> mapDTOtoEntityPage(Page<AdvertDTO> dtoPage, Pageable pageable) {
         List<AdvertDTO> dtoList = dtoPage.getContent();
         long totalElements = dtoPage.getTotalElements();

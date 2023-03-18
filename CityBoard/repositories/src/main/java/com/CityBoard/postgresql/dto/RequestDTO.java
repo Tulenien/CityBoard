@@ -1,9 +1,7 @@
 package com.CityBoard.postgresql.dto;
 
 import com.CityBoard.interfaces.AbstractEntityDTO;
-import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Requests;
-import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.RequestStatus;
 import com.CityBoard.models.enums.RequestType;
 import lombok.*;
@@ -40,6 +38,7 @@ public class RequestDTO extends AbstractEntityDTO {
                 .build();
         return request;
     }
+
     public void mapEntity(Requests request) {
         id = request.getId();
         type = request.getType();

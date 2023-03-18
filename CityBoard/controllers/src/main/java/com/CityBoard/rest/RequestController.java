@@ -59,23 +59,20 @@ public class RequestController {
             description = "Authorization required")
     @GetMapping("/requests")
     public ResponseEntity<List<Requests>> showIncomingRequestsList(@RequestParam(value = "filter", required = false, defaultValue = "")
-                                                                       String filter) {
+                                                                   String filter) {
         HttpStatus status = HttpStatus.OK;
         final JwtAuthentication authInfo = authService.getAuthInfo();
         if (authInfo == null) {
             status = HttpStatus.FORBIDDEN;
             return new ResponseEntity<>(status);
-        }
-        else {
+        } else {
             Users user = usersService.getUserByUsername(authInfo.getUsername());
             List<Requests> requests;
             if (filter.equals("incoming")) {
                 requests = requestsService.getIncomingRequests(user.getId());
-            }
-            else if (filter.equals("outgoing")) {
+            } else if (filter.equals("outgoing")) {
                 requests = requestsService.getOutgoingRequests(user.getId());
-            }
-            else {
+            } else {
                 requests = requestsService.getOutgoingRequests(user.getId());
                 requests.addAll(requestsService.getIncomingRequests(user.getId()));
             }
@@ -95,10 +92,9 @@ public class RequestController {
         final JwtAuthentication authInfo = authService.getAuthInfo();
         if (authInfo == null) {
             return new ResponseEntity<>(headers, HttpStatus.UNAUTHORIZED);
-        }
-        else if (requestsService.createRequest(usersService.getUserByUsername(authInfo.getUsername()).getId(),
-                                               data.getAdvertId(),
-                                               data.getType())) {
+        } else if (requestsService.createRequest(usersService.getUserByUsername(authInfo.getUsername()).getId(),
+                data.getAdvertId(),
+                data.getType())) {
             return new ResponseEntity<>(headers, HttpStatus.CREATED);
         }
         return new ResponseEntity<>(headers, HttpStatus.BAD_REQUEST);

@@ -2,14 +2,13 @@ package com.CityBoard.rest;
 
 import com.CityBoard.models.JwtRequest;
 import com.CityBoard.models.JwtResponse;
-import com.CityBoard.rest.data.RefreshJwtRequest;
 import com.CityBoard.models.Users;
+import com.CityBoard.rest.data.RefreshJwtRequest;
 import com.CityBoard.rest.data.UserRegistrationData;
 import com.CityBoard.services.AuthService;
 import com.CityBoard.services.UsersService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.links.Link;
@@ -52,8 +51,7 @@ public class AuthController {
         try {
             final JwtResponse token = authService.login(authRequest);
             return ResponseEntity.ok(token);
-        }
-        catch (AuthException e) {
+        } catch (AuthException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
@@ -63,8 +61,7 @@ public class AuthController {
         try {
             final JwtResponse token = authService.getAccessToken(request.getRefreshToken());
             return ResponseEntity.ok(token);
-        }
-        catch (AuthException e) {
+        } catch (AuthException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -74,11 +71,9 @@ public class AuthController {
         try {
             final JwtResponse token = authService.refresh(request.getRefreshToken());
             return ResponseEntity.ok(token);
-        }
-        catch (AuthException e) {
+        } catch (AuthException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        catch (IllegalStateException i) {
+        } catch (IllegalStateException i) {
             // No refresh token
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -86,7 +81,7 @@ public class AuthController {
 
     @Operation(responses = {@ApiResponse(responseCode = "201", description = "New user created and saved in database",
             links = {@Link(name = "Get adverts page", operationId = "getAdvertsPaged",
-                    parameters = { @LinkParameter(name = "pageNumber", expression = "1"),
+                    parameters = {@LinkParameter(name = "pageNumber", expression = "1"),
                             @LinkParameter(name = "pageSize", expression = "10")})}),
             @ApiResponse(responseCode = "409", description = "Username exists in database")})
     @PostMapping("/registration")
@@ -95,8 +90,7 @@ public class AuthController {
         Users user = data.mapToUsers();
         try {
             usersService.createUser(user);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         headers.setLocation(URI.create("/login"));

@@ -28,8 +28,7 @@ public class AdvertFormData {
     private Integer price;
     private String description;
 
-    public Adverts mapToAdverts()
-    {
+    public Adverts mapToAdverts() {
         Adverts advert = Adverts.builder()
                 .type(type)
                 .email(email)

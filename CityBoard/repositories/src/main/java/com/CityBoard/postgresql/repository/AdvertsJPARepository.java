@@ -18,11 +18,11 @@ public interface AdvertsJPARepository extends CommonRepository<AdvertDTO> {
     Page<AdvertDTO> findAllVisiblePaginated(Pageable pageable);
 
     @Query(value = "select * from adverts where status <> 2",
-           countQuery = "select count(*) from adverts where status <> 2", nativeQuery = true)
+            countQuery = "select count(*) from adverts where status <> 2", nativeQuery = true)
     Page<AdvertDTO> findAllNotDeletedPaginated(Pageable pageable);
 
     @Query(value = "select * from adverts where author_id <> ?1 and status = 0",
-           countQuery = "select count(*) from adverts where author_id <> ?1 and status = 0", nativeQuery = true)
+            countQuery = "select count(*) from adverts where author_id <> ?1 and status = 0", nativeQuery = true)
     Page<AdvertDTO> findVisibleNotAuthoredPaginated(Long authorId, Pageable pageable);
 
     @Query(value = "select * from adverts where author_id = ?1 and status <> 2", nativeQuery = true)

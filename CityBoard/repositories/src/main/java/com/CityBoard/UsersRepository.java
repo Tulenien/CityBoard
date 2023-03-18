@@ -1,9 +1,7 @@
 package com.CityBoard;
 
-import com.CityBoard.models.Adverts;
 import com.CityBoard.models.Users;
 import com.CityBoard.models.enums.Roles;
-import com.CityBoard.postgresql.dto.AdvertDTO;
 import com.CityBoard.postgresql.dto.UserDTO;
 import com.CityBoard.postgresql.repository.UsersJPARepository;
 import org.springframework.data.domain.Page;

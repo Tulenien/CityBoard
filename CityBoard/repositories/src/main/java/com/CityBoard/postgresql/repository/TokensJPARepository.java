@@ -9,5 +9,6 @@ import java.util.Optional;
 @Repository
 public interface TokensJPARepository extends CommonRepository<JwtToken> {
     JwtToken findByUsername(String username);
+
     Optional<JwtToken> findById(Long id);
 }
